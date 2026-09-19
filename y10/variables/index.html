@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 10 Variables | Epsom KS3</title>
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; KS3 Computer Science</div>
+    <h1>Year 10: Variables and assignment</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Hand in (PDF)</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead">DRAWING</div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Hand in makes a PDF to upload to Google Classroom.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+</footer>
+<script>window.LESSON = {"id": "y10-variables", "order": 1, "version": 1, "year": "Year 10", "slug": "variables", "folder": "y10", "title": "Variables and assignment", "short": "Variables", "objective": "Store a value in a variable, change it, read a value from the user, and read the pseudocode for the same ideas.", "keywords": ["variable", "assignment", "overwrite", "data type", "input"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "Before you start", "intro": ["Answer all three before you run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "In a flowchart, which symbol shows input or output?"}, {"id": "r2", "label": "R2", "prompt": "Write pseudocode that adds Price1 and Price2 and stores the result in Total."}, {"id": "r3", "label": "R3", "prompt": "What does the assignment arrow do in pseudocode?"}]}, {"kind": "code", "nav": "1", "label": "Step 1: run", "title": "Store a value", "remember": "A variable is a named box that holds one value at a time.", "intro": ["score is a variable. The number 5 is stored in it.", "Press Run. The program prints what score holds."], "code": "score = 5\nprint(score)\n", "questions": [{"id": "s1a", "label": "1a", "prompt": "What value is stored in score?"}], "expected_b64": "NQ=="}, {"kind": "code", "nav": "2", "label": "Step 2: fill the gap", "title": "Use two variables in a calculation", "remember": "A calculation can only use a variable that already has a value.", "intro": ["price1 and price2 each hold a value. total should hold their sum.", "Replace ____ with the second variable. Then press Run."], "code": "price1 = 4\nprice2 = 6\ntotal = price1 + ____\nprint(total)\n", "hint": "The second variable is called price2.", "questions": [{"id": "s2a", "label": "2a", "prompt": "Why must both prices have a value before the total line runs?"}], "expected_b64": "MTA="}, {"kind": "code", "nav": "3", "label": "Step 3: run", "title": "Changing a variable", "intro": ["score is set to 5, then set to 8 on the next line.", "Press Run and read what it prints."], "code": "score = 5\nscore = 8\nprint(score)\n", "questions": [{"id": "s3a", "label": "3a", "prompt": "What is printed, 5 or 8?"}], "expected_b64": "OA=="}, {"kind": "code", "nav": "4", "label": "Step 4: predict, then run", "title": "Dividing gives a decimal", "intro": ["The line below divides total by 2 and shows one decimal place.", "Write your prediction in 4a. Run is switched on once 4a has an answer.", "Once you press Run, 4a cannot be changed."], "code": "total = 9\n\n# :.1f shows the number with 1 decimal place\nprint(\"Average:\", f\"{total / 2:.1f}\")\n", "predict_first": "s4a", "questions": [{"id": "s4a", "label": "4a", "prompt": "Predict what this prints."}, {"id": "s4b", "label": "4b", "prompt": "Was your prediction the same as the output? Write yes or no."}], "expected_b64": "QXZlcmFnZTogNC41"}, {"kind": "code", "nav": "5", "label": "Step 5: type an input", "title": "Reading a value from the user", "remember": "input() reads what the user types and hands it back as text.", "intro": ["This program asks for a name, then greets it.", "Type Sam when the box appears, then press Run."], "code": "name = input(\"What is your name: \")\nprint(\"Hello\", name)\n", "inputs": ["Sam"], "questions": [{"id": "s5a", "label": "5a", "prompt": "Which line reads what the user types?"}], "expected_b64": "SGVsbG8gU2Ft"}, {"kind": "questions", "nav": "6", "label": "Step 6: read", "title": "The same ideas in exam pseudocode", "intro": ["In the exam these ideas are written in pseudocode.", "DECLARE names a variable and its type. The arrow stores a value."], "readonly": "DECLARE Score : INTEGER\nScore \u2190 5\nScore \u2190 8\nOUTPUT Score", "questions": [{"id": "s6a", "label": "6a", "prompt": "Write the Python line for: Score \u2190 5"}, {"id": "s6b", "label": "6b", "prompt": "What does OUTPUT Score become in Python?"}, {"id": "s6c", "label": "6c", "prompt": "After both arrow lines, what value does Score hold?"}]}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything."], "questions": [{"id": "e1", "label": "E1", "prompt": "Write the line that stores the number 10 in a variable called count."}, {"id": "e2", "label": "E2", "prompt": "What happens to the old value when a variable is given a new one?"}, {"id": "e3", "label": "E3", "prompt": "Which Python word reads what the user types?"}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

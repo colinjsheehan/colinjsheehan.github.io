@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 7 (i) L05 | Epsom KS3</title>
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; KS3 Computer Science</div>
+    <h1>Year 7 (i): Up and down</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="Your name">
+  <button class="btn amber" id="handin">&#128196; Hand in</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">&#9654; Run</button>
+        <button class="btn grey" id="stop">&#9632; Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">&#8634; Again</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead">PICTURE</div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">LOOK</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead">&#8250;_ <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">&#8629;</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span></span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+</footer>
+<script>window.LESSON = {"id": "y7i-05", "order": 5, "version": 1, "year": "Year 7 (i)", "slug": "l05", "folder": "y7i", "title": "Up and down", "short": "L05", "objective": "Jump. Look at the gap. Draw a star.", "keywords": ["jump", "gap", "top", "bottom", "star", "sun"], "words": ["jump", "gap", "top", "bottom", "star", "sun"], "simple": true, "steps": [{"kind": "questions", "nav": "0", "label": "Again", "title": "Look. Say the word.", "questions": [{"id": "r1", "label": "0a", "prompt": "What is this?", "image": "../img/icon_red.png", "pick": [{"v": "red"}, {"v": "blue"}, {"v": "green"}]}, {"id": "r2", "label": "0b", "prompt": "What is this?", "image": "../img/icon_pen.png", "pick": [{"v": "red"}, {"v": "blue"}, {"v": "pen"}]}, {"id": "r3", "label": "0c", "prompt": "What is this?", "image": "../img/icon_yellow.png", "pick": [{"v": "pen"}, {"v": "yellow"}, {"v": "colour"}]}]}, {"kind": "questions", "nav": "1", "label": "Words", "title": "Look. Listen. Say.", "images": [{"src": "../img/icon_jump.png", "label": "jump"}, {"src": "../img/icon_gap.png", "label": "gap"}, {"src": "../img/icon_top.png", "label": "top"}, {"src": "../img/icon_bottom.png", "label": "bottom"}, {"src": "../img/icon_star.png", "label": "star"}, {"src": "../img/icon_sun.png", "label": "sun"}], "questions": [{"id": "w1", "label": "1a", "prompt": "What is this?", "image": "../img/icon_jump.png", "pick": [{"v": "jump"}, {"v": "gap"}, {"v": "top"}]}, {"id": "w2", "label": "1b", "prompt": "What is this?", "image": "../img/icon_gap.png", "pick": [{"v": "top"}, {"v": "bottom"}, {"v": "gap"}]}, {"id": "w3", "label": "1c", "prompt": "What is this?", "image": "../img/icon_star.png", "pick": [{"v": "jump"}, {"v": "star"}, {"v": "sun"}]}]}, {"kind": "code", "nav": "2", "label": "Run", "title": "Jump. Gap.", "turtle": true, "intro": ["Run it.", "Look at the gaps."], "code": "from turtle import *\npensize(3)\n\nforward(60)\npenup()\nforward(40)\npendown()\nforward(60)\npenup()\nforward(40)\npendown()\nforward(60)\n", "questions": [{"id": "s2a", "label": "2a", "prompt": "How many gaps?", "pick": [{"v": "1"}, {"v": "2"}, {"v": "3"}]}]}, {"kind": "code", "nav": "3", "label": "Run", "title": "A star", "turtle": true, "intro": ["Run it."], "code": "from turtle import *\npensize(3)\n\nforward(150)\nright(144)\nforward(150)\nright(144)\nforward(150)\nright(144)\nforward(150)\nright(144)\nforward(150)\nright(144)\n", "questions": [{"id": "s3a", "label": "3a", "prompt": "What is it?", "pick": [{"v": "sun", "img": "../img/icon_sun.png", "label": "sun"}, {"v": "star", "img": "../img/icon_star.png", "label": "star"}]}]}, {"kind": "code", "nav": "4", "label": "Type", "title": "Jump to the top.", "turtle": true, "intro": ["Type it:", "penup()", "Run it. No line to the star."], "code": "from turtle import *\npensize(3)\n\n____()\nleft(90)\nforward(100)\nright(90)\npendown()\nforward(100)\nright(144)\nforward(100)\nright(144)\nforward(100)\nright(144)\nforward(100)\nright(144)\nforward(100)\nright(144)\n", "hint": "penup()", "questions": [{"id": "s4a", "label": "4a", "prompt": "Top or bottom?", "pick": [{"v": "top", "img": "../img/icon_top.png", "label": "top"}, {"v": "bottom", "img": "../img/icon_bottom.png", "label": "bottom"}]}]}, {"kind": "questions", "nav": "5", "label": "Words", "title": "Look. Say the word.", "questions": [{"id": "x1", "label": "5a", "prompt": "What is this?", "image": "../img/icon_sun.png", "pick": [{"v": "sun"}, {"v": "jump"}, {"v": "gap"}]}, {"id": "x2", "label": "5b", "prompt": "What is this?", "image": "../img/icon_bottom.png", "pick": [{"v": "star"}, {"v": "sun"}, {"v": "bottom"}]}, {"id": "x3", "label": "5c", "prompt": "What is this?", "image": "../img/icon_top.png", "pick": [{"v": "star"}, {"v": "top"}, {"v": "bottom"}]}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

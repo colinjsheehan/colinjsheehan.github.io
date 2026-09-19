@@ -188,3 +188,24 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   main.has-drawing #console, #console { flex:none; height:140px; }
 }
 
+
+/* ---------------------------------------------------------------- pictures
+   Used only by lessons that ask for them (the Year 7 (i) pages). */
+.pics { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0; }
+.pics figure { margin:0; border:1px solid var(--grey); border-radius:6px; padding:4px;
+               background:#fff; text-align:center; width:130px; }
+.pics img { display:block; max-width:100%; max-height:150px; width:auto; height:auto; margin:0 auto; }
+.pics figcaption { font-size:17px; font-weight:700; margin-top:2px; }
+
+/* ---------------------------------------------------------------- pick one
+   Tap a word or a picture. Big targets: these are pressed with a finger. */
+.pick { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+.pick .opt { min-width:88px; min-height:48px; padding:6px 12px; font-size:18px; font-weight:700;
+             border:2px solid #AEB8BA; border-radius:8px; background:#fff; color:var(--near);
+             cursor:pointer; -webkit-appearance:none; display:flex; flex-direction:column;
+             align-items:center; gap:3px; font-family:inherit; }
+/* short enough that the word under a picture stays in view above the editor */
+.pick .opt img { display:block; max-width:120px; max-height:110px; width:auto; height:auto; }
+.pick .opt.sel { border-color:var(--teal); background:var(--lteal); box-shadow:0 0 0 2px var(--teal) inset; }
+.pick .opt[disabled] { cursor:not-allowed; opacity:.8; }
+.pick.locked .opt.sel { opacity:1; }

@@ -29,6 +29,33 @@
      renumbered, or work saved under the old numbering lands on the wrong steps.
      v2: arrays gained a separate prediction step, 19 Sep 2026. */
   var KEY = "epsom-lesson:" + L.id + ":v" + (L.version || 1);
+
+  /* SIMPLE ENGLISH. A lesson with "simple": true (the Year 7 (i) pages) gets
+     these words instead of the page's usual ones. They are short, they use words
+     the class has been taught, and the symbols carry the meaning where no taught
+     word fits. The hand-in PDF is not affected: it is for the teacher and keeps
+     the full wording. With "simple" absent, every string below is the one the
+     page has always shown, so the Year 8 to 10 pages do not change. */
+  var SIMPLE = !!L.simple;
+  var TX = SIMPLE ? {
+    remember: "Look: ", hint: "?", drawOnly: "",
+    predictOff: function (label) { return "First: " + label; },
+    locked: "\uD83D\uDD12",
+    yes: "\u2713 Same", no: "\u2717 Different", err: "\u2717 Stop. Look at the line.",
+    ok: "\u2713", waiting: "\u25B6",
+    reset: "\u21BA Again", resetArm: "Again?",
+    noPdf: "\u2717", saved: function (f) { return "\u2713 " + f; }
+  } : {
+    remember: "Remember: ", hint: "Hint",
+    drawOnly: "This step draws a picture. There is no text output to check.",
+    predictOff: function (label) { return "Run is switched off until " + label + " has an answer."; },
+    locked: "Locked when Run was pressed.",
+    yes: "Matches the expected output", no: "Does not match the expected output",
+    err: "Stopped with an error", ok: "", waiting: "Shown after you run the code once.",
+    reset: "Reset this step", resetArm: "Tap again to reset",
+    noPdf: "The PDF tool did not load. Reload the page and try again.",
+    saved: function (f) { return "Saved as \"" + f + "\". Upload it to this lesson's Google Classroom assignment."; }
+  };
   var NAMEKEY = "epsom:name";
 
   var $ = function (id) { return document.getElementById(id); };
@@ -199,11 +226,12 @@
 
     if (step.remember) {
       var r = el("div", "remember");
-      r.appendChild(el("b", "", "Remember: "));
+      r.appendChild(el("b", "", TX.remember));
       r.appendChild(document.createTextNode(step.remember));
       cardEl.appendChild(r);
     }
     (step.intro || []).forEach(function (t) { cardEl.appendChild(el("p", "", t)); });
+    if (step.images) cardEl.appendChild(pics(step.images));
 
     if (step.table) {
       var t = el("table", "idx"), tr = el("tr");
@@ -223,6 +251,14 @@
       box.appendChild(el("span", "qlabel", q.label));
       box.appendChild(el("span", "qprompt", q.prompt));
       if (q.code) box.appendChild(el("pre", "show", q.code));
+      if (q.image) box.appendChild(pics([{ src: q.image }]));
+      if (q.images) box.appendChild(pics(q.images));
+      if (q.pick) {
+        box.appendChild(pickEl(q));
+        if (state.locked[q.id]) box.appendChild(el("p", "locknote", TX.locked));
+        cardEl.appendChild(box);
+        return;
+      }
       var ta = el("textarea");
       ta.id = "q-" + q.id;
       ta.rows = 2;
@@ -242,12 +278,12 @@
         renderNavSoon();
       });
       box.appendChild(ta);
-      if (state.locked[q.id]) box.appendChild(el("p", "locknote", "Locked when Run was pressed."));
+      if (state.locked[q.id]) box.appendChild(el("p", "locknote", TX.locked));
       cardEl.appendChild(box);
     });
 
-    if (step.kind === "code" && step.expected == null && step.turtle) {
-      cardEl.appendChild(el("p", "", "This step draws a picture. There is no text output to check."));
+    if (step.kind === "code" && step.expected == null && step.turtle && TX.drawOnly) {
+      cardEl.appendChild(el("p", "", TX.drawOnly));
     }
     if (step.predict_first) {
       var pn = el("p", "predict-note", "");
@@ -256,7 +292,7 @@
     }
     if (step.hint) {
       var d = el("details", "hint");
-      d.appendChild(el("summary", "", "Hint"));
+      d.appendChild(el("summary", "", TX.hint));
       d.appendChild(el("p", "", step.hint));
       if (st(i).hint) d.open = true;
       d.addEventListener("toggle", function () {
@@ -265,6 +301,63 @@
       cardEl.appendChild(d);
     }
     cardEl.scrollTop = 0;
+  }
+
+  /* PICTURES. A row of images with an optional word under each. The src is
+     written into the page by build_site.py: a file beside the page when hosted,
+     a data: address in the offline single-file page. */
+  function pics(list) {
+    var row = el("div", "pics");
+    list.forEach(function (p) {
+      var f = el("figure");
+      var im = el("img");
+      im.src = p.src;
+      im.alt = p.label || "";
+      im.loading = "eager";
+      f.appendChild(im);
+      if (p.label) f.appendChild(el("figcaption", "", p.label));
+      row.appendChild(f);
+    });
+    return row;
+  }
+
+  /* PICK ONE. Tap a word or a picture instead of typing. The choice is saved as
+     the answer like any typed answer, so the nav tick, the lock on a prediction
+     and the hand-in PDF all work unchanged. The box carries readOnly like a
+     textarea does, so one test works for both. */
+  function pickEl(q) {
+    var box = el("div", "pick");
+    box.id = "q-" + q.id;
+    q.pick.forEach(function (o) {
+      var b = el("button", "opt");
+      b.type = "button";
+      b.setAttribute("data-v", o.v);
+      if (o.img) { var im = el("img"); im.src = o.img; im.alt = o.label || o.v; b.appendChild(im); }
+      var cap = o.label != null ? o.label : (o.img ? "" : o.v);
+      if (cap) b.appendChild(el("span", "", cap));
+      if (state.answers[q.id] === o.v) b.classList.add("sel");
+      b.addEventListener("click", function () {
+        if (box.readOnly) return;
+        state.answers[q.id] = o.v;
+        Array.prototype.forEach.call(box.children, function (c) {
+          c.classList.toggle("sel", c.getAttribute("data-v") === o.v);
+        });
+        saveSoon();
+        updateRunGate();
+        renderNavSoon();
+      });
+      box.appendChild(b);
+    });
+    if (state.locked[q.id]) lockEl(box);
+    return box;
+  }
+
+  function lockEl(e) {
+    e.readOnly = true;
+    e.classList.add("locked");
+    if (e.tagName !== "TEXTAREA") {
+      Array.prototype.forEach.call(e.querySelectorAll("button"), function (b) { b.disabled = true; });
+    }
   }
 
   var navTimer = null;
@@ -278,7 +371,7 @@
     var pn = $("predict-note");
     if (pn) {
       var q = (step.questions || []).filter(function (x) { return x.id === step.predict_first; })[0];
-      pn.textContent = blocked ? "Run is switched off until " + (q ? q.label : "the prediction") + " has an answer." : "";
+      pn.textContent = blocked ? TX.predictOff(q ? q.label : "the prediction") : "";
     }
   }
 
@@ -297,11 +390,13 @@
     if (step.kind !== "code" || !s.ran) return;
     if (step.expected != null) {
       matchEl.className = s.matched ? "yes" : "no";
-      matchEl.textContent = s.matched ? "Matches the expected output"
-                                      : "Does not match the expected output";
+      matchEl.textContent = s.matched ? TX.yes : TX.no;
     } else if (s.error) {
       matchEl.className = "no";
-      matchEl.textContent = "Stopped with an error";
+      matchEl.textContent = TX.err;
+    } else if (TX.ok) {
+      matchEl.className = "yes";
+      matchEl.textContent = TX.ok;
     }
   }
 
@@ -310,7 +405,7 @@
   function showExpected(i) {
     var step = L.steps[i], s = state.steps[String(i)] || {}, box = $("expected");
     if (step.expected == null) { box.textContent = ""; return; }
-    box.textContent = s.ran ? step.expected : "Shown after you run the code once.";
+    box.textContent = s.ran ? step.expected : TX.waiting;
     box.classList.toggle("waiting", !s.ran);
   }
 
@@ -356,7 +451,7 @@
       codeEl.value = st(i).code;
       codeEl.scrollTop = 0; codeEl.scrollLeft = 0;
       syncEditor();
-      $("reset").textContent = "Reset this step";
+      $("reset").textContent = TX.reset;
     }
     renderCard(i);
     renderNav();
@@ -388,13 +483,13 @@
     var b = $("reset");
     if (!resetArmed) {
       resetArmed = true;
-      b.textContent = "Tap again to reset";
-      resetTimer = setTimeout(function () { resetArmed = false; b.textContent = "Reset this step"; }, 3000);
+      b.textContent = TX.resetArm;
+      resetTimer = setTimeout(function () { resetArmed = false; b.textContent = TX.reset; }, 3000);
       return;
     }
     clearTimeout(resetTimer);
     resetArmed = false;
-    b.textContent = "Reset this step";
+    b.textContent = TX.reset;
     var i = state.current;
     state.steps[String(i)] = { code: L.steps[i].code || "", hint: st(i).hint };
     codeEl.value = L.steps[i].code || "";
@@ -535,9 +630,8 @@
       state.locked[step.predict_first] = true;
       var pta = $("q-" + step.predict_first);
       if (pta) {
-        pta.readOnly = true;
-        pta.classList.add("locked");
-        pta.parentNode.appendChild(el("p", "locknote", "Locked when Run was pressed."));
+        lockEl(pta);
+        pta.parentNode.appendChild(el("p", "locknote", TX.locked));
       }
       save();
     }
@@ -725,13 +819,13 @@
       return;
     }
     if (!window.jspdf || !window.jspdf.jsPDF) {
-      msgEl.textContent = "The PDF tool did not load. Reload the page and try again.";
+      msgEl.textContent = TX.noPdf;
       return;
     }
     save();
     var doc = buildPdf(), f = fileName();
     doc.save(f);
-    msgEl.textContent = "Saved as \"" + f + "\". Upload it to this lesson's Google Classroom assignment.";
+    msgEl.textContent = TX.saved(f);
   });
 
   /* Hooks for the automated browser test only. */

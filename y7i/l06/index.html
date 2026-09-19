@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 7 (i) L06 | Epsom KS3</title>
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; KS3 Computer Science</div>
+    <h1>Year 7 (i): Big and small</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="Your name">
+  <button class="btn amber" id="handin">&#128196; Hand in</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">&#9654; Run</button>
+        <button class="btn grey" id="stop">&#9632; Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">&#8634; Again</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead">PICTURE</div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">LOOK</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead">&#8250;_ <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">&#8629;</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span></span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+</footer>
+<script>window.LESSON = {"id": "y7i-06", "order": 6, "version": 1, "year": "Year 7 (i)", "slug": "l06", "folder": "y7i", "title": "Big and small", "short": "L06", "objective": "A big house. A small house.", "keywords": ["big", "small", "house", "roof", "door", "tree"], "words": ["big", "small", "house", "roof", "door", "tree"], "simple": true, "steps": [{"kind": "questions", "nav": "0", "label": "Again", "title": "Look. Say the word.", "questions": [{"id": "r1", "label": "0a", "prompt": "What is this?", "image": "../img/icon_jump.png", "pick": [{"v": "jump"}, {"v": "gap"}, {"v": "top"}]}, {"id": "r2", "label": "0b", "prompt": "What is this?", "image": "../img/icon_star.png", "pick": [{"v": "sun"}, {"v": "jump"}, {"v": "star"}]}, {"id": "r3", "label": "0c", "prompt": "What is this?", "image": "../img/icon_top.png", "pick": [{"v": "star"}, {"v": "top"}, {"v": "bottom"}]}]}, {"kind": "questions", "nav": "1", "label": "Words", "title": "Look. Listen. Say.", "images": [{"src": "../img/icon_big.png", "label": "big"}, {"src": "../img/icon_small.png", "label": "small"}, {"src": "../img/icon_house.png", "label": "house"}, {"src": "../img/icon_roof.png", "label": "roof"}, {"src": "../img/icon_door.png", "label": "door"}, {"src": "../img/icon_tree.png", "label": "tree"}], "questions": [{"id": "w1", "label": "1a", "prompt": "What is this?", "image": "../img/icon_house.png", "pick": [{"v": "house"}, {"v": "roof"}, {"v": "door"}]}, {"id": "w2", "label": "1b", "prompt": "What is this?", "image": "../img/icon_roof.png", "pick": [{"v": "door"}, {"v": "tree"}, {"v": "roof"}]}, {"id": "w3", "label": "1c", "prompt": "What is this?", "image": "../img/icon_door.png", "pick": [{"v": "big"}, {"v": "door"}, {"v": "tree"}]}]}, {"kind": "code", "nav": "2", "label": "Run", "title": "A house", "turtle": true, "intro": ["Run it."], "code": "from turtle import *\npensize(3)\n\n# wall\nforward(120)\nleft(90)\nforward(120)\nleft(90)\nforward(120)\nleft(90)\nforward(120)\nleft(90)\n\n# roof\npenup()\nleft(90)\nforward(120)\nright(90)\npendown()\nforward(120)\nleft(120)\nforward(120)\nleft(120)\nforward(120)\nleft(120)\n", "questions": [{"id": "s2a", "label": "2a", "prompt": "What is it?", "pick": [{"v": "tree", "img": "../img/icon_tree.png", "label": "tree"}, {"v": "house", "img": "../img/icon_house.png", "label": "house"}, {"v": "door", "img": "../img/icon_door.png", "label": "door"}]}]}, {"kind": "code", "nav": "3", "label": "Look", "title": "Big or small?", "turtle": true, "intro": ["Look at the numbers.", "Tick big or small.", "Run it."], "code": "from turtle import *\npensize(3)\n\n# wall\nforward(60)\nleft(90)\nforward(60)\nleft(90)\nforward(60)\nleft(90)\nforward(60)\nleft(90)\n\n# roof\npenup()\nleft(90)\nforward(60)\nright(90)\npendown()\nforward(60)\nleft(120)\nforward(60)\nleft(120)\nforward(60)\nleft(120)\n", "predict_first": "s3a", "questions": [{"id": "s3a", "label": "3a", "prompt": "Big or small?", "pick": [{"v": "big", "img": "../img/y7i_l06_big.png", "label": "big"}, {"v": "small", "img": "../img/y7i_l06_small.png", "label": "small"}]}]}, {"kind": "code", "nav": "4", "label": "Type", "title": "A small house", "turtle": true, "intro": ["The roof is 60.", "Type 60. Run it."], "code": "from turtle import *\npensize(3)\n\n# wall\nforward(____)\nleft(90)\nforward(____)\nleft(90)\nforward(____)\nleft(90)\nforward(____)\nleft(90)\n\n# roof\npenup()\nleft(90)\nforward(60)\nright(90)\npendown()\nforward(60)\nleft(120)\nforward(60)\nleft(120)\nforward(60)\nleft(120)\n", "hint": "60", "questions": []}, {"kind": "questions", "nav": "5", "label": "Words", "title": "Look. Say the word.", "questions": [{"id": "x1", "label": "5a", "prompt": "What is this?", "image": "../img/icon_tree.png", "pick": [{"v": "tree"}, {"v": "big"}, {"v": "small"}]}, {"id": "x2", "label": "5b", "prompt": "What is this?", "image": "../img/icon_small.png", "pick": [{"v": "house"}, {"v": "roof"}, {"v": "small"}]}, {"id": "x3", "label": "5c", "prompt": "What is this?", "image": "../img/icon_big.png", "pick": [{"v": "house"}, {"v": "big"}, {"v": "small"}]}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

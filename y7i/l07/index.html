@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 7 (i) L07 | Epsom KS3</title>
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; KS3 Computer Science</div>
+    <h1>Year 7 (i): Triangle and square</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="Your name">
+  <button class="btn amber" id="handin">&#128196; Hand in</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">&#9654; Run</button>
+        <button class="btn grey" id="stop">&#9632; Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">&#8634; Again</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead">PICTURE</div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">LOOK</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead">&#8250;_ <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">&#8629;</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span></span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+</footer>
+<script>window.LESSON = {"id": "y7i-07", "order": 7, "version": 1, "year": "Year 7 (i)", "slug": "l07", "folder": "y7i", "title": "Triangle and square", "short": "L07", "objective": "Fill a square. Fill a triangle.", "keywords": ["triangle", "wall", "window", "fill", "sky", "grass"], "words": ["triangle", "wall", "window", "fill", "sky", "grass"], "simple": true, "steps": [{"kind": "questions", "nav": "0", "label": "Again", "title": "Look. Say the word.", "questions": [{"id": "r1", "label": "0a", "prompt": "What is this?", "image": "../img/icon_house.png", "pick": [{"v": "house"}, {"v": "roof"}, {"v": "door"}]}, {"id": "r2", "label": "0b", "prompt": "What is this?", "image": "../img/icon_roof.png", "pick": [{"v": "door"}, {"v": "tree"}, {"v": "roof"}]}, {"id": "r3", "label": "0c", "prompt": "What is this?", "image": "../img/icon_small.png", "pick": [{"v": "roof"}, {"v": "small"}, {"v": "house"}]}]}, {"kind": "questions", "nav": "1", "label": "Words", "title": "Look. Listen. Say.", "images": [{"src": "../img/icon_triangle.png", "label": "triangle"}, {"src": "../img/icon_wall.png", "label": "wall"}, {"src": "../img/icon_window.png", "label": "window"}, {"src": "../img/icon_fill.png", "label": "fill"}, {"src": "../img/icon_sky.png", "label": "sky"}, {"src": "../img/icon_grass.png", "label": "grass"}], "questions": [{"id": "w1", "label": "1a", "prompt": "What is this?", "image": "../img/icon_triangle.png", "pick": [{"v": "triangle"}, {"v": "wall"}, {"v": "window"}]}, {"id": "w2", "label": "1b", "prompt": "What is this?", "image": "../img/icon_wall.png", "pick": [{"v": "window"}, {"v": "fill"}, {"v": "wall"}]}, {"id": "w3", "label": "1c", "prompt": "What is this?", "image": "../img/icon_window.png", "pick": [{"v": "sky"}, {"v": "window"}, {"v": "fill"}]}]}, {"kind": "code", "nav": "2", "label": "Run", "title": "Grass", "turtle": true, "intro": ["Run it."], "code": "from turtle import *\nspeed(10)\npensize(3)\n\n# grass\npenup()\ngoto(-300, -140)\npendown()\nfillcolor(\"green\")\nbegin_fill()\nforward(600)\nright(90)\nforward(100)\nright(90)\nforward(600)\nright(90)\nforward(100)\nright(90)\nend_fill()\n", "questions": [{"id": "s2a", "label": "2a", "prompt": "What colour?", "pick": [{"v": "yellow", "img": "../img/icon_yellow.png", "label": "yellow"}, {"v": "green", "img": "../img/icon_green.png", "label": "green"}, {"v": "red", "img": "../img/icon_red.png", "label": "red"}]}]}, {"kind": "code", "nav": "3", "label": "Type", "title": "The wall", "turtle": true, "intro": ["Type \"yellow\".", "Run it."], "code": "from turtle import *\nspeed(10)\npensize(3)\n\n# grass\npenup()\ngoto(-300, -140)\npendown()\nfillcolor(\"green\")\nbegin_fill()\nforward(600)\nright(90)\nforward(100)\nright(90)\nforward(600)\nright(90)\nforward(100)\nright(90)\nend_fill()\n\n# wall\npenup()\ngoto(-100, 60)\npendown()\nfillcolor(____)\nbegin_fill()\nforward(200)\nright(90)\nforward(200)\nright(90)\nforward(200)\nright(90)\nforward(200)\nright(90)\nend_fill()\n", "hint": "\"yellow\"", "questions": [{"id": "s3a", "label": "3a", "prompt": "Square or triangle?", "pick": [{"v": "square", "img": "../img/icon_square.png", "label": "square"}, {"v": "triangle", "img": "../img/icon_triangle.png", "label": "triangle"}]}]}, {"kind": "code", "nav": "4", "label": "Type", "title": "The roof", "turtle": true, "remember": "Triangle: right(120).", "intro": ["Type 120.", "Run it."], "code": "from turtle import *\nspeed(10)\npensize(3)\n\n# grass\npenup()\ngoto(-300, -140)\npendown()\nfillcolor(\"green\")\nbegin_fill()\nforward(600)\nright(90)\nforward(100)\nright(90)\nforward(600)\nright(90)\nforward(100)\nright(90)\nend_fill()\n\n# wall\npenup()\ngoto(-100, 60)\npendown()\nfillcolor(\"yellow\")\nbegin_fill()\nforward(200)\nright(90)\nforward(200)\nright(90)\nforward(200)\nright(90)\nforward(200)\nright(90)\nend_fill()\n\n# roof\npenup()\ngoto(100, 60)\npendown()\nright(180)\nfillcolor(\"red\")\nbegin_fill()\nforward(200)\nright(120)\nforward(200)\nright(____)\nforward(200)\nright(120)\nend_fill()\nright(180)\n", "hint": "120", "questions": [{"id": "s4a", "label": "4a", "prompt": "Square or triangle?", "pick": [{"v": "triangle", "img": "../img/icon_triangle.png", "label": "triangle"}, {"v": "square", "img": "../img/icon_square.png", "label": "square"}]}]}, {"kind": "code", "nav": "5", "label": "Type", "title": "Window 2", "turtle": true, "intro": ["Look at the picture.", "Type 30. Run it."], "images": [{"src": "../img/y7i_l07_done.png"}], "code": "from turtle import *\nspeed(10)\npensize(3)\n\n# grass\npenup()\ngoto(-300, -140)\npendown()\nfillcolor(\"green\")\nbegin_fill()\nforward(600)\nright(90)\nforward(100)\nright(90)\nforward(600)\nright(90)\nforward(100)\nright(90)\nend_fill()\n\n# wall\npenup()\ngoto(-100, 60)\npendown()\nfillcolor(\"yellow\")\nbegin_fill()\nforward(200)\nright(90)\nforward(200)\nright(90)\nforward(200)\nright(90)\nforward(200)\nright(90)\nend_fill()\n\n# roof\npenup()\ngoto(100, 60)\npendown()\nright(180)\nfillcolor(\"red\")\nbegin_fill()\nforward(200)\nright(120)\nforward(200)\nright(120)\nforward(200)\nright(120)\nend_fill()\nright(180)\n\n# door\npenup()\ngoto(-30, -40)\npendown()\nfillcolor(\"red\")\nbegin_fill()\nforward(60)\nright(90)\nforward(100)\nright(90)\nforward(60)\nright(90)\nforward(100)\nright(90)\nend_fill()\n\n# window\npenup()\ngoto(-80, 30)\npendown()\nfillcolor(\"blue\")\nbegin_fill()\nforward(50)\nright(90)\nforward(50)\nright(90)\nforward(50)\nright(90)\nforward(50)\nright(90)\nend_fill()\n\n# window 2\npenup()\ngoto(____, 30)\npendown()\nfillcolor(\"blue\")\nbegin_fill()\nforward(50)\nright(90)\nforward(50)\nright(90)\nforward(50)\nright(90)\nforward(50)\nright(90)\nend_fill()\n", "hint": "30", "questions": []}, {"kind": "questions", "nav": "6", "label": "Words", "title": "Look. Say the word.", "questions": [{"id": "x1", "label": "6a", "prompt": "What is this?", "image": "../img/icon_grass.png", "pick": [{"v": "grass"}, {"v": "triangle"}, {"v": "wall"}]}, {"id": "x2", "label": "6b", "prompt": "What is this?", "image": "../img/icon_fill.png", "pick": [{"v": "sky"}, {"v": "grass"}, {"v": "fill"}]}, {"id": "x3", "label": "6c", "prompt": "What is this?", "image": "../img/icon_sky.png", "pick": [{"v": "triangle"}, {"v": "sky"}, {"v": "grass"}]}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

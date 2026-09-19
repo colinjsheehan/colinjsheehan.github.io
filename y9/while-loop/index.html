@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 9 Revisit 4 | Epsom KS3</title>
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; KS3 Computer Science</div>
+    <h1>Year 9: Revisit 4: the while loop</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Hand in (PDF)</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead">DRAWING</div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Hand in makes a PDF to upload to Google Classroom.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+</footer>
+<script>window.LESSON = {"id": "y9-while-loop", "order": 4, "version": 1, "year": "Year 9", "slug": "while-loop", "folder": "y9", "title": "Revisit 4: the while loop", "short": "Revisit 4", "objective": "Use a while loop that repeats while a condition is True, and change a variable inside it so the loop stops.", "keywords": ["while loop", "condition", "True", "False", "<="], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From last lesson", "intro": ["Answer all three. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "How many times does this loop run?", "code": "for side in range(6):"}, {"id": "r2", "label": "R2", "prompt": "What turn does a hexagon need at each corner?"}, {"id": "r3", "label": "R3", "prompt": "How does Python know which lines are inside a loop?"}]}, {"kind": "code", "nav": "1", "label": "Step 1: run", "title": "Repeat while it is True", "remember": "count <= 3 means count is less than or equal to 3.", "intro": ["The loop runs while count <= 3 is True. The last indented line adds 1 to count each time round.", "Press Run."], "code": "count = 1\n\nwhile count <= 3:\n    print(\"Lap\", count)\n    count = count + 1\n\nprint(\"Finished\")\n", "questions": [{"id": "s1a", "label": "1a", "prompt": "What is the value of count when the loop stops?"}], "expected_b64": "TGFwIDEKTGFwIDIKTGFwIDMKRmluaXNoZWQ="}, {"kind": "code", "nav": "2", "label": "Step 2: predict, then run", "title": "A growing spiral", "turtle": true, "intro": ["Each line is 20 longer than the one before. The loop stops when side reaches 120.", "Write your prediction in 2a. Run is switched on once 2a has an answer.", "Once you press Run, 2a cannot be changed."], "code": "from turtle import *\npensize(3)\n\nside = 20\n\nwhile side < 120:\n    forward(side)\n    right(90)\n    print(side)\n    side = side + 20\n", "predict_first": "s2a", "questions": [{"id": "s2a", "label": "2a", "prompt": "How many lines does the turtle draw?"}, {"id": "s2b", "label": "2b", "prompt": "How long is the last line?"}], "expected_b64": "MjAKNDAKNjAKODAKMTAw"}, {"kind": "code", "nav": "3", "label": "Step 3: fill the gap", "title": "Counting down in twos", "remember": "The variable in the condition must change inside the loop.", "intro": ["This loop counts down from 10 in steps of 2.", "Replace ____ with a number. Then press Run."], "code": "count = 10\n\nwhile count > 0:\n    print(count)\n    count = count - ____\n\nprint(\"Lift off\")\n", "hint": "Counting in twos means taking away 2 each time.", "questions": [{"id": "s3a", "label": "3a", "prompt": "What is the value of count when the loop stops?"}], "expected_b64": "MTAKOAo2CjQKMgpMaWZ0IG9mZg=="}, {"kind": "code", "nav": "4", "label": "Step 4: find and fix", "title": "One lap short", "intro": ["This program should print Lap 1 to Lap 5. It stops one lap short.", "Press Run. Answer 4a.", "Then change one symbol in the while line so it prints all five laps."], "code": "lap = 1\n\nwhile lap < 5:\n    print(\"Lap\", lap)\n    lap = lap + 1\n", "hint": "Look at Step 1. It used a different comparison.", "questions": [{"id": "s4a", "label": "4a", "prompt": "Why does the loop stop before Lap 5?"}], "expected_b64": "TGFwIDEKTGFwIDIKTGFwIDMKTGFwIDQKTGFwIDU="}, {"kind": "code", "nav": "5", "label": "Step 5: fill the gap", "title": "A square with a while loop", "turtle": true, "intro": ["This while loop does the same job as a for loop.", "Replace ____ so the turtle draws a square. Then press Run."], "code": "from turtle import *\npensize(3)\n\ncount = 0\n\nwhile count < ____:\n    forward(100)\n    right(90)\n    count = count + 1\n\nprint(\"Sides drawn:\", count)\n", "hint": "count starts at 0. How many sides does a square have?", "questions": [], "expected_b64": "U2lkZXMgZHJhd246IDQ="}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything."], "questions": [{"id": "e1", "label": "E1", "prompt": "What does this print?", "code": "n = 3\nwhile n < 6:\n    print(n)\n    n = n + 1"}, {"id": "e2", "label": "E2", "prompt": "What happens if the variable in the condition never changes inside the loop?"}, {"id": "e3", "label": "E3", "prompt": "Which symbol means less than or equal to?"}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

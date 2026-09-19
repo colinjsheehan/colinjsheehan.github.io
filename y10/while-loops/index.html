@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 10 While loops | Epsom KS3</title>
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; KS3 Computer Science</div>
+    <h1>Year 10: Condition-controlled loops: while</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Hand in (PDF)</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead">DRAWING</div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Hand in makes a PDF to upload to Google Classroom.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+</footer>
+<script>window.LESSON = {"id": "y10-while-loops", "order": 5, "version": 1, "year": "Year 10", "slug": "while-loops", "folder": "y10", "title": "Condition-controlled loops: while", "short": "While loops", "objective": "Use a while loop to repeat while a condition is true, change the variable so the loop ends, and read the pseudocode WHILE and REPEAT loops.", "keywords": ["iteration", "while loop", "condition", "update", "repeat until"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From last lesson", "intro": ["Answer all three before you run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "How many numbers does range(5) give?"}, {"id": "r2", "label": "R2", "prompt": "In a running total, what value does the total start at?"}, {"id": "r3", "label": "R3", "prompt": "Does a for loop over range(1, 5) include the value 5?"}]}, {"kind": "code", "nav": "1", "label": "Step 1: run", "title": "Repeating while a condition is true", "remember": "A while loop repeats its indented lines while the condition stays true.", "intro": ["count starts at 1. The loop runs while count is 3 or less.", "Press Run and read the numbers."], "code": "count = 1\nwhile count <= 3:\n    print(count)\n    count = count + 1\n", "questions": [{"id": "s1a", "label": "1a", "prompt": "What value does count reach that stops the loop?"}], "expected_b64": "MQoyCjM="}, {"kind": "code", "nav": "2", "label": "Step 2: run", "title": "A total inside a while loop", "remember": "Like a for loop, a while loop can build a running total.", "intro": ["This loop adds 1, 2, 3, 4, 5 into total, then prints it.", "Press Run and read the total."], "code": "count = 1\ntotal = 0\nwhile count <= 5:\n    total = total + count\n    count = count + 1\nprint(\"Total:\", total)\n", "questions": [{"id": "s2a", "label": "2a", "prompt": "How many times does the loop run?"}], "expected_b64": "VG90YWw6IDE1"}, {"kind": "code", "nav": "3", "label": "Step 3: fill the gap", "title": "The line that ends the loop", "remember": "Something inside the loop must move the condition towards false.", "intro": ["This loop should print Go three times.", "Replace ____ so count goes up by one each time. Then press Run."], "code": "count = 1\nwhile count <= 3:\n    print(\"Go\")\n    count = count + ____\n", "hint": "Add 1 so count moves towards ending the loop.", "questions": [{"id": "s3a", "label": "3a", "prompt": "What would happen if count never changed inside the loop?"}], "expected_b64": "R28KR28KR28="}, {"kind": "code", "nav": "4", "label": "Step 4: predict, then run", "title": "Looping until a value is passed", "intro": ["number starts at 2. The loop doubles it while it is under 20.", "Write your prediction in 4a. Run is switched on once 4a has an answer.", "Once you press Run, 4a cannot be changed."], "code": "number = 2\nwhile number < 20:\n    number = number * 2\nprint(number)\n", "predict_first": "s4a", "questions": [{"id": "s4a", "label": "4a", "prompt": "Predict what this prints."}, {"id": "s4b", "label": "4b", "prompt": "Is the final number 20 or more? Write yes or no."}], "expected_b64": "MzI="}, {"kind": "code", "nav": "5", "label": "Step 5: type inputs", "title": "Keep asking until the right word", "remember": "A while loop can repeat until the user types the right thing.", "intro": ["This program keeps asking until the word open is typed.", "Type shut first, then open, pressing Enter after each. Then press Run."], "code": "word = \"\"\nwhile word != \"open\":\n    word = input(\"Password: \")\nprint(\"Welcome\")\n", "inputs": ["shut", "open"], "questions": [{"id": "s5a", "label": "5a", "prompt": "Which typed word makes the loop stop?"}], "expected_b64": "V2VsY29tZQ=="}, {"kind": "questions", "nav": "6", "label": "Step 6: read WHILE", "title": "The WHILE loop in exam pseudocode", "intro": ["In the exam, a while loop is written with WHILE, DO and ENDWHILE.", "It checks the condition before each pass, the same as Python while."], "readonly": "Count \u2190 1\nWHILE Count <= 3 DO\n    OUTPUT Count\n    Count \u2190 Count + 1\nENDWHILE", "questions": [{"id": "s6a", "label": "6a", "prompt": "What does the arrow in Count \u2190 Count + 1 become in Python?"}, {"id": "s6b", "label": "6b", "prompt": "What keyword closes a WHILE loop in pseudocode?"}, {"id": "s6c", "label": "6c", "prompt": "Why must the loop change Count inside it?"}]}, {"kind": "questions", "nav": "7", "label": "Step 7: read REPEAT", "title": "The REPEAT loop in exam pseudocode", "intro": ["A REPEAT loop checks its condition at the end, so it always runs once.", "It stops when the UNTIL condition becomes true."], "readonly": "Count \u2190 1\nREPEAT\n    OUTPUT Count\n    Count \u2190 Count + 1\nUNTIL Count > 3", "questions": [{"id": "s7a", "label": "7a", "prompt": "When does a REPEAT loop check its condition?"}, {"id": "s7b", "label": "7b", "prompt": "What keyword ends a REPEAT loop in pseudocode?"}, {"id": "s7c", "label": "7c", "prompt": "Does a REPEAT loop always run at least once?"}]}, {"kind": "questions", "nav": "8", "label": "Step 8: apply", "title": "Write it yourself", "intro": ["Write your answers in the boxes. You do not need to run anything."], "questions": [{"id": "s8a", "label": "8a", "prompt": "Write a while loop line that repeats while count is less than ten."}, {"id": "s8b", "label": "8b", "prompt": "Write the line that adds 1 to count so the loop can end."}, {"id": "s8c", "label": "8c", "prompt": "A loop whose condition never becomes false has what fault?"}]}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything."], "questions": [{"id": "e1", "label": "E1", "prompt": "What must change inside a while loop so it can stop?"}, {"id": "e2", "label": "E2", "prompt": "Which loop always runs at least once, WHILE or REPEAT?"}, {"id": "e3", "label": "E3", "prompt": "Write a while loop line that repeats while tries is not equal to 3."}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

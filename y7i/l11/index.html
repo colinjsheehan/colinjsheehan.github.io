@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 7 (i) Lesson 11 | Epsom KS3</title>
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; KS3 Computer Science</div>
+    <h1>Year 7 (i): The street</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="Your name">
+  <button class="btn amber" id="handin">&#128196; Hand in</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">&#9654; Run</button>
+        <button class="btn grey" id="stop">&#9632; Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">&#8634; Again</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead">PICTURE</div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">LOOK</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead">&#8250;_ <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">&#8629;</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span></span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y7i-11", "order": 11, "version": 1, "year": "Year 7 (i)", "slug": "l11", "folder": "y7i", "title": "The street", "short": "Lesson 11", "objective": "A loop inside a loop. Plus 150.", "keywords": ["street", "plus", "start", "inside", "outside", "more"], "words": ["street", "plus", "start", "inside", "outside", "more"], "simple": true, "steps": [{"kind": "questions", "nav": "0", "label": "Again", "title": "Look. Say the word.", "questions": [{"id": "r1", "label": "0a", "prompt": "What is this?", "image": "../img/icon_size.png", "pick": [{"v": "size"}, {"v": "change"}, {"v": "tall"}]}, {"id": "r2", "label": "0b", "prompt": "What is this?", "image": "../img/icon_wide.png", "pick": [{"v": "narrow"}, {"v": "middle"}, {"v": "wide"}]}, {"id": "r3", "label": "0c", "prompt": "What is this?", "image": "../img/icon_middle.png", "pick": [{"v": "change"}, {"v": "middle"}, {"v": "size"}]}]}, {"kind": "questions", "nav": "1", "label": "Words", "title": "Look. Listen. Say.", "images": [{"src": "../img/icon_street.png", "label": "street"}, {"src": "../img/icon_plus.png", "label": "plus"}, {"src": "../img/icon_start.png", "label": "start"}, {"src": "../img/icon_inside.png", "label": "inside"}, {"src": "../img/icon_outside.png", "label": "outside"}, {"src": "../img/icon_more.png", "label": "more"}], "questions": [{"id": "w1", "label": "1a", "prompt": "What is this?", "image": "../img/icon_street.png", "pick": [{"v": "street"}, {"v": "plus"}, {"v": "start"}]}, {"id": "w2", "label": "1b", "prompt": "What is this?", "image": "../img/icon_plus.png", "pick": [{"v": "start"}, {"v": "inside"}, {"v": "plus"}]}, {"id": "w3", "label": "1c", "prompt": "What is this?", "image": "../img/icon_inside.png", "pick": [{"v": "more"}, {"v": "inside"}, {"v": "outside"}]}]}, {"kind": "questions", "nav": "2", "label": "Plus", "title": "Start. Plus 150.", "intro": ["Look at the number.", "Plus 150."], "questions": [{"id": "s2a", "label": "2a", "prompt": "What is x now?", "code": "x = 0\nx = x + 150", "pick": [{"v": "0"}, {"v": "150"}, {"v": "300"}]}, {"id": "s2b", "label": "2b", "prompt": "What is x now?", "code": "x = -300\nx = x + 150", "pick": [{"v": "-450"}, {"v": "-150"}, {"v": "150"}]}, {"id": "s2c", "label": "2c", "prompt": "What is x now?", "code": "x = -150\nx = x + 150", "pick": [{"v": "-300"}, {"v": "0"}, {"v": "150"}]}]}, {"kind": "code", "nav": "3", "label": "Run", "title": "Three houses?", "turtle": true, "remember": "A loop inside a loop.", "intro": ["Run it. Count the houses."], "code": "from turtle import *\nspeed(10)\npensize(3)\n\n# start\nx = -300\n\n# grass\npenup()\ngoto(-300, -100)\npendown()\nfillcolor(\"green\")\nbegin_fill()\nforward(600)\nright(90)\nforward(100)\nright(90)\nforward(600)\nright(90)\nforward(100)\nright(90)\nend_fill()\n\n# the street - 3 houses\nfor house in range(3):\n    penup()\n    goto(x, 0)\n    pendown()\n    # wall\n    fillcolor(\"yellow\")\n    begin_fill()\n    for i in range(4):\n        forward(100)\n        right(90)\n    end_fill()\n    # roof\n    fillcolor(\"red\")\n    begin_fill()\n    for i in range(3):\n        forward(100)\n        left(120)\n    end_fill()\n    # the next house\n", "questions": [{"id": "s3a", "label": "3a", "prompt": "How many houses?", "pick": [{"v": "1"}, {"v": "2"}, {"v": "3"}]}]}, {"kind": "code", "nav": "4", "label": "Type", "title": "The next house", "turtle": true, "intro": ["Look at the picture.", "Type 150. Run it."], "images": [{"src": "../img/y7i_l11_three.png"}], "code": "from turtle import *\nspeed(10)\npensize(3)\n\n# start\nx = -300\n\n# grass\npenup()\ngoto(-300, -100)\npendown()\nfillcolor(\"green\")\nbegin_fill()\nforward(600)\nright(90)\nforward(100)\nright(90)\nforward(600)\nright(90)\nforward(100)\nright(90)\nend_fill()\n\n# the street - 3 houses\nfor house in range(3):\n    penup()\n    goto(x, 0)\n    pendown()\n    # wall\n    fillcolor(\"yellow\")\n    begin_fill()\n    for i in range(4):\n        forward(100)\n        right(90)\n    end_fill()\n    # roof\n    fillcolor(\"red\")\n    begin_fill()\n    for i in range(3):\n        forward(100)\n        left(120)\n    end_fill()\n    # the next house\n    x = x + ____\n", "hint": "150", "questions": [{"id": "s4a", "label": "4a", "prompt": "How many houses?", "pick": [{"v": "1"}, {"v": "2"}, {"v": "3"}]}]}, {"kind": "code", "nav": "5", "label": "Type", "title": "More houses", "turtle": true, "intro": ["Four houses.", "Type 4. Run it."], "images": [{"src": "../img/y7i_l11_four.png"}], "code": "from turtle import *\nspeed(10)\npensize(3)\n\n# start\nx = -300\n\n# grass\npenup()\ngoto(-300, -100)\npendown()\nfillcolor(\"green\")\nbegin_fill()\nforward(600)\nright(90)\nforward(100)\nright(90)\nforward(600)\nright(90)\nforward(100)\nright(90)\nend_fill()\n\n# the street - 3 houses\nfor house in range(____):\n    penup()\n    goto(x, 0)\n    pendown()\n    # wall\n    fillcolor(\"yellow\")\n    begin_fill()\n    for i in range(4):\n        forward(100)\n        right(90)\n    end_fill()\n    # roof\n    fillcolor(\"red\")\n    begin_fill()\n    for i in range(3):\n        forward(100)\n        left(120)\n    end_fill()\n    # the next house\n    x = x + 150\n", "hint": "4", "questions": []}, {"kind": "code", "nav": "6", "label": "Look", "title": "Inside or outside?", "turtle": true, "intro": ["Look at the plus line.", "Tick inside or outside. Run it.", "Move it inside. Run it again."], "code": "from turtle import *\nspeed(10)\npensize(3)\n\n# start\nx = -300\n\n# grass\npenup()\ngoto(-300, -100)\npendown()\nfillcolor(\"green\")\nbegin_fill()\nforward(600)\nright(90)\nforward(100)\nright(90)\nforward(600)\nright(90)\nforward(100)\nright(90)\nend_fill()\n\n# the street - 3 houses\nfor house in range(3):\n    penup()\n    goto(x, 0)\n    pendown()\n    # wall\n    fillcolor(\"yellow\")\n    begin_fill()\n    for i in range(4):\n        forward(100)\n        right(90)\n    end_fill()\n    # roof\n    fillcolor(\"red\")\n    begin_fill()\n    for i in range(3):\n        forward(100)\n        left(120)\n    end_fill()\n    # the next house\nx = x + 150\n", "predict_first": "s6a", "questions": [{"id": "s6a", "label": "6a", "prompt": "The plus line is...", "pick": [{"v": "inside", "img": "../img/icon_inside.png", "label": "inside"}, {"v": "outside", "img": "../img/icon_outside.png", "label": "outside"}]}]}, {"kind": "questions", "nav": "7", "label": "Words", "title": "Look. Say the word.", "images": [{"src": "../img/y7i_l11_one.png", "label": "1"}, {"src": "../img/y7i_l11_three.png", "label": "3"}], "questions": [{"id": "x1", "label": "7a", "prompt": "What is this?", "image": "../img/icon_start.png", "pick": [{"v": "start"}, {"v": "inside"}, {"v": "outside"}]}, {"id": "x2", "label": "7b", "prompt": "What is this?", "image": "../img/icon_outside.png", "pick": [{"v": "more"}, {"v": "street"}, {"v": "outside"}]}, {"id": "x3", "label": "7c", "prompt": "What is this?", "image": "../img/icon_more.png", "pick": [{"v": "plus"}, {"v": "more"}, {"v": "street"}]}, {"id": "e1", "label": "7d", "prompt": "x = -300 is the...", "pick": [{"v": "start", "img": "../img/icon_start.png", "label": "start"}, {"v": "plus", "img": "../img/icon_plus.png", "label": "plus"}]}, {"id": "e2", "label": "7e", "prompt": "for i in range(4) is...", "pick": [{"v": "inside", "img": "../img/icon_inside.png", "label": "inside"}, {"v": "outside", "img": "../img/icon_outside.png", "label": "outside"}]}, {"id": "e3", "label": "7f", "prompt": "Four houses is...", "pick": [{"v": "more", "img": "../img/icon_more.png", "label": "more"}, {"v": "small", "img": "../img/icon_small.png", "label": "small"}]}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

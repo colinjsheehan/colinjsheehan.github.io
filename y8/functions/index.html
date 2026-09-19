@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 8 Revisit 1 | Epsom KS3</title>
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; KS3 Computer Science</div>
+    <h1>Year 8: Revisit 1: functions</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Hand in (PDF)</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead">DRAWING</div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Hand in makes a PDF to upload to Google Classroom.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+</footer>
+<script>window.LESSON = {"id": "y8-functions", "order": 1, "version": 1, "year": "Year 8", "slug": "functions", "folder": "y8", "title": "Revisit 1: functions", "short": "Revisit 1", "objective": "Define a function with parameters, call it with values in the right order, and call it with a value the user typed.", "keywords": ["function", "def", "parameter", "argument", "call"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From Lesson 8", "intro": ["Answer all three. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "A program allows 3 to 8. Write the two boundary tests."}, {"id": "r2", "label": "R2", "prompt": "Why must a validation loop use or and not and?"}, {"id": "r3", "label": "R3", "prompt": "A validation loop prints its message forever. What is missing from inside it?"}]}, {"kind": "code", "nav": "1", "label": "Step 1: run", "title": "One name for a job", "turtle": true, "remember": "sides, length and colour are parameters: blanks, filled in each time the function is called.", "intro": ["The def line gives the job a name, draw_polygon, and three parameters.", "The last line calls it. Press Run."], "code": "from turtle import *\npensize(3)\n\ndef draw_polygon(sides, length, colour):\n    pencolor(colour)\n    for side in range(sides):\n        forward(length)\n        right(360 / sides)\n\ndraw_polygon(3, 100, 'blue')\n", "questions": [{"id": "s1a", "label": "1a", "prompt": "Which value in the call fills the parameter length?"}]}, {"kind": "code", "nav": "2", "label": "Step 2: predict, then run", "title": "Defined, but not called", "intro": ["This program defines a function called greet.", "Write your prediction in 2a. Run is switched on once 2a has an answer.", "Once you press Run, 2a cannot be changed."], "code": "def greet(name):\n    print(\"Hello\", name)\n\nlessons = 2\nprint(lessons * 3)\n", "predict_first": "s2a", "questions": [{"id": "s2a", "label": "2a", "prompt": "Predict what this prints."}, {"id": "s2b", "label": "2b", "prompt": "Why is Hello never printed?"}], "expected_b64": "Ng=="}, {"kind": "code", "nav": "3", "label": "Step 3: fill the gap", "title": "Call it for a hexagon", "turtle": true, "remember": "The values in a call fill the parameters in order: sides, then length, then colour.", "intro": ["Replace ____ so the call draws a green hexagon (6 sides), each side 60 long.", "Then press Run."], "code": "from turtle import *\npensize(3)\n\ndef draw_polygon(sides, length, colour):\n    pencolor(colour)\n    for side in range(sides):\n        forward(length)\n        right(360 / sides)\n\ndraw_polygon(____, 60, 'green')\n", "hint": "The first value fills sides.", "questions": []}, {"kind": "code", "nav": "4", "label": "Step 4: find and fix", "title": "The values in the wrong order", "turtle": true, "intro": ["This call should draw a purple octagon (8 sides), each side 40 long. It stops with an error.", "Press Run. Read the error. Answer 4a.", "Then put the three values in the right order."], "code": "from turtle import *\npensize(3)\n\ndef draw_polygon(sides, length, colour):\n    pencolor(colour)\n    for side in range(sides):\n        forward(length)\n        right(360 / sides)\n\ndraw_polygon('purple', 8, 40)\n", "hint": "Look at the def line. The order there is the order the values must go in.", "questions": [{"id": "s4a", "label": "4a", "prompt": "Which parameter did 'purple' fill in the broken call?"}]}, {"kind": "code", "nav": "5", "label": "Step 5: fill two gaps", "title": "A new function", "turtle": true, "intro": ["draw_square has two parameters, length and colour.", "Inside the function, replace each ____ with the right parameter. Then press Run. It draws two squares."], "code": "from turtle import *\npensize(3)\n\ndef draw_square(length, colour):\n    pencolor(____)\n    for side in range(4):\n        forward(____)\n        right(90)\n\ndraw_square(50, 'red')\ndraw_square(120, 'blue')\n", "hint": "pencolor needs the colour. forward needs the length.", "questions": [{"id": "s5a", "label": "5a", "prompt": "How many times does the code inside draw_square run?"}]}, {"kind": "code", "nav": "6", "label": "Step 6: fill the gap", "title": "Call it with the user's choice", "turtle": true, "intro": ["This is how the October program uses the function: the user types the number of sides, and the call uses it.", "Replace ____ with the variable that holds the user's number.", "Press Run and type 5."], "code": "from turtle import *\npensize(3)\n\ndef draw_polygon(sides, length, colour):\n    pencolor(colour)\n    for side in range(sides):\n        forward(length)\n        right(360 / sides)\n\nchoice = int(input(\"Enter sides from 3 to 8: \"))\n\ndraw_polygon(____, 80, 'green')\nprint(\"Drew\", choice, \"sides\")\n", "inputs": ["5"], "hint": "The number the user typed is stored in the variable on the input line.", "questions": [{"id": "s6a", "label": "6a", "prompt": "Why is int() needed on the input line?"}], "expected_b64": "RHJldyA1IHNpZGVz"}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything."], "questions": [{"id": "e1", "label": "E1", "prompt": "Write the first line of a function called draw_star with three parameters."}, {"id": "e2", "label": "E2", "prompt": "What is the difference between defining a function and calling it?"}, {"id": "e3", "label": "E3", "prompt": "What does this call draw?", "code": "draw_polygon(4, 100, 'red')"}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

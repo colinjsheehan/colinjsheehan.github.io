@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 8 Revisit 6 | Epsom KS3</title>
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; KS3 Computer Science</div>
+    <h1>Year 8: Revisit 6: making it insist</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Hand in (PDF)</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead">DRAWING</div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Hand in makes a PDF to upload to Google Classroom.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+</footer>
+<script>window.LESSON = {"id": "y8-validation", "order": 6, "version": 1, "year": "Year 8", "slug": "making-it-insist", "folder": "y8", "title": "Revisit 6: making it insist", "short": "Revisit 6", "objective": "Use a while loop to refuse a value outside the range and ask again until a sensible one is typed.", "keywords": ["while loop", "validation", "or", "boundary", "test data"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From last lesson", "intro": ["Answer all three. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "What type of value does input() always give?"}, {"id": "r2", "label": "R2", "prompt": "Write the line that asks for a size and turns the answer into a whole number."}, {"id": "r3", "label": "R3", "prompt": "Is \"1\" == 1 True or False?"}]}, {"kind": "code", "nav": "1", "label": "Step 1: run", "title": "Repeat while it is True", "remember": "An if asks once. A while keeps asking until the answer is False.", "intro": ["The loop runs while count <= 3 is True. The last indented line adds 1 to count each time round.", "Press Run."], "code": "count = 1\n\nwhile count <= 3:\n    print(\"Lap\", count)\n    count = count + 1\n\nprint(\"Finished\")\n", "questions": [{"id": "s1a", "label": "1a", "prompt": "What is the value of count when the loop stops?"}], "expected_b64": "TGFwIDEKTGFwIDIKTGFwIDMKRmluaXNoZWQ="}, {"kind": "code", "nav": "2", "label": "Step 2: predict, then run", "title": "Refuse, then accept", "intro": ["When the program asks, you will type 9, then 3.", "Write your prediction in 2a. Run is switched on once 2a has an answer.", "Once you press Run, 2a cannot be changed."], "code": "choice = int(input(\"Choose a size from 1 to 5: \"))\n\nwhile choice < 1 or choice > 5:\n    print(\"That is not between 1 and 5.\")\n    choice = int(input(\"Try again: \"))\n\nprint(\"You chose\", choice)\n", "inputs": ["9", "3"], "predict_first": "s2a", "questions": [{"id": "s2a", "label": "2a", "prompt": "Predict the lines it prints."}, {"id": "s2b", "label": "2b", "prompt": "How many times does the loop run?"}], "expected_b64": "VGhhdCBpcyBub3QgYmV0d2VlbiAxIGFuZCA1LgpZb3UgY2hvc2UgMw=="}, {"kind": "code", "nav": "3", "label": "Step 3: fill the gap", "title": "The top of the range", "intro": ["This program allows 3 to 8 sides. The top number is missing.", "Replace ____ with a number.", "Press Run. Type 9, then 8."], "code": "sides = int(input(\"Enter sides from 3 to 8: \"))\n\nwhile sides < 3 or sides > ____:\n    print(\"Sides must be from 3 to 8.\")\n    sides = int(input(\"Enter sides from 3 to 8: \"))\n\nprint(\"Sides:\", sides)\n", "inputs": ["9", "8"], "hint": "The loop should run for anything bigger than the largest allowed value.", "questions": [{"id": "s3a", "label": "3a", "prompt": "Why is 8 a good value to test with?"}], "expected_b64": "U2lkZXMgbXVzdCBiZSBmcm9tIDMgdG8gOC4KU2lkZXM6IDg="}, {"kind": "code", "nav": "4", "label": "Step 4: fill the gap", "title": "Ask again inside the loop", "remember": "The variable in the condition must change inside the loop.", "intro": ["The last line of the loop is missing: it must ask again.", "Replace ____ with the input line. Copy the first line of the program and change the question to Try again: ", "Press Run. Type 0, then 12, then 5."], "code": "choice = int(input(\"Choose a size from 1 to 5: \"))\n\nwhile choice < 1 or choice > 5:\n    print(\"That is not between 1 and 5.\")\n    choice = ____\n\nprint(\"You chose\", choice)\n", "inputs": ["0", "12", "5"], "hint": "choice = int(input(\"Try again: \"))", "questions": [{"id": "s4a", "label": "4a", "prompt": "What would happen if the loop did not ask again?"}], "expected_b64": "VGhhdCBpcyBub3QgYmV0d2VlbiAxIGFuZCA1LgpUaGF0IGlzIG5vdCBiZXR3ZWVuIDEgYW5kIDUuCllvdSBjaG9zZSA1"}, {"kind": "code", "nav": "5", "label": "Step 5: find and fix", "title": "One wrong word", "intro": ["This program should refuse 9 and accept 3. It accepts 9.", "Press Run. Type 9. Answer 5a.", "Then change one word in the while line. Run again: type 9, then 3."], "code": "choice = int(input(\"Choose a size from 1 to 5: \"))\n\nwhile choice < 1 and choice > 5:\n    print(\"That is not between 1 and 5.\")\n    choice = int(input(\"Try again: \"))\n\nprint(\"You chose\", choice)\n", "inputs": ["9", "3"], "hint": "Look at Step 2. It used a different word.", "questions": [{"id": "s5a", "label": "5a", "prompt": "Can a number be less than 1 and more than 5 at the same time?"}], "expected_b64": "VGhhdCBpcyBub3QgYmV0d2VlbiAxIGFuZCA1LgpZb3UgY2hvc2UgMw=="}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything."], "questions": [{"id": "e1", "label": "E1", "prompt": "A program allows 3 to 8. Write the two boundary tests."}, {"id": "e2", "label": "E2", "prompt": "Why must a validation loop use or and not and?"}, {"id": "e3", "label": "E3", "prompt": "A validation loop prints its message forever. What is missing from inside it?"}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

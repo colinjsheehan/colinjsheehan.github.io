@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 8 Revisit 5 | Epsom KS3</title>
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; KS3 Computer Science</div>
+    <h1>Year 8: Revisit 5: ask the user</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Hand in (PDF)</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead">DRAWING</div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Hand in makes a PDF to upload to Google Classroom.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+</footer>
+<script>window.LESSON = {"id": "y8-menu", "order": 5, "version": 1, "year": "Year 8", "slug": "ask-the-user", "folder": "y8", "title": "Revisit 5: ask the user", "short": "Revisit 5", "objective": "Ask the user a question, turn the answer into a number with int(), and choose what to do with a menu.", "keywords": ["input", "string", "integer", "int()", "menu", "=="], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From last lesson", "intro": ["Answer all three. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "Is 50 > 50 True or False?"}, {"id": "r2", "label": "R2", "prompt": "Which symbol compares two values to see if they are equal?"}, {"id": "r3", "label": "R3", "prompt": "What does this print?", "code": "sides = 5\nif sides <= 4:\n    print(\"blue\")\nelse:\n    print(\"green\")"}]}, {"kind": "code", "nav": "1", "label": "Step 1: run", "title": "Asking a question", "remember": "input() waits for the user to type, then gives back what they typed.", "intro": ["Press Run. When the program asks, type Aisha and press Enter."], "code": "name = input(\"What is your name? \")\n\nprint(\"Hello\", name)\n", "inputs": ["Aisha"], "questions": [{"id": "s1a", "label": "1a", "prompt": "Where does the value in name come from?"}], "expected_b64": "SGVsbG8gQWlzaGE="}, {"kind": "code", "nav": "2", "label": "Step 2: predict, then run", "title": "Text, not a number", "intro": ["When the program asks, you will type 13.", "Write your prediction in 2a. Run is switched on once 2a has an answer.", "Once you press Run, 2a cannot be changed."], "code": "age = input(\"How old are you? \")\n\nprint(age + age)\n", "inputs": ["13"], "predict_first": "s2a", "questions": [{"id": "s2a", "label": "2a", "prompt": "Predict what this prints."}, {"id": "s2b", "label": "2b", "prompt": "Compare your prediction with the output. Write what was different, or write: the same."}], "expected_b64": "MTMxMw=="}, {"kind": "code", "nav": "3", "label": "Step 3: fill the gap", "title": "Turning text into a number", "remember": "int() turns text such as \"13\" into the whole number 13.", "intro": ["Replace ____ so the typed text becomes a whole number.", "Press Run. When the program asks, type 13."], "code": "age = ____(input(\"How old are you? \"))\n\nprint(age + age)\n", "inputs": ["13"], "hint": "The word is three letters long. It is short for integer.", "questions": [{"id": "s3a", "label": "3a", "prompt": "Why did Step 2 print 1313?"}], "expected_b64": "MjY="}, {"kind": "code", "nav": "4", "label": "Step 4: fill the gap", "title": "The menu", "turtle": true, "intro": ["The menu prints the choices, asks for a number and picks a wall length.", "Replace ____ with the number for medium.", "Press Run. When it asks, type 2."], "code": "from turtle import *\npensize(3)\n\nprint(\"SIZE: 1 = small  2 = medium  3 = large\")\nsize_choice = int(input(\"What size house? \"))\n\nif size_choice == 1:\n    wall = 90\nelif size_choice == ____:\n    wall = 140\nelse:\n    wall = 210\n\nfor side in range(4):\n    forward(wall)\n    right(90)\n\nprint(\"Wall:\", wall)\n", "inputs": ["2"], "hint": "Look at the SIZE line. Which number is medium?", "questions": [{"id": "s4a", "label": "4a", "prompt": "What wall length does this program use if the user types 3?"}], "expected_b64": "U0laRTogMSA9IHNtYWxsICAyID0gbWVkaXVtICAzID0gbGFyZ2UKV2FsbDogMTQw"}, {"kind": "code", "nav": "5", "label": "Step 5: find and fix", "title": "Never equal", "intro": ["This menu should say Small when you type 1. It says the choice is not on the menu.", "Press Run and type 1. Answer 5a.", "Then fix the input line. Run again and type 1."], "code": "size_choice = input(\"What size? \")\n\nif size_choice == 1:\n    print(\"Small\")\nelif size_choice == 2:\n    print(\"Medium\")\nelse:\n    print(\"That is not on the menu.\")\n", "inputs": ["1"], "hint": "Look at Step 3. What turned the text into a number?", "questions": [{"id": "s5a", "label": "5a", "prompt": "Why is the text \"1\" not equal to the number 1?"}], "expected_b64": "U21hbGw="}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything."], "questions": [{"id": "e1", "label": "E1", "prompt": "What type of value does input() always give?"}, {"id": "e2", "label": "E2", "prompt": "What does this print?", "code": "print(int(\"4\") + 1)"}, {"id": "e3", "label": "E3", "prompt": "What is the difference between = and == in Python?"}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

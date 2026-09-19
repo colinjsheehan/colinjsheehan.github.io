@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 8 Revisit 4 | Epsom KS3</title>
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; KS3 Computer Science</div>
+    <h1>Year 8: Revisit 4: conditions</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Hand in (PDF)</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead">DRAWING</div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Hand in makes a PDF to upload to Google Classroom.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+</footer>
+<script>window.LESSON = {"id": "y8-conditions", "order": 4, "version": 1, "year": "Year 8", "slug": "conditions", "folder": "y8", "title": "Revisit 4: conditions", "short": "Revisit 4", "objective": "Use if, elif and else to choose one path, and test the value on the edge.", "keywords": ["selection", "if", "elif", "else", "condition", "boundary"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From last lesson", "intro": ["Answer all three. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "How many times does this loop run?", "code": "for side in range(5):"}, {"id": "r2", "label": "R2", "prompt": "What turn does a hexagon need at each corner?"}, {"id": "r3", "label": "R3", "prompt": "How does Python know which lines are inside a loop?"}]}, {"kind": "code", "nav": "1", "label": "Step 1: run", "title": "One of two paths", "remember": ">= means greater than or equal to.", "intro": ["The if line asks a question. If the answer is True, the first indented line runs. If not, the line under else runs.", "Press Run."], "code": "score = 7\n\nif score >= 5:\n    print(\"Pass\")\nelse:\n    print(\"Try again\")\n", "questions": [{"id": "s1a", "label": "1a", "prompt": "Which line would print if score were 3?"}], "expected_b64": "UGFzcw=="}, {"kind": "code", "nav": "2", "label": "Step 2: predict, then run", "title": "Right on the edge", "turtle": true, "intro": ["The first print shows the answer to the question wall > 150.", "Write your prediction in 2a. Run is switched on once 2a has an answer.", "Once you press Run, 2a cannot be changed."], "code": "from turtle import *\npensize(3)\n\nwall = 150\nprint(wall > 150)\n\nif wall > 150:\n    fillcolor(\"red\")\nelse:\n    fillcolor(\"blue\")\n\nbegin_fill()\nfor side in range(4):\n    forward(wall)\n    right(90)\nend_fill()\n", "predict_first": "s2a", "questions": [{"id": "s2a", "label": "2a", "prompt": "Predict what the print line shows."}, {"id": "s2b", "label": "2b", "prompt": "What colour is the square?"}], "expected_b64": "RmFsc2U="}, {"kind": "code", "nav": "3", "label": "Step 3: fill the gap", "title": "Three paths", "remember": "Python checks from the top and runs only the first path that is True.", "intro": ["The rule: 3 or 4 sides is blue, 5 or 6 sides is green, 7 or 8 sides is purple.", "Replace ____ with a number. Then press Run. With 7 sides it should say purple."], "code": "sides = 7\n\nif sides <= 4:\n    colour = \"blue\"\nelif sides <= ____:\n    colour = \"green\"\nelse:\n    colour = \"purple\"\n\nprint(\"Colour:\", colour)\n", "hint": "Green is for 5 and 6. What is the largest number that is green?", "questions": [{"id": "s3a", "label": "3a", "prompt": "Why is 7 a better test value than 5 for this program?"}], "expected_b64": "Q29sb3VyOiBwdXJwbGU="}, {"kind": "code", "nav": "4", "label": "Step 4: find and fix", "title": "Wrong at the edge", "intro": ["The pass mark is 50 or more. A mark of 50 should pass, but this program says Fail.", "Press Run. Answer 4a.", "Then change one symbol in the if line."], "code": "mark = 50\n\nif mark > 50:\n    print(\"Pass\")\nelse:\n    print(\"Fail\")\n", "hint": "Step 1 used a different comparison.", "questions": [{"id": "s4a", "label": "4a", "prompt": "Is 50 > 50 True or False?"}], "expected_b64": "UGFzcw=="}, {"kind": "code", "nav": "5", "label": "Step 5: fill the gap", "title": "The house that decides", "turtle": true, "intro": ["size 1 is small (60), size 2 is medium (120), size 3 is large (180).", "Replace ____ with the wall length for medium. Then press Run."], "code": "from turtle import *\npensize(3)\n\nsize = 2\n\nif size == 1:\n    wall = 60\nelif size == 2:\n    wall = ____\nelse:\n    wall = 180\n\nfor side in range(4):\n    forward(wall)\n    right(90)\n\nprint(\"Wall:\", wall)\n", "hint": "Read the first line of the step card.", "questions": [{"id": "s5a", "label": "5a", "prompt": "What does == mean in the if line?"}], "expected_b64": "V2FsbDogMTIw"}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything."], "questions": [{"id": "e1", "label": "E1", "prompt": "Is 8 >= 8 True or False?"}, {"id": "e2", "label": "E2", "prompt": "What does this print?", "code": "age = 12\nif age > 12:\n    print(\"Older\")\nelse:\n    print(\"Not older\")"}, {"id": "e3", "label": "E3", "prompt": "A program allows 3 to 8 sides. Which two values test the edges?"}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

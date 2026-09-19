@@ -463,7 +463,44 @@
     var g = c.getContext("2d");
     g.fillStyle = "#fff"; g.fillRect(0, 0, w, h);
     for (var k = 0; k < cs.length; k++) { try { g.drawImage(cs[k], 0, 0, w, h); } catch (e) {} }
-    return c.toDataURL("image/jpeg", 0.85);
+    return c;
+  }
+
+  /* The whole canvas, for showing the drawing again when a student comes back
+     to the step. */
+  function fullImage(c) { return c ? c.toDataURL("image/jpeg", 0.85) : null; }
+
+  /* The drawing cut down to what the student actually drew, for the PDF. A small
+     shape in the middle of a 700 x 500 canvas would otherwise print as a dot in
+     a big empty box. Ink is any pixel that is not near-white. */
+  function croppedImage(c) {
+    if (!c) return null;
+    var w = c.width, h = c.height, d;
+    try { d = c.getContext("2d").getImageData(0, 0, w, h).data; } catch (e) { return null; }
+    var x0 = w, y0 = h, x1 = -1, y1 = -1;
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        var i = (y * w + x) * 4;
+        if (d[i] < 235 || d[i + 1] < 235 || d[i + 2] < 235) {
+          if (x < x0) x0 = x; if (x > x1) x1 = x;
+          if (y < y0) y0 = y; if (y > y1) y1 = y;
+        }
+      }
+    }
+    if (x1 < 0) return null;                        // nothing drawn
+    var pad = 24, minSide = 160;
+    x0 -= pad; y0 -= pad; x1 += pad; y1 += pad;
+    var cw = x1 - x0, ch = y1 - y0;
+    if (cw < minSide) { x0 -= (minSide - cw) / 2; cw = minSide; }
+    if (ch < minSide) { y0 -= (minSide - ch) / 2; ch = minSide; }
+    x0 = Math.max(0, Math.round(x0)); y0 = Math.max(0, Math.round(y0));
+    cw = Math.min(w - x0, Math.round(cw)); ch = Math.min(h - y0, Math.round(ch));
+    var out = document.createElement("canvas");
+    out.width = cw; out.height = ch;
+    var g = out.getContext("2d");
+    g.fillStyle = "#fff"; g.fillRect(0, 0, cw, ch);
+    g.drawImage(c, x0, y0, cw, ch, 0, 0, cw, ch);
+    return {src: out.toDataURL("image/jpeg", 0.9), w: cw, h: ch};
   }
 
   var running = false, killed = false;
@@ -517,7 +554,11 @@
       showMatch(i);
       showExpected(i);
       var after = function () {
-        if (step.turtle) s.drawing = snapshot();
+        if (step.turtle) {
+          var snap = snapshot();
+          s.drawing = fullImage(snap);
+          s.crop = croppedImage(snap);
+        }
         save();
         renderNav();
       };
@@ -646,11 +687,16 @@
           text((cut ? lines.slice(0, 60) : lines).join("\n") + (cut ? "\n(output cut to 60 lines)" : ""),
                9, "normal", "courier", 4);
         }
-        if (step.turtle && s.drawing) {
-          var iw = 110, ih = iw * 5 / 7;
+        if (step.turtle && (s.crop || s.drawing)) {
+          /* The student's own drawing, cut to what they drew and as large as fits
+             in a 120 x 90 mm box. Older saves have only the full canvas. */
+          var src = s.crop ? s.crop.src : s.drawing;
+          var pw = s.crop ? s.crop.w : 700, ph = s.crop ? s.crop.h : 500;
+          var scale = Math.min(120 / pw, 90 / ph);
+          var iw = pw * scale, ih = ph * scale;
           gap(1.5); need(ih + 8);
           text("Drawing", 9, "bold");
-          try { doc.addImage(s.drawing, "JPEG", M + 4, y, iw, ih); doc.setDrawColor(200); doc.rect(M + 4, y, iw, ih); }
+          try { doc.addImage(src, "JPEG", M + 4, y, iw, ih); doc.setDrawColor(200); doc.rect(M + 4, y, iw, ih); }
           catch (e) {}
           y += ih + 2;
         }

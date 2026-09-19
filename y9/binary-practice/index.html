@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 9 Binary practice | Epsom KS3</title>
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; KS3 Computer Science</div>
+    <h1>Year 9: Binary practice: nibbles, bytes and two bytes</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Hand in (PDF)</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead">DRAWING</div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Hand in makes a PDF to upload to Google Classroom.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y9-binary-practice", "order": 23, "unit": "data-representation", "version": 1, "year": "Year 9", "slug": "binary-practice", "folder": "y9", "title": "Binary practice: nibbles, bytes and two bytes", "short": "Binary practice", "objective": "Convert between binary and denary for 4 bits, 8 bits and 16 bits.", "keywords": ["nibble", "byte", "bit", "binary", "denary"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "Before you start", "intro": ["Answer all three. Do not use the grid yet."], "questions": [{"id": "r1", "label": "R1", "prompt": "What is 8 + 4 + 1?"}, {"id": "r2", "label": "R2", "prompt": "What is 13 - 8?"}, {"id": "r3", "label": "R3", "prompt": "Each binary column is worth how many times the column on its right?"}]}, {"kind": "convert", "nav": "1", "label": "Nibbles 1", "title": "4 bits: binary to denary", "bits": 4, "direction": "to_denary", "remember": "A nibble is 4 bits. Add the columns that have a 1.", "intro": ["Type the denary number for each nibble.", "The box turns green when the answer is right. Amber means check it again."], "items": [5, 8, 3, 15, 10], "questions": []}, {"kind": "convert", "nav": "2", "label": "Nibbles 2", "title": "4 bits: denary to binary", "bits": 4, "direction": "to_binary", "remember": "Go from the left. Does the column fit? Yes: 1, and take it away. No: 0.", "intro": ["Type a 1 or a 0 under each column.", "The row turns green when all four are right."], "items": [6, 9, 12, 1, 14], "questions": []}, {"kind": "convert", "nav": "3", "label": "Bytes 1", "title": "8 bits: binary to denary", "bits": 8, "direction": "to_denary", "remember": "A byte is 8 bits, which is two nibbles.", "intro": ["Type the denary number for each byte."], "items": [17, 150, 26, 240, 129], "questions": []}, {"kind": "convert", "nav": "4", "label": "Bytes 2", "title": "8 bits: denary to binary", "bits": 8, "direction": "to_binary", "intro": ["Type a 1 or a 0 under each column. All eight, including the 0s at the front."], "items": [20, 100, 130, 199, 255], "questions": []}, {"kind": "convert", "nav": "5", "label": "Two bytes 1", "title": "16 bits: binary to denary", "bits": 16, "direction": "to_denary", "remember": "Two bytes is 16 bits. The columns keep doubling: 256, 512, 1024 and on.", "intro": ["Type the denary number for each one."], "items": [256, 513, 1024, 4099, 32768], "questions": []}, {"kind": "convert", "nav": "6", "label": "Two bytes 2", "title": "16 bits: denary to binary", "bits": 16, "direction": "to_binary", "intro": ["Type a 1 or a 0 under each of the sixteen columns."], "items": [300, 1000, 4096, 2026, 65535], "questions": []}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without the grid."], "questions": [{"id": "e1", "label": "E1", "prompt": "What is the largest denary number a nibble can hold?"}, {"id": "e2", "label": "E2", "prompt": "What is the largest denary number a byte can hold?"}, {"id": "e3", "label": "E3", "prompt": "What is the largest denary number two bytes can hold?"}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

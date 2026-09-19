@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 9 Binary | Epsom KS3</title>
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; KS3 Computer Science</div>
+    <h1>Year 9: Binary: denary to binary and back</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Hand in (PDF)</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead">DRAWING</div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Hand in makes a PDF to upload to Google Classroom.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y9-binary", "order": 22, "unit": "data-representation", "version": 1, "year": "Year 9", "slug": "binary", "folder": "y9", "title": "Binary: denary to binary and back", "short": "Binary", "objective": "Convert a binary number to denary, and a denary number from 0 to 255 to 8-bit binary.", "keywords": ["binary", "denary", "bit", "byte", "place value"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "Before you start", "intro": ["Answer all three. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "What is 45 - 32?"}, {"id": "r2", "label": "R2", "prompt": "What is 64 + 16 + 4?"}, {"id": "r3", "label": "R3", "prompt": "What does this print?", "code": "times = [14.8, 15.2, 14.5]\nprint(times[1])"}]}, {"kind": "code", "nav": "1", "label": "Step 1: run", "title": "The eight columns", "remember": "Denary is our normal counting system (also called decimal). Binary uses only 0 and 1.", "intro": ["A byte has eight columns. Each column is one switch: 1 is on, 0 is off.", "The loop starts at 128 and halves it each time. Press Run."], "code": "value = 128\n\nfor column in range(8):\n    print(value)\n    value = value // 2\n", "questions": [{"id": "s1a", "label": "1a", "prompt": "Each column is worth how many times the column on its right?"}], "expected_b64": "MTI4CjY0CjMyCjE2CjgKNAoyCjE="}, {"kind": "code", "nav": "2", "label": "Step 2: run", "title": "Binary to denary: add the columns", "table": {"headers": ["Column", "128", "64", "32", "16", "8", "4", "2", "1"], "rows": [["Switch", "0", "0", "1", "1", "1", "1", "0", "0"]]}, "remember": "Binary to denary: add the columns that have a 1. Ignore the columns with a 0.", "intro": ["The table shows 00111100 in the grid.", "The 1s are under 32, 16, 8 and 4. Press Run to add them."], "code": "# 00111100: the 1s are under 32, 16, 8 and 4\nprint(32 + 16 + 8 + 4)\n", "questions": [{"id": "s2a", "label": "2a", "prompt": "Which two columns have a 1 in 01000001?"}], "expected_b64": "NjA="}, {"kind": "code", "nav": "3", "label": "Step 3: convert, then check", "title": "Your turn: binary to denary", "table": {"headers": ["Column", "128", "64", "32", "16", "8", "4", "2", "1"], "rows": [["Switch", "", "", "", "", "", "", "", ""]]}, "intro": ["Convert 01000001 to denary on paper. Use the grid.", "Write your answer in 3a. Run is switched on once 3a has an answer.", "Once you press Run, 3a cannot be changed. Run checks your answer."], "code": "# int(text, 2) reads the text as a binary number\nprint(int(\"01000001\", 2))\n", "predict_first": "s3a", "questions": [{"id": "s3a", "label": "3a", "prompt": "What is 01000001 in denary?"}, {"id": "s3b", "label": "3b", "prompt": "Compare your answer with the output. Write what was different, or write: the same."}], "expected_b64": "NjU="}, {"kind": "code", "nav": "4", "label": "Step 4: fill the gap", "title": "Two switches on", "table": {"headers": ["Column", "128", "64", "32", "16", "8", "4", "2", "1"], "rows": [["Switch", "1", "0", "1", "0", "0", "0", "0", "0"]]}, "intro": ["The table shows 10100000. Two columns have a 1.", "Replace ____ with the value of the second column that has a 1. Then press Run."], "code": "# 10100000\ntotal = 128 + ____\nprint(total)\n", "hint": "Look along the top row of the table, under the second 1.", "questions": [], "expected_b64": "MTYw"}, {"kind": "code", "nav": "5", "label": "Step 5: run", "title": "Denary to binary: does it fit?", "remember": "Denary to binary: go left to right. Does the column fit? Yes: write 1 and take it away. No: write 0.", "intro": ["This program uses the rule to turn 45 into binary.", "Press Run. Read each line of the output. It is the rule, one column at a time."], "code": "number = 45\nbinary = \"\"\n\nfor column in [128, 64, 32, 16, 8, 4, 2, 1]:\n    if column <= number:\n        print(column, \"fits: write 1\")\n        binary = binary + \"1\"\n        number = number - column\n    else:\n        print(column, \"does not fit: write 0\")\n        binary = binary + \"0\"\n\nprint(\"Binary:\", binary)\n", "questions": [{"id": "s5a", "label": "5a", "prompt": "After 32 is taken away from 45, what number is left to place?"}], "expected_b64": "MTI4IGRvZXMgbm90IGZpdDogd3JpdGUgMAo2NCBkb2VzIG5vdCBmaXQ6IHdyaXRlIDAKMzIgZml0czogd3JpdGUgMQoxNiBkb2VzIG5vdCBmaXQ6IHdyaXRlIDAKOCBmaXRzOiB3cml0ZSAxCjQgZml0czogd3JpdGUgMQoyIGRvZXMgbm90IGZpdDogd3JpdGUgMAoxIGZpdHM6IHdyaXRlIDEKQmluYXJ5OiAwMDEwMTEwMQ=="}, {"kind": "code", "nav": "6", "label": "Step 6: convert, then check", "title": "Your turn: denary to binary", "table": {"headers": ["Column", "128", "64", "32", "16", "8", "4", "2", "1"], "rows": [["Switch", "", "", "", "", "", "", "", ""]]}, "intro": ["Convert 100 to 8-bit binary on paper. Use the grid and the rule.", "Write all eight digits in 6a, including any 0s at the front.", "Run is switched on once 6a has an answer. Run checks your answer."], "code": "number = 100\nbinary = \"\"\n\nfor column in [128, 64, 32, 16, 8, 4, 2, 1]:\n    if column <= number:\n        binary = binary + \"1\"\n        number = number - column\n    else:\n        binary = binary + \"0\"\n\nprint(\"Binary:\", binary)\n", "predict_first": "s6a", "questions": [{"id": "s6a", "label": "6a", "prompt": "What is 100 in 8-bit binary?"}, {"id": "s6b", "label": "6b", "prompt": "Which columns fitted?"}], "expected_b64": "QmluYXJ5OiAwMTEwMDEwMA=="}, {"kind": "code", "nav": "7", "label": "Step 7: find and fix", "title": "Something left over", "intro": ["This program should turn 64 into binary. The answer is wrong, and the last line shows something left over.", "Press Run. Answer 7a.", "Then change one symbol in the if line so that a column that is exactly equal also fits."], "code": "number = 64\nbinary = \"\"\n\nfor column in [128, 64, 32, 16, 8, 4, 2, 1]:\n    if column < number:\n        binary = binary + \"1\"\n        number = number - column\n    else:\n        binary = binary + \"0\"\n\nprint(\"Binary:\", binary)\nprint(\"Left over:\", number)\n", "hint": "64 fits into 64. The if line must say less than OR EQUAL TO.", "questions": [{"id": "s7a", "label": "7a", "prompt": "How can you tell from the output that the answer is wrong?"}], "expected_b64": "QmluYXJ5OiAwMTAwMDAwMApMZWZ0IG92ZXI6IDA="}, {"kind": "code", "nav": "8", "label": "Step 8: run", "title": "The zeros at the front", "intro": ["bin() is Python's own converter. Press Run."], "code": "print(bin(18))\n", "remember": "0b means this is binary. bin() drops the zeros at the front. An 8-bit answer always has eight digits.", "questions": [{"id": "s8a", "label": "8a", "prompt": "Write 18 in 8-bit binary."}], "expected_b64": "MGIxMDAxMA=="}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything. Use the grid on paper."], "questions": [{"id": "e1", "label": "E1", "prompt": "What is 00001111 in denary?"}, {"id": "e2", "label": "E2", "prompt": "What is 20 in 8-bit binary?"}, {"id": "e3", "label": "E3", "prompt": "What is the largest denary number that fits in 8 bits?"}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

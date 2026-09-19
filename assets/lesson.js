@@ -194,6 +194,7 @@
   function isDone(i) {
     var step = L.steps[i], s = state.steps[String(i)] || {};
     var qs = (step.questions || []).every(answered);
+    if (step.kind === "convert") return qs && convDone(i);
     if (step.kind === "questions") return qs;
     var codeOk = step.expected != null ? !!s.matched : (!!s.ran && !s.error);
     return qs && codeOk;
@@ -245,6 +246,7 @@
       cardEl.appendChild(t);
     }
     if (step.readonly) cardEl.appendChild(el("pre", "show", step.readonly));
+    if (step.kind === "convert") cardEl.appendChild(convertEl(step, i));
 
     (step.questions || []).forEach(function (q) {
       var box = el("div", "q");
@@ -319,6 +321,123 @@
       row.appendChild(f);
     });
     return row;
+  }
+
+  /* CONVERT. Self-correcting binary conversions (added 19 Sep 2026).
+     A step with "kind": "convert" has "bits" (4, 8 or 16), "direction"
+     ("to_denary" or "to_binary") and "items" (the denary numbers). The column
+     headings sit above every question. The answer box turns green the moment
+     the answer is right, and amber when a complete answer is wrong, so the
+     student corrects it there and then. Every attempt is saved: what is in the
+     box, whether it is right, and how many complete wrong answers came first. */
+  function toBin(n, bits) {
+    var b = n.toString(2);
+    while (b.length < bits) b = "0" + b;
+    return b;
+  }
+  function convAnswer(step, j) {
+    var n = step.items[j];
+    return step.direction === "to_denary" ? String(n) : toBin(n, step.bits);
+  }
+  function convDone(i) {
+    var step = L.steps[i], s = state.steps[String(i)] || {}, c = s.conv || {};
+    return step.items.every(function (n, j) { return c[j] === convAnswer(step, j); });
+  }
+  function convertEl(step, i) {
+    var s = st(i);
+    if (!s.conv) s.conv = {};
+    if (!s.tries) s.tries = {};
+    var heads = [];
+    for (var k = step.bits - 1; k >= 0; k--) heads.push(Math.pow(2, k));
+    var wrap = el("div", "conv conv-" + step.bits);
+    var tally = el("p", "conv-tally");
+    function recount() {
+      var right = step.items.filter(function (n, j) { return s.conv[j] === convAnswer(step, j); }).length;
+      tally.textContent = right + " of " + step.items.length + " correct";
+      tally.classList.toggle("all", right === step.items.length);
+    }
+    function mark(box, j, value, complete) {
+      var ok = value === convAnswer(step, j);
+      /* conv-ok / conv-bad, not "right" / "wrong": main.cardonly .right is the
+         hidden output pane, so a class called "right" would hide the answer. */
+      var wasWrong = box.classList.contains("conv-bad");
+      box.classList.toggle("conv-ok", ok);
+      box.classList.toggle("conv-bad", !ok && complete);
+      if (!ok && complete && !wasWrong) s.tries[j] = (s.tries[j] || 0) + 1;
+      s.conv[j] = value;
+      recount();
+      saveSoon();
+      renderNavSoon();
+    }
+    function headRow(grid) {
+      heads.forEach(function (h, k) {
+        grid.appendChild(el("div", "conv-h" + (k && k % 4 === 0 ? " nb" : ""), String(h)));
+      });
+    }
+    step.items.forEach(function (n, j) {
+      var row = el("div", "conv-q");
+      row.id = "conv-" + i + "-" + j;
+      row.appendChild(el("span", "qlabel", (j + 1) + "."));
+      var grid = el("div", "conv-grid");
+      grid.style.gridTemplateColumns = "repeat(" + step.bits + ", minmax(0, 1fr))";
+      headRow(grid);
+      var saved = s.conv[j] || "";
+      if (step.direction === "to_denary") {
+        toBin(n, step.bits).split("").forEach(function (c, k) {
+          grid.appendChild(el("div", "conv-b" + (k && k % 4 === 0 ? " nb" : ""), c));
+        });
+        row.appendChild(grid);
+        var line = el("div", "conv-ans");
+        line.appendChild(el("span", "", "Denary:"));
+        var inp = el("input", "conv-in");
+        inp.type = "text";
+        inp.setAttribute("inputmode", "numeric");
+        ["autocapitalize", "autocorrect", "autocomplete"].forEach(function (a) { inp.setAttribute(a, "off"); });
+        inp.spellcheck = false;
+        inp.value = saved;
+        inp.addEventListener("input", function () {
+          inp.value = inp.value.replace(/[^0-9]/g, "");
+          mark(inp, j, inp.value, inp.value.length >= String(n).length);
+        });
+        line.appendChild(inp);
+        row.appendChild(line);
+        if (saved) mark(inp, j, saved, saved.length >= String(n).length);
+      } else {
+        row.insertBefore(el("span", "conv-n", String(n)), null);
+        var cells = [];
+        for (var k2 = 0; k2 < step.bits; k2++) {
+          var c = el("input", "conv-cell" + (k2 && k2 % 4 === 0 ? " nb" : ""));
+          c.type = "text";
+          c.maxLength = 1;
+          c.setAttribute("inputmode", "numeric");
+          c.setAttribute("aria-label", "column " + heads[k2]);
+          ["autocapitalize", "autocorrect", "autocomplete"].forEach(function (a) { c.setAttribute(a, "off"); });
+          c.value = saved.charAt(k2) === "0" || saved.charAt(k2) === "1" ? saved.charAt(k2) : "";
+          cells.push(c);
+          grid.appendChild(c);
+        }
+        var readCells = function () {
+          return cells.map(function (x) { return x.value || " "; }).join("").replace(/\s+$/, "");
+        };
+        cells.forEach(function (c, k3) {
+          c.addEventListener("input", function () {
+            c.value = c.value.replace(/[^01]/g, "").slice(-1);
+            if (c.value && k3 + 1 < cells.length) cells[k3 + 1].focus();
+            var v = readCells();
+            mark(grid, j, v, cells.every(function (x) { return x.value; }));
+          });
+          c.addEventListener("keydown", function (e) {
+            if (e.key === "Backspace" && !c.value && k3 > 0) cells[k3 - 1].focus();
+          });
+        });
+        row.appendChild(grid);
+        if (saved) mark(grid, j, readCells(), cells.every(function (x) { return x.value; }));
+      }
+      wrap.appendChild(row);
+    });
+    recount();
+    wrap.appendChild(tally);
+    return wrap;
   }
 
   /* PICK ONE. Tap a word or a picture instead of typing. The choice is saved as
@@ -727,9 +846,12 @@
     var when = now.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) +
                ", " + now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 
-    var codeSteps = 0, matched = 0, hints = 0, qTotal = 0, qDone = 0;
+    var codeSteps = 0, matched = 0, hints = 0, qTotal = 0, qDone = 0, cvTotal = 0, cvRight = 0;
     L.steps.forEach(function (step, i) {
       var s = state.steps[String(i)] || {};
+      if (step.kind === "convert") step.items.forEach(function (n, j) {
+        cvTotal++; if ((s.conv || {})[j] === convAnswer(step, j)) cvRight++;
+      });
       if (step.kind === "code" && step.expected != null) { codeSteps++; if (s.matched) matched++; }
       if (s.hint) hints++;
       (step.questions || []).forEach(function (q) { qTotal++; if (answered(q)) qDone++; });
@@ -746,7 +868,8 @@
     gap(2);
     text("Steps with the expected output: " + matched + " of " + codeSteps +
          "     Questions answered: " + qDone + " of " + qTotal +
-         "     Hints opened: " + hints, 10, "bold");
+         "     Hints opened: " + hints +
+         (cvTotal ? "     Conversions correct: " + cvRight + " of " + cvTotal : ""), 10, "bold");
     gap(2); rule();
 
     L.steps.forEach(function (step, i) {
@@ -760,6 +883,18 @@
                                                            : "Output did not match the expected output";
         else result = s.error ? "Stopped with an error" : "Ran without an error";
         text("Result: " + result + (step.hint ? "     Hint opened: " + (s.hint ? "yes" : "no") : ""), 10);
+      }
+      if (step.kind === "convert") {
+        var cv = s.conv || {}, tr = s.tries || {};
+        step.items.forEach(function (n, j) {
+          var shown = step.direction === "to_denary" ? toBin(n, step.bits) : String(n);
+          var got = (cv[j] || "").trim(), ok = got === convAnswer(step, j);
+          var how = ok ? (tr[j] ? "correct after " + tr[j] + " wrong " + (tr[j] === 1 ? "try" : "tries")
+                                : "correct first time")
+                       : (got ? "not correct" : "not answered");
+          text((j + 1) + ".  " + shown + "  ->  " + (got || "(blank)") + "     " + how,
+               10, "normal", "courier", 4);
+        });
       }
       (step.questions || []).forEach(function (q) {
         gap(1);

@@ -984,7 +984,7 @@
     });
 
     doc.setTextColor(31, 111, 107);
-    text("Epsom College Malaysia  |  KS3 Computer Science", 9, "bold");
+    text("Epsom College Malaysia  |  Computer Science", 9, "bold");
     doc.setTextColor(34, 41, 43);
     text(L.year + ": " + L.title, 16, "bold");
     gap(1);

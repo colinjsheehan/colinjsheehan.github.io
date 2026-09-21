@@ -82,6 +82,111 @@
   codeArea.appendChild(hl);
   codeArea.appendChild(codeEl);
 
+  /* ------------------------------------------------ the card / editor divider
+     A bar on the top edge of the editor. Dragging it up shrinks the card (which
+     then scrolls) and gives the editor the room; dragging down does the reverse.
+     Pointer events, so mouse, pen and touch (iPad, Chromebook) all work.
+     Double-tap (or Enter) swaps between the normal split and the editor at full
+     height. Arrow keys move it too. The position is kept per student in this
+     browser under SPLITKEY, as a share of the window height, so it carries from
+     page to page and survives a window resize.
+     Only the card's height is set. #hl and #code both fill #codearea exactly,
+     so they are resized together and stay aligned. */
+  var SPLITKEY = "epsom:split";
+  var CARD_MIN = 64;        // the step label and title stay in view
+  var EDITOR_MIN = 150;     // toolbar and about four lines of code
+  var NARROW_MIN = 320;     // editor height on narrow screens, as in lesson.css
+  var splitter = el("div");
+  splitter.id = "splitter";
+  splitter.setAttribute("role", "separator");
+  splitter.setAttribute("aria-orientation", "horizontal");
+  splitter.setAttribute("aria-label", "Drag to make the code editor bigger or smaller");
+  splitter.tabIndex = 0;
+  var editorBlock = $("editor-block");
+  editorBlock.parentNode.insertBefore(splitter, editorBlock);
+  var split = null;         // null: normal split; "full": editor at full height; else a share
+  try {
+    var saved = localStorage.getItem(SPLITKEY);
+    if (saved === "full") split = "full";
+    else if (saved && isFinite(parseFloat(saved))) split = parseFloat(saved);
+  } catch (e) {}
+  function saveSplit() {
+    try {
+      if (split === null) localStorage.removeItem(SPLITKEY);
+      else localStorage.setItem(SPLITKEY, String(split));
+    } catch (e) {}
+  }
+  function isNarrow() { return window.matchMedia("(max-width: 860px)").matches; }
+  function applySplit() {
+    cardEl.style.height = ""; cardEl.style.maxHeight = ""; codeWrap.style.height = "";
+    mainEl.classList.toggle("split-set", split !== null);
+    if (split === null || mainEl.classList.contains("cardonly")) { syncScroll(); return; }
+    cardEl.style.maxHeight = "none";
+    var natural = cardEl.offsetHeight;         // the card at full length, no scrolling
+    var want = split === "full" ? 0 : split * window.innerHeight;
+    var h;
+    if (isNarrow()) {
+      h = Math.max(Math.min(CARD_MIN, natural), Math.min(want, natural));
+      /* The page scrolls here, so the editor takes what the card gave up. */
+      var grow = Math.max(0, natural - h);
+      codeWrap.style.height = Math.round(Math.min(NARROW_MIN + grow,
+        Math.max(NARROW_MIN, window.innerHeight * 0.75))) + "px";
+    } else {
+      var room = cardEl.parentNode.clientHeight - splitter.offsetHeight - EDITOR_MIN;
+      h = Math.max(Math.min(CARD_MIN, natural), Math.min(want, natural, room));
+    }
+    cardEl.style.height = Math.round(h) + "px";
+    syncScroll();
+  }
+  function setSplitPx(px) {
+    split = Math.max(0, px) / window.innerHeight;
+    applySplit();
+  }
+  var drag = null, lastTap = 0;
+  splitter.addEventListener("pointerdown", function (e) {
+    if (e.button !== undefined && e.button > 0) return;
+    e.preventDefault();
+    drag = { y: e.clientY, h: cardEl.offsetHeight, moved: false, id: e.pointerId };
+    try { splitter.setPointerCapture(e.pointerId); } catch (x) {}
+    splitter.classList.add("dragging");
+  });
+  splitter.addEventListener("pointermove", function (e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    var dy = e.clientY - drag.y;
+    if (Math.abs(dy) > 4) drag.moved = true;
+    if (drag.moved) setSplitPx(drag.h + dy);
+  });
+  function endDrag(e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    var moved = drag.moved;
+    drag = null;
+    splitter.classList.remove("dragging");
+    if (moved) { saveSplit(); lastTap = 0; return; }
+    var now = Date.now();
+    if (now - lastTap < 400) { lastTap = 0; toggleFull(); }
+    else lastTap = now;
+  }
+  splitter.addEventListener("pointerup", endDrag);
+  splitter.addEventListener("pointercancel", endDrag);
+  function toggleFull() {
+    split = split === "full" ? null : "full";
+    applySplit();
+    saveSplit();
+  }
+  splitter.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+      e.preventDefault();
+      setSplitPx(cardEl.offsetHeight + (e.key === "ArrowUp" ? -30 : 30));
+      saveSplit();
+    } else if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      toggleFull();
+    }
+  });
+  window.addEventListener("resize", applySplit);
+  /* Typing in an answer box can change the card's length. */
+  cardEl.addEventListener("input", function () { if (split !== null && isNarrow()) applySplit(); });
+
   var KEYWORDS = {};
   ("False None True and as break continue def elif else for from if import in is " +
    "not or pass return while with").split(" ").forEach(function (k) { KEYWORDS[k] = 1; });
@@ -573,6 +678,7 @@
       $("reset").textContent = TX.reset;
     }
     renderCard(i);
+    applySplit();
     renderNav();
     updateRunGate();
     replay(i);
@@ -965,6 +1071,7 @@
 
   /* Hooks for the automated browser test only. */
   window.__lesson = { state: function () { return state; }, go: go, run: run, buildPdf: buildPdf,
+    applySplit: applySplit,
                       isRunning: function () { return running; } };
 
   go(state.current);

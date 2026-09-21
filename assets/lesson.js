@@ -38,7 +38,7 @@
      page has always shown, so the Year 8 to 10 pages do not change. */
   var SIMPLE = !!L.simple;
   var TX = SIMPLE ? {
-    remember: "Look: ", hint: "?", drawOnly: "",
+    remember: "Look: ", hint: "?", drawOnly: "", drill: "Say it: ",
     predictOff: function (label) { return "First: " + label; },
     locked: "\uD83D\uDD12",
     yes: "\u2713 Same", no: "\u2717 Different", err: "\u2717 Stop. Look at the line.",
@@ -46,7 +46,7 @@
     reset: "\u21BA Again", resetArm: "Again?",
     noPdf: "\u2717", saved: function (f) { return "\u2713 " + f; }
   } : {
-    remember: "Remember: ", hint: "Hint",
+    remember: "Remember: ", hint: "Hint", drill: "Say it together",
     drawOnly: "This step draws a picture. There is no text output to check.",
     predictOff: function (label) { return "Run is switched off until " + label + " has an answer."; },
     locked: "Locked when Run was pressed.",
@@ -336,6 +336,18 @@
       r.appendChild(document.createTextNode(step.remember));
       cardEl.appendChild(r);
     }
+    /* WORD LIST: "wordlist": [["loop", "do it again and again."], ...]. Larger
+       type, each new word in bold, one per line. Shown before the intro. */
+    if (step.wordlist) {
+      var wl = el("ul", "wordlist");
+      step.wordlist.forEach(function (w) {
+        var li = el("li");
+        li.appendChild(el("b", "", w[0]));
+        li.appendChild(document.createTextNode(": " + w[1]));
+        wl.appendChild(li);
+      });
+      cardEl.appendChild(wl);
+    }
     (step.intro || []).forEach(function (t) { cardEl.appendChild(el("p", "", t)); });
     if (step.images) cardEl.appendChild(pics(step.images));
 
@@ -389,6 +401,14 @@
       cardEl.appendChild(box);
     });
 
+    /* DRILL: "drill": "A while loop needs ...". The key sentence of the lesson,
+       said aloud together (choral drill). Last thing on the card. */
+    if (step.drill) {
+      var dr = el("div", "drill");
+      dr.appendChild(el("div", "drill-head", TX.drill));
+      dr.appendChild(el("p", "", step.drill));
+      cardEl.appendChild(dr);
+    }
     if (step.kind === "code" && step.expected == null && step.turtle && TX.drawOnly) {
       cardEl.appendChild(el("p", "", TX.drawOnly));
     }

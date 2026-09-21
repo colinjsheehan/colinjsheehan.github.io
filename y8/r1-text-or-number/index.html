@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 8 R1 | Epsom KS3</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; KS3 Computer Science</div>
+    <h1>Year 8: Text or number? input() and int()</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Hand in (PDF)</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead">DRAWING</div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Hand in makes a PDF to upload to Google Classroom.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y8-r1-text-or-number", "label": "R1", "order": 5.5, "version": 1, "year": "Year 8", "slug": "r1-text-or-number", "folder": "y8", "title": "Text or number? input() and int()", "short": "R1", "objective": "Say what kind of value input() gives, turn it into a number with int(), and use = to store and == to compare.", "keywords": ["input()", "text", "number", "int()", "=", "=="], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From earlier lessons", "intro": ["Answer all three. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "What is in wall after this line runs?", "code": "wall = 140"}, {"id": "r2", "label": "R2", "prompt": "Is 150 > 150 True or False?"}, {"id": "r3", "label": "R3", "prompt": "Why does the colour code need quote marks in this line?", "code": "fillcolor(\"#E8D3A9\")"}]}, {"kind": "questions", "nav": "W", "label": "Words", "title": "Six words for today", "wordlist": [["input()", "asks the user, then waits for them to type."], ["text", "anything in quote marks, like \"5\"."], ["number", "a value you can do sums with, like 5."], ["int()", "turns text such as \"5\" into the number 5."], ["=", "stores a value in a variable."], ["==", "compares two values. The answer is True or False."]], "intro": ["Say each word. Then choose the right word for each sentence."], "drill": "input() always gives text. int() turns it into a number.", "questions": [{"id": "w1", "label": "W1", "prompt": "\"5\" in quote marks is ...", "pick": [{"v": "text"}, {"v": "a number"}]}, {"id": "w2", "label": "W2", "prompt": "5 with no quote marks is ...", "pick": [{"v": "text"}, {"v": "a number"}]}, {"id": "w3", "label": "W3", "prompt": "input() always gives ...", "pick": [{"v": "a number"}, {"v": "True or False"}, {"v": "text"}]}, {"id": "w4", "label": "W4", "prompt": "The = in choice = 2 ...", "pick": [{"v": "compares"}, {"v": "stores"}, {"v": "prints"}]}, {"id": "w5", "label": "W5", "prompt": "The == in if choice == 2: ...", "pick": [{"v": "stores"}, {"v": "prints"}, {"v": "compares"}]}]}, {"kind": "code", "nav": "1", "label": "Step 1: predict, then run", "title": "What arrives when the user types", "remember": "input() always gives text, even when the user types digits.", "intro": ["When the program asks, you will type 5.", "Write your prediction in 1a. Run is switched on once 1a has an answer.", "Once you press Run, 1a cannot be changed."], "code": "answer = input(\"Type a number: \")\n\nprint(answer + answer)\n", "inputs": ["5"], "predict_first": "s1a", "questions": [{"id": "s1a", "label": "1a", "prompt": "Predict what this prints."}, {"id": "s1b", "label": "1b", "prompt": "Is the value in answer text or a number?"}], "expected_b64": "NTU="}, {"kind": "code", "nav": "2", "label": "Step 2: find and fix", "title": "Text + number is an error", "intro": ["Press Run and type 5. Answer 2a.", "Then change the first line so the program prints 15. Run again and type 5."], "code": "answer = input(\"Type a number: \")\n\nprint(answer + 10)\n", "inputs": ["5"], "hint": "Put int( ) round the whole of input(...). Count the brackets at the end.", "questions": [{"id": "s2a", "label": "2a", "prompt": "What happened the first time you ran it?"}, {"id": "s2b", "label": "2b", "prompt": "Why do we put int() round input()?"}], "expected_b64": "MTU="}, {"kind": "code", "nav": "3", "label": "Step 3: write the line", "title": "Store the answer as a number", "turtle": true, "remember": "size_choice = int(input(\"What size house? \")) asks, waits, turns the text into a number, then stores it.", "intro": ["Replace ____ with the whole right-hand side of the line: ask the question and turn the answer into a number.", "Press Run. When it asks, type 3."], "code": "from turtle import *\npensize(3)\n\nprint(\"SIZE: 1 = small  2 = medium  3 = large\")\n# ask \"What size house? \" and store the answer as a NUMBER\nsize_choice = ____\n\nif size_choice == 1:\n    wall = 90\nelif size_choice == 2:\n    wall = 140\nelse:\n    wall = 210\n\nfor side in range(4):\n    forward(wall)\n    right(90)\n\nprint(\"Wall:\", wall)\n", "inputs": ["3"], "hint": "It is the line in the Remember box, without size_choice = at the front.", "questions": [{"id": "s3a", "label": "3a", "prompt": "Which is done first, input() or int()?"}], "expected_b64": "U0laRTogMSA9IHNtYWxsICAyID0gbWVkaXVtICAzID0gbGFyZ2UKV2FsbDogMjEw"}, {"kind": "code", "nav": "4", "label": "Step 4: find and fix", "title": "Store or compare?", "remember": "One = stores a value. Two == compare two values.", "intro": ["This menu should print Small when you type 1.", "Press Run. It stops before it asks you anything. Answer 4a.", "Then fix the one line that is wrong. Run again and type 1."], "code": "print(\"SIZE: 1 = small  2 = medium  3 = large\")\nsize_choice = int(input(\"What size house? \"))\n\nif size_choice = 1:\n    print(\"Small\")\nelif size_choice == 2:\n    print(\"Medium\")\nelse:\n    print(\"Large\")\n", "inputs": ["1"], "hint": "Compare the if line with the elif line.", "questions": [{"id": "s4a", "label": "4a", "prompt": "Line 4 has one =. Why is that wrong?"}, {"id": "s4b", "label": "4b", "prompt": "What does the one = on line 2 do?"}, {"id": "s4c", "label": "4c", "prompt": "What does the == on line 6 do?"}], "expected_b64": "U0laRTogMSA9IHNtYWxsICAyID0gbWVkaXVtICAzID0gbGFyZ2UKU21hbGw="}, {"kind": "code", "nav": "Make", "label": "Make: your own menu", "turtle": true, "title": "Make a menu of your own", "remember": "Every menu needs both: int(input(...)) to get a number, and == to compare it. Mark them with # TEXT TO NUMBER and # COMPARE.", "intro": ["Run it first and type 2. Then change it into a menu of your own.", "Ideas, from easier to harder:", "1. Add a fourth size: 4 = huge.", "2. Ask a second question: a colour menu with its own int(input(...)) and its own if, elif and else.", "3. Ask how many houses, and draw that many with a for loop.", "4. Your own idea: a menu for a shape, a pattern or a street.", "Run it after every change."], "code": "from turtle import *\npensize(3)\n\nprint(\"SIZE: 1 = small  2 = medium  3 = large\")\nsize_choice = int(input(\"What size house? \"))   # TEXT TO NUMBER\n\nif size_choice == 1:                              # COMPARE\n    wall = 90\nelif size_choice == 2:\n    wall = 140\nelse:\n    wall = 210\n\nfillcolor(\"orange\")\nbegin_fill()\nfor side in range(4):\n    forward(wall)\n    right(90)\nend_fill()\n", "inputs": ["2"], "questions": [{"id": "m1", "label": "M1", "prompt": "What does your program ask the user?"}, {"id": "m2", "label": "M2", "prompt": "Copy one line that turns the answer into a number."}, {"id": "m3", "label": "M3", "prompt": "Copy one line that compares."}, {"id": "m4", "label": "M4", "prompt": "Run it and type a word instead of a number. What happens?"}]}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything."], "questions": [{"id": "e1", "label": "E1", "prompt": "What kind of value does input() always give?"}, {"id": "e2", "label": "E2", "prompt": "What does this print?", "code": "print(int(\"4\") + 4)"}, {"id": "e3", "label": "E3", "prompt": "The user types 4. What happens on the second line?", "code": "answer = input(\"Number: \")\nprint(answer + 1)"}, {"id": "e4", "label": "E4", "prompt": "What is wrong with this line?", "code": "if wall = 150:"}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

@@ -142,50 +142,145 @@
     split = Math.max(0, px) / window.innerHeight;
     applySplit();
   }
-  var drag = null, lastTap = 0;
-  splitter.addEventListener("pointerdown", function (e) {
-    if (e.button !== undefined && e.button > 0) return;
-    e.preventDefault();
-    drag = { y: e.clientY, h: cardEl.offsetHeight, moved: false, id: e.pointerId };
-    try { splitter.setPointerCapture(e.pointerId); } catch (x) {}
-    splitter.classList.add("dragging");
-  });
-  splitter.addEventListener("pointermove", function (e) {
-    if (!drag || e.pointerId !== drag.id) return;
-    var dy = e.clientY - drag.y;
-    if (Math.abs(dy) > 4) drag.moved = true;
-    if (drag.moved) setSplitPx(drag.h + dy);
-  });
-  function endDrag(e) {
-    if (!drag || e.pointerId !== drag.id) return;
-    var moved = drag.moved;
-    drag = null;
-    splitter.classList.remove("dragging");
-    if (moved) { saveSplit(); lastTap = 0; return; }
-    var now = Date.now();
-    if (now - lastTap < 400) { lastTap = 0; toggleFull(); }
-    else lastTap = now;
+  /* The drag, the double-tap and the keys are the same on every splitter, so
+     they live here once. get() reads the current height above the bar, set(px)
+     moves it, end() saves, toggle() switches between the normal split and the
+     one-sided view. Pointer events cover mouse, pen and touch. */
+  function dragBar(bar, opts) {
+    var drag = null, lastTap = 0;
+    bar.addEventListener("pointerdown", function (e) {
+      if (e.button !== undefined && e.button > 0) return;
+      e.preventDefault();
+      drag = { y: e.clientY, h: opts.get(), moved: false, id: e.pointerId };
+      try { bar.setPointerCapture(e.pointerId); } catch (x) {}
+      bar.classList.add("dragging");
+    });
+    bar.addEventListener("pointermove", function (e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var dy = e.clientY - drag.y;
+      if (Math.abs(dy) > 4) drag.moved = true;
+      if (drag.moved) opts.set(drag.h + dy);
+    });
+    function endDrag(e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var moved = drag.moved;
+      drag = null;
+      bar.classList.remove("dragging");
+      if (moved) { opts.end(); lastTap = 0; return; }
+      var now = Date.now();
+      if (now - lastTap < 400) { lastTap = 0; opts.toggle(); }
+      else lastTap = now;
+    }
+    bar.addEventListener("pointerup", endDrag);
+    bar.addEventListener("pointercancel", endDrag);
+    bar.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+        e.preventDefault();
+        opts.set(opts.get() + (e.key === "ArrowUp" ? -30 : 30));
+        opts.end();
+      } else if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        opts.toggle();
+      }
+    });
   }
-  splitter.addEventListener("pointerup", endDrag);
-  splitter.addEventListener("pointercancel", endDrag);
+
   function toggleFull() {
     split = split === "full" ? null : "full";
     applySplit();
     saveSplit();
   }
-  splitter.addEventListener("keydown", function (e) {
-    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-      e.preventDefault();
-      setSplitPx(cardEl.offsetHeight + (e.key === "ArrowUp" ? -30 : 30));
-      saveSplit();
-    } else if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      toggleFull();
-    }
-  });
+  dragBar(splitter, { get: function () { return cardEl.offsetHeight; },
+                      set: setSplitPx, end: saveSplit, toggle: toggleFull });
+
   window.addEventListener("resize", applySplit);
   /* Typing in an answer box can change the card's length. */
   cardEl.addEventListener("input", function () { if (split !== null && isNarrow()) applySplit(); });
+
+  /* ------------------------------------------- the right pane's own divider
+     On a turtle step it sits between the drawing and the output. On a step with
+     an expected output and no drawing it sits between Expected output and Your
+     output. It looks and behaves exactly like the left one, and it is kept per
+     student in this browser under its own key, one for each of the two places.
+     Only the box above the bar is given a height. The drawing is never redrawn
+     or cropped: #turtle-canvas keeps its 7:5 shape and sizeStage() gives it the
+     largest width that fits the room it has, so both canvases scale inside it.
+     Hidden below 861px, where the page scrolls instead (see lesson.css). */
+  var RKEYS = { draw: "epsom:rsplit-draw", exp: "epsom:rsplit-exp" };
+  var DRAW_MIN = 120, EXP_MIN = 60, OUT_MIN = 90;
+  var rsplitter = el("div");
+  rsplitter.id = "rsplitter";
+  rsplitter.setAttribute("role", "separator");
+  rsplitter.setAttribute("aria-orientation", "horizontal");
+  rsplitter.setAttribute("aria-label", "Drag to make the drawing or the output bigger or smaller");
+  rsplitter.tabIndex = 0;
+  var outHead = $("output-head"), drawBlock = $("drawing-block"), expBlock = $("expected-block");
+  outHead.parentNode.insertBefore(rsplitter, outHead);
+  var rsplit = { draw: null, exp: null };
+  Object.keys(RKEYS).forEach(function (m) {
+    try {
+      var v = localStorage.getItem(RKEYS[m]);
+      if (v === "full") rsplit[m] = "full";
+      else if (v && isFinite(parseFloat(v))) rsplit[m] = parseFloat(v);
+    } catch (e) {}
+  });
+  function rmode() {
+    if (mainEl.classList.contains("cardonly")) return null;
+    if (!drawBlock.hidden) return "draw";
+    if (!expBlock.hidden) return "exp";
+    return null;
+  }
+  function saveRSplit() {
+    var m = rmode();
+    if (!m) return;
+    try {
+      if (rsplit[m] === null) localStorage.removeItem(RKEYS[m]);
+      else localStorage.setItem(RKEYS[m], String(rsplit[m]));
+    } catch (e) {}
+  }
+  /* The drawing box: as wide as fits, never wider than 700, and never taller
+     than the room above the bar. The canvases inside are pinned to it. */
+  function sizeStage() {
+    var stage = $("stage");
+    if (!stage || drawBlock.hidden) return;
+    var w = stage.clientWidth - 16, h = stage.clientHeight - 16;
+    var box = $("turtle-canvas");
+    if (w > 0 && h > 0) box.style.width = Math.max(60, Math.min(700, w, h * 1.4)) + "px";
+  }
+  function applyRSplit() {
+    drawBlock.style.height = ""; expBlock.style.height = ""; expBlock.style.maxHeight = "";
+    var m = rmode();
+    rsplitter.hidden = !m;
+    mainEl.classList.toggle("rsplit-set", !!m && rsplit[m] !== null && !isNarrow());
+    if (!m || isNarrow() || rsplit[m] === null) { sizeStage(); return; }
+    var target = m === "draw" ? drawBlock : expBlock;
+    var pane = target.parentNode;
+    var room = pane.clientHeight - rsplitter.offsetHeight - outHead.offsetHeight - OUT_MIN;
+    if (askRow && askRow.style.display !== "none") room -= askRow.offsetHeight;
+    var want = rsplit[m] === "full" ? 1e6 : rsplit[m] * window.innerHeight;
+    var least = m === "draw" ? DRAW_MIN : EXP_MIN;
+    var h = Math.max(least, Math.min(want, Math.max(least, room)));
+    target.style.height = Math.round(h) + "px";
+    if (m === "exp") target.style.maxHeight = "none";
+    sizeStage();
+  }
+  function setRSplitPx(px) {
+    var m = rmode();
+    if (!m) return;
+    rsplit[m] = Math.max(0, px) / window.innerHeight;
+    applyRSplit();
+  }
+  function toggleRFull() {
+    var m = rmode();
+    if (!m) return;
+    rsplit[m] = rsplit[m] === "full" ? null : "full";
+    applyRSplit();
+    saveRSplit();
+  }
+  dragBar(rsplitter, {
+    get: function () { var m = rmode(); return m === "exp" ? expBlock.offsetHeight : drawBlock.offsetHeight; },
+    set: setRSplitPx, end: saveRSplit, toggle: toggleRFull });
+  window.addEventListener("resize", applyRSplit);
 
   var KEYWORDS = {};
   ("False None True and as break continue def elif else for from if import in is " +
@@ -699,6 +794,7 @@
     }
     renderCard(i);
     applySplit();
+    applyRSplit();
     renderNav();
     updateRunGate();
     replay(i);
@@ -1092,6 +1188,7 @@
   /* Hooks for the automated browser test only. */
   window.__lesson = { state: function () { return state; }, go: go, run: run, buildPdf: buildPdf,
     applySplit: applySplit,
+    applyRSplit: applyRSplit, sizeStage: sizeStage,
                       isRunning: function () { return running; } };
 
   go(state.current);

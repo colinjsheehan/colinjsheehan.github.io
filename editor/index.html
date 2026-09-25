@@ -43,6 +43,7 @@
     .right { flex:1 1 auto; }
     #console { height:96px; }
     #turtle-canvas { height:auto; aspect-ratio:7/5; }
+    #rsplitter { display:none; }
   }
 
   .panehead { background:var(--panel); border-bottom:1px solid var(--grey);
@@ -93,7 +94,25 @@
 
   #stage { flex:1; overflow:auto; background:#fff; display:flex; justify-content:center;
            align-items:flex-start; padding:8px; }
-  #turtle-canvas { width:700px; height:500px; max-width:100%; }
+  /* The box keeps the 7:5 shape and both canvases are pinned inside it, so the
+     whole drawing scales when the divider moves. Nothing is redrawn or cropped. */
+  #turtle-canvas { position:relative; width:700px; max-width:100%; aspect-ratio:7/5; height:auto; }
+  #turtle-canvas canvas { position:absolute !important; left:0; top:0; margin-top:0 !important;
+                          width:100% !important; height:100% !important; }
+  #turtle-canvas img { position:absolute; left:0; top:0; width:100%; height:100%; }
+
+  /* The divider between the drawing and the output. Same bar as the lesson pages. */
+  #rsplitter { flex:none; height:16px; position:relative; z-index:3; cursor:row-resize;
+               background:var(--panel); border-top:1px solid var(--grey);
+               touch-action:none; user-select:none; -webkit-user-select:none; }
+  #rsplitter::before { content:""; position:absolute; left:0; right:0; top:-9px; height:9px; }
+  #rsplitter::after { content:""; position:absolute; left:50%; top:5px; width:44px; height:5px;
+                      margin-left:-22px; border-radius:3px; background:#AEB8BA; }
+  #rsplitter:hover::after, #rsplitter.dragging::after, #rsplitter:focus-visible::after
+    { background:var(--amber); }
+  #rsplitter:focus { outline:none; }
+  #rsplitter:focus-visible { box-shadow:inset 0 0 0 2px var(--amber); }
+  main.rsplit-set #console { height:auto; flex:1; min-height:90px; }
 
   #console { flex:none; height:132px; overflow:auto; border-top:1px solid var(--grey);
              background:#FAFBFB; padding:8px 10px;
@@ -146,7 +165,9 @@
   <section class="pane right">
     <div class="panehead">DRAWING</div>
     <div id="stage"><div id="turtle-canvas"></div></div>
-    <div class="panehead">OUTPUT</div>
+    <div id="rsplitter" role="separator" aria-orientation="horizontal" tabindex="0"
+         aria-label="Drag to make the drawing or the output bigger or smaller"></div>
+    <div class="panehead" id="output-head">OUTPUT</div>
     <div id="console"></div>
     <div id="askrow">
       <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
@@ -2026,7 +2047,91 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); run(); }
   });
 
-  window.__epsomTest = { buildPdf: buildPdf, fileName: fileName,
+  /* ---------- the divider between the drawing and the output ----------
+     Drag it with a mouse or a finger, double-tap or press Enter to give the
+     drawing the whole pane and back, and use the arrow keys. The position is
+     kept in this browser. Only the drawing box is given a height; sizeStage()
+     then gives the 7:5 canvas the largest width that fits, so the drawing is
+     never cropped. Hidden below 861px, where the panes are stacked. */
+  var RKEY = "epsom:rsplit-editor", OUT_MIN = 90, DRAW_MIN = 120;
+  var rsplitter = document.getElementById("rsplitter");
+  var stageEl = document.getElementById("stage");
+  var outHead = document.getElementById("output-head");
+  var mainEl = document.querySelector("main");
+  var rsplit = null;
+  try {
+    var saved = localStorage.getItem(RKEY);
+    if (saved === "full") rsplit = "full";
+    else if (saved && isFinite(parseFloat(saved))) rsplit = parseFloat(saved);
+  } catch (e) {}
+  function rnarrow() { return window.matchMedia("(max-width: 860px)").matches; }
+  function saveRSplit() {
+    try {
+      if (rsplit === null) localStorage.removeItem(RKEY);
+      else localStorage.setItem(RKEY, String(rsplit));
+    } catch (e) {}
+  }
+  function sizeStage() {
+    var w = stageEl.clientWidth - 16, h = stageEl.clientHeight - 16;
+    var box = document.getElementById("turtle-canvas");
+    if (w > 0 && h > 0) box.style.width = Math.max(60, Math.min(700, w, h * 1.4)) + "px";
+  }
+  function applyRSplit() {
+    stageEl.style.height = "";
+    mainEl.classList.toggle("rsplit-set", rsplit !== null && !rnarrow());
+    if (rsplit === null || rnarrow()) { sizeStage(); return; }
+    var pane = stageEl.parentNode;
+    var room = pane.clientHeight - rsplitter.offsetHeight - outHead.offsetHeight - OUT_MIN
+               - stageEl.previousElementSibling.offsetHeight;
+    var want = rsplit === "full" ? 1e6 : rsplit * window.innerHeight;
+    stageEl.style.flex = "none";
+    stageEl.style.height = Math.round(Math.max(DRAW_MIN, Math.min(want, Math.max(DRAW_MIN, room)))) + "px";
+    sizeStage();
+  }
+  function setRSplitPx(px) { rsplit = Math.max(0, px) / window.innerHeight; applyRSplit(); }
+  function toggleRFull() { rsplit = rsplit === "full" ? null : "full"; applyRSplit(); saveRSplit(); }
+  (function () {
+    var drag = null, lastTap = 0;
+    rsplitter.addEventListener("pointerdown", function (e) {
+      if (e.button !== undefined && e.button > 0) return;
+      e.preventDefault();
+      drag = { y: e.clientY, h: stageEl.offsetHeight, moved: false, id: e.pointerId };
+      try { rsplitter.setPointerCapture(e.pointerId); } catch (x) {}
+      rsplitter.classList.add("dragging");
+    });
+    rsplitter.addEventListener("pointermove", function (e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var dy = e.clientY - drag.y;
+      if (Math.abs(dy) > 4) drag.moved = true;
+      if (drag.moved) setRSplitPx(drag.h + dy);
+    });
+    function endDrag(e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var moved = drag.moved;
+      drag = null;
+      rsplitter.classList.remove("dragging");
+      if (moved) { saveRSplit(); lastTap = 0; return; }
+      var now = Date.now();
+      if (now - lastTap < 400) { lastTap = 0; toggleRFull(); }
+      else lastTap = now;
+    }
+    rsplitter.addEventListener("pointerup", endDrag);
+    rsplitter.addEventListener("pointercancel", endDrag);
+    rsplitter.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+        e.preventDefault();
+        setRSplitPx(stageEl.offsetHeight + (e.key === "ArrowUp" ? -30 : 30));
+        saveRSplit();
+      } else if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggleRFull();
+      }
+    });
+  })();
+  window.addEventListener("resize", applyRSplit);
+  applyRSplit();
+
+  window.__epsomTest = { buildPdf: buildPdf, fileName: fileName, applyRSplit: applyRSplit,
                          isRunning: function () { return running; } };
   window.__epsomReady = true;
 })();

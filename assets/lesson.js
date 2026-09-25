@@ -282,6 +282,147 @@
     set: setRSplitPx, end: saveRSplit, toggle: toggleRFull });
   window.addEventListener("resize", applyRSplit);
 
+  /* ------------------------------------------------ looking at the drawing
+     Fit crops to what the student drew and fills the box with it, the same
+     rectangle the hand-in PDF uses. Pinch, a trackpad pinch or the wheel zoom,
+     one finger or the mouse drags, and Whole canvas (or a double-tap) puts the
+     plain view back. Nothing is redrawn: the box is moved and scaled with a CSS
+     transform and #stage clips what falls outside, so every pixel the program
+     drew is still there and the PDF is unaffected. */
+  var view = { k: 1, tx: 0, ty: 0 };
+  function applyView() {
+    var box = $("turtle-canvas");
+    box.style.transform = view.k === 1 && !view.tx && !view.ty
+      ? "" : "translate(" + view.tx + "px," + view.ty + "px) scale(" + view.k + ")";
+    var plainBtn = $("plain");
+    if (plainBtn) plainBtn.disabled = (view.k === 1 && !view.tx && !view.ty);
+  }
+  function plainView() { view = { k: 1, tx: 0, ty: 0 }; applyView(); }
+  /* The smallest rectangle holding everything that was drawn, in canvas pixels. */
+  /* The turtle sprite sits on the top canvas. Fit measures what was DRAWN, so
+     that layer is left out: otherwise a program that draws nothing yet would
+     zoom the arrow to fill the box. */
+  function drawnOnly() {
+    var cs = $("turtle-canvas").querySelectorAll("canvas");
+    if (!cs.length) return null;
+    var list = [];
+    for (var k = 0; k < cs.length; k++) list.push(cs[k]);
+    if (list.length > 1) {
+      list.sort(function (a, b) {
+        return (parseInt(a.style.zIndex || 0, 10)) - (parseInt(b.style.zIndex || 0, 10));
+      });
+      list.pop();
+    }
+    var c = document.createElement("canvas");
+    c.width = cs[0].width; c.height = cs[0].height;
+    var g = c.getContext("2d");
+    g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height);
+    for (var j = 0; j < list.length; j++) { try { g.drawImage(list[j], 0, 0, c.width, c.height); } catch (e) {} }
+    return c;
+  }
+  function inkBox() {
+    var c = drawnOnly();
+    if (!c) return null;
+    var w = c.width, h = c.height, d;
+    try { d = c.getContext("2d").getImageData(0, 0, w, h).data; } catch (e) { return null; }
+    var x0 = w, y0 = h, x1 = -1, y1 = -1;
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        var i = (y * w + x) * 4;
+        if (d[i] < 235 || d[i + 1] < 235 || d[i + 2] < 235) {
+          if (x < x0) x0 = x;
+          if (x > x1) x1 = x;
+          if (y < y0) y0 = y;
+          if (y > y1) y1 = y;
+        }
+      }
+    }
+    if (x1 < 0) return null;
+    return { x0: x0, y0: y0, x1: x1 + 1, y1: y1 + 1, w: w, h: h };
+  }
+  function fitView() {
+    var stage = $("stage"), box = $("turtle-canvas");
+    var ink = inkBox();
+    if (!ink || drawBlock.hidden) return false;
+    plainView();
+    var b = box.getBoundingClientRect(), st = stage.getBoundingClientRect();
+    var sx = b.width / ink.w, sy = b.height / ink.h;          // canvas pixel to screen
+    var iw = (ink.x1 - ink.x0) * sx, ih = (ink.y1 - ink.y0) * sy;
+    var pad = 16;
+    var k = Math.min((st.width - pad * 2) / Math.max(1, iw), (st.height - pad * 2) / Math.max(1, ih));
+    k = Math.max(1, Math.min(6, k));
+    var cx = (ink.x0 * sx + iw / 2), cy = (ink.y0 * sy + ih / 2);   // ink centre in the box
+    view.k = k;
+    view.tx = st.left - b.left + st.width / 2 - k * cx;
+    view.ty = st.top - b.top + st.height / 2 - k * cy;
+    applyView();
+    return true;
+  }
+  function zoomAt(clientX, clientY, factor) {
+    var box = $("turtle-canvas").getBoundingClientRect();
+    var k2 = Math.max(0.5, Math.min(8, view.k * factor));
+    /* keep the point under the fingers where it is */
+    var px = (clientX - box.left) / view.k, py = (clientY - box.top) / view.k;
+    view.tx += (view.k - k2) * px;
+    view.ty += (view.k - k2) * py;
+    view.k = k2;
+    applyView();
+  }
+  var fitBtn = $("fit"), plainBtn = $("plain");
+  if (fitBtn) fitBtn.addEventListener("click", function () { fitView(); });
+  if (plainBtn) plainBtn.addEventListener("click", plainView);
+  (function () {
+    var stage = $("stage");
+    if (!stage) return;
+    var points = {}, last = null, pinch = null, tapAt = 0, moved = false;
+    stage.addEventListener("pointerdown", function (e) {
+      points[e.pointerId] = { x: e.clientX, y: e.clientY };
+      var ids = Object.keys(points);
+      moved = false;
+      if (ids.length === 1) { last = { x: e.clientX, y: e.clientY }; }
+      else if (ids.length === 2) {
+        var a = points[ids[0]], b = points[ids[1]];
+        pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) };
+      }
+      try { stage.setPointerCapture(e.pointerId); } catch (x) {}
+    });
+    stage.addEventListener("pointermove", function (e) {
+      if (!points[e.pointerId]) return;
+      points[e.pointerId] = { x: e.clientX, y: e.clientY };
+      var ids = Object.keys(points);
+      if (ids.length >= 2 && pinch) {
+        var a = points[ids[0]], b = points[ids[1]];
+        var d = Math.hypot(a.x - b.x, a.y - b.y);
+        if (pinch.d > 0 && Math.abs(d - pinch.d) > 1) {
+          zoomAt((a.x + b.x) / 2, (a.y + b.y) / 2, d / pinch.d);
+          moved = true;
+        }
+        pinch.d = d;
+      } else if (ids.length === 1 && last) {
+        var dx = e.clientX - last.x, dy = e.clientY - last.y;
+        if (Math.abs(dx) > 2 || Math.abs(dy) > 2) moved = true;
+        if (moved) { view.tx += dx; view.ty += dy; applyView(); }
+        last = { x: e.clientX, y: e.clientY };
+      }
+    });
+    function up(e) {
+      delete points[e.pointerId];
+      if (!Object.keys(points).length) { pinch = null; last = null; }
+      if (moved) { tapAt = 0; return; }
+      var now = Date.now();
+      if (now - tapAt < 400) { tapAt = 0; plainView(); }
+      else tapAt = now;
+    }
+    stage.addEventListener("pointerup", up);
+    stage.addEventListener("pointercancel", up);
+    stage.addEventListener("dblclick", plainView);
+    stage.addEventListener("wheel", function (e) {
+      if (drawBlock.hidden) return;
+      e.preventDefault();
+      zoomAt(e.clientX, e.clientY, e.deltaY < 0 ? 1.12 : 1 / 1.12);
+    }, { passive: false });
+  })();
+
   var KEYWORDS = {};
   ("False None True and as break continue def elif else for from if import in is " +
    "not or pass return while with").split(" ").forEach(function (k) { KEYWORDS[k] = 1; });
@@ -795,6 +936,7 @@
     renderCard(i);
     applySplit();
     applyRSplit();
+    plainView();
     renderNav();
     updateRunGate();
     replay(i);
@@ -883,6 +1025,7 @@
 
   function resetCanvas() {
     $("turtle-canvas").innerHTML = "";
+    plainView();                       // a new drawing always starts on the plain view
     if (window.Sk && Sk.TurtleGraphics && Sk.TurtleGraphics.reset) {
       try { Sk.TurtleGraphics.reset(); } catch (e) {}
     }
@@ -1189,6 +1332,7 @@
   window.__lesson = { state: function () { return state; }, go: go, run: run, buildPdf: buildPdf,
     applySplit: applySplit,
     applyRSplit: applyRSplit, sizeStage: sizeStage,
+    fitView: fitView, plainView: plainView, view: function () { return view; },
                       isRunning: function () { return running; } };
 
   go(state.current);

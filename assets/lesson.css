@@ -108,6 +108,11 @@ details.hint p { background:var(--lamber); padding:6px 9px; border-radius:4px; }
    right of the drawing was cut off. The box keeps the 7:5 shape and both canvases
    are pinned inside it, so the whole drawing scales to fit. */
 #turtle-canvas { position:relative; width:700px; max-width:100%; aspect-ratio:7/5; height:auto; }
+/* Fit and pinch: the box itself is moved and scaled, so nothing is redrawn and
+   the canvases keep every pixel they had. #stage clips what falls outside. */
+#turtle-canvas { transform-origin:0 0; will-change:transform; }
+#drawing-head .btn { padding:2px 8px; font-size:12px; }
+@media (min-width: 861px) { #stage { touch-action:none; } }
 #turtle-canvas canvas { position:absolute !important; left:0; top:0; margin-top:0 !important;
                         width:100% !important; height:100% !important; }
 #turtle-canvas img { position:absolute; left:0; top:0; width:100%; height:100%; }

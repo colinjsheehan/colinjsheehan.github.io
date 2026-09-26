@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 10 Lesson 6 | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; Computer Science</div>
+    <h1>Year 10: Exam-style pseudocode practice</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Hand in (PDF)</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Hand in makes a PDF to upload to Google Classroom.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y10-pseudocode-practice", "order": 6, "version": 1, "year": "Year 10", "slug": "pseudocode-practice", "folder": "y10", "title": "Exam-style pseudocode practice", "short": "Lesson 6", "objective": "Read, trace, write and correct Cambridge pseudocode for sequence and selection, and translate it into Python to test it.", "keywords": ["pseudocode", "constant", "condition", "IF", "CASE", "trace", "error"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From earlier lessons", "intro": ["Answer all three before you start. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "State the four stages of the program development life cycle, in order."}, {"id": "r2", "label": "R2", "prompt": "Which symbol assigns a value in pseudocode?"}, {"id": "r3", "label": "R3", "prompt": "Which pseudocode symbol means not equal to?"}]}, {"kind": "questions", "nav": "W", "label": "Words", "title": "Pseudocode and Python side by side", "intro": ["In Paper 2, an answer that is code is written in Cambridge pseudocode. The one exception is the 15-mark scenario question, where Python may be used.", "Use this table in every step of the lesson. Come back to W at any time."], "table": {"headers": ["Pseudocode", "Python", "What it does"], "rows": [["DECLARE Mark : INTEGER", "no line needed", "names a variable and its data type"], ["CONSTANT PassMark \u2190 50", "PASS_MARK = 50", "a value that never changes"], ["Mark \u2190 63", "mark = 63", "stores a value"], ["INPUT Mark", "mark = int(input())", "reads a value"], ["OUTPUT \"Pass\"", "print(\"Pass\")", "displays a value"], ["=", "==", "equal to, in a condition"], ["<>", "!=", "not equal to"], ["IF ... THEN ... ELSE ... ENDIF", "if ...: and else:", "chooses one of two branches"], ["CASE OF ... OTHERWISE ... ENDCASE", "if, elif and else", "chooses one of several values"]]}, "questions": [{"id": "w1", "label": "W1", "prompt": "Write the pseudocode for this Python line:  total = total + price"}, {"id": "w2", "label": "W2", "prompt": "Write the Python condition for this pseudocode condition:  Answer <> 0"}]}, {"kind": "questions", "nav": "1", "label": "Step 1: choose", "title": "Data types", "intro": ["A program stores five items about a student.", "Choose the most suitable data type for each item."], "questions": [{"id": "s1a", "label": "1a", "prompt": "The student's surname", "pick": [{"v": "INTEGER"}, {"v": "REAL"}, {"v": "CHAR"}, {"v": "STRING"}, {"v": "BOOLEAN"}]}, {"id": "s1b", "label": "1b", "prompt": "The student's age in whole years", "pick": [{"v": "INTEGER"}, {"v": "REAL"}, {"v": "CHAR"}, {"v": "STRING"}, {"v": "BOOLEAN"}]}, {"id": "s1c", "label": "1c", "prompt": "The student's average grade, such as 78.5", "pick": [{"v": "INTEGER"}, {"v": "REAL"}, {"v": "CHAR"}, {"v": "STRING"}, {"v": "BOOLEAN"}]}, {"id": "s1d", "label": "1d", "prompt": "Whether the student has paid the trip fee", "pick": [{"v": "INTEGER"}, {"v": "REAL"}, {"v": "CHAR"}, {"v": "STRING"}, {"v": "BOOLEAN"}]}, {"id": "s1e", "label": "1e", "prompt": "The first letter of the student's house, such as 'B'", "pick": [{"v": "INTEGER"}, {"v": "REAL"}, {"v": "CHAR"}, {"v": "STRING"}, {"v": "BOOLEAN"}]}]}, {"kind": "questions", "nav": "2", "label": "Step 2: read", "title": "Constants and variables", "intro": ["Read this pseudocode. It uses one constant and one variable."], "readonly": "CONSTANT PassMark \u2190 50\nDECLARE Mark : INTEGER\nINPUT Mark\nIF Mark >= PassMark\n  THEN\n    OUTPUT \"Pass\"\n  ELSE\n    OUTPUT \"Fail\"\nENDIF", "questions": [{"id": "s2a", "label": "2a", "prompt": "Name the constant in this pseudocode."}, {"id": "s2b", "label": "2b", "prompt": "State one difference between a variable and a constant."}, {"id": "s2c", "label": "2c", "prompt": "Write one line of pseudocode that declares a constant called MaxPupils with the value 30."}]}, {"kind": "code", "nav": "3", "label": "Step 3: predict, then run", "title": "Conditions are TRUE or FALSE", "remember": "A condition is a question with two possible answers. Pseudocode writes them TRUE and FALSE; Python prints them True and False.", "intro": ["The grey box shows three pseudocode conditions. The Python below is the same three conditions, translated with the table in W. AND becomes and.", "Write your prediction in 3a. Run is switched on once 3a has an answer.", "Once you press Run, 3a cannot be changed."], "readonly": "8 > 3\n5 <> 5\n(4 >= 4) AND (2 > 9)", "code": "print(8 > 3)\nprint(5 != 5)\nprint((4 >= 4) and (2 > 9))\n", "predict_first": "s3a", "questions": [{"id": "s3a", "label": "3a", "prompt": "Predict the three lines this prints."}, {"id": "s3b", "label": "3b", "prompt": "The third condition has one TRUE part and one FALSE part. Explain why the whole condition is FALSE."}, {"id": "s3c", "label": "3c", "prompt": "Write a precise condition that is TRUE when the variable Temp is below zero."}], "expected_b64": "VHJ1ZQpGYWxzZQpGYWxzZQ=="}, {"kind": "questions", "nav": "4", "label": "Step 4: trace", "title": "Trace an IF", "intro": ["Read this pseudocode. Work out the output for each input without running anything."], "readonly": "INPUT Age\nIF Age >= 18\n  THEN\n    OUTPUT \"Adult\"\n  ELSE\n    OUTPUT \"Child\"\nENDIF", "questions": [{"id": "s4a", "label": "4a", "prompt": "State exactly what is output when the input is 18."}, {"id": "s4b", "label": "4b", "prompt": "State exactly what is output when the input is 7."}, {"id": "s4c", "label": "4c", "prompt": "The input 18 is the boundary value. Explain why it is the most useful value to test."}]}, {"kind": "code", "nav": "5", "label": "Step 5: translate and run", "title": "The same IF in Python", "remember": "THEN becomes a colon. ENDIF has no line in Python: the indented lines end instead.", "intro": ["This is the Python for the pseudocode in Step 4, with one gap in the condition.", "Replace ____ with the boundary value. Then press Run and type 18 when asked."], "code": "age = int(input(\"Age: \"))\nif age >= ____:\n    print(\"Adult\")\nelse:\n    print(\"Child\")\n", "inputs": ["18"], "hint": "The pseudocode condition is Age >= 18.", "questions": [{"id": "s5a", "label": "5a", "prompt": "Name the two pseudocode keywords in Step 4 that have no word of their own in the Python."}], "expected_b64": "QWR1bHQ="}, {"kind": "questions", "nav": "6", "label": "Step 6: write", "title": "Write an IF in pseudocode", "intro": ["A student passes with a mark of 50 or more. Otherwise the student fails. The mark is stored in the variable Mark.", "Write the pseudocode in the box. Use the layout from Step 4: THEN and ELSE on their own lines, and ENDIF at the end."], "hint": "Start with IF Mark >= 50. It is >= and not > because a mark of exactly 50 passes.", "questions": [{"id": "s6a", "label": "6a", "prompt": "Write pseudocode that outputs Pass or Fail for the value in Mark."}]}, {"kind": "code", "nav": "7", "label": "Step 7: translate and run", "title": "A CASE statement in Python", "remember": "CASE tests one variable against set values. Python uses if, elif and else. OTHERWISE catches every value that is not listed.", "intro": ["The grey box is a menu written as a CASE statement. The Python below is the same menu, with one gap.", "Replace ____ so that choice 3 outputs Quit. Then press Run and type 3 when asked."], "readonly": "CASE OF Choice\n  1 : OUTPUT \"Play\"\n  2 : OUTPUT \"Load\"\n  3 : OUTPUT \"Quit\"\n  OTHERWISE OUTPUT \"Invalid\"\nENDCASE", "code": "choice = int(input(\"Choice: \"))\nif choice == 1:\n    print(\"Play\")\nelif choice == 2:\n    print(\"Load\")\nelif choice == ____:\n    print(\"Quit\")\nelse:\n    print(\"Invalid\")\n", "inputs": ["3"], "hint": "Each CASE value becomes one condition: choice == 1, choice == 2, and so on.", "questions": [{"id": "s7a", "label": "7a", "prompt": "Which Python word does the job of OTHERWISE?"}, {"id": "s7b", "label": "7b", "prompt": "Without running it, state what the program outputs if the user types 7."}], "expected_b64": "UXVpdA=="}, {"kind": "questions", "nav": "8", "label": "Step 8: write", "title": "Write a whole algorithm", "intro": ["Write a pseudocode algorithm that does these three things, in this order.", "First, it asks the user to input the price of two items.", "Second, it works out the total of the two prices.", "Third, if the total is more than 10, it outputs \"Discount\"; otherwise it outputs the total.", "Use sensible variable names and the syllabus layout."], "hint": "Two INPUT lines, one assignment with the arrow, then IF with THEN, ELSE and ENDIF.", "questions": [{"id": "s8a", "label": "8a", "prompt": "Write the pseudocode algorithm."}]}, {"kind": "code", "nav": "9", "label": "Step 9: test in Python", "title": "Test your algorithm", "remember": "The expected output shown after Run is for Test 1 only.", "intro": ["Translate your pseudocode from Step 8 into Python in the editor. Use float(input()) for the prices and print the total as money with f\"{total:.2f}\".", "Test 1: run it and type 6.50 and then 4.00. It must output Discount.", "Then answer 9a and 9b with your own program."], "code": "# Step 8 in Python. Write your program below this line.\n\n", "inputs": ["6.50", "4.00"], "hint": "total = price1 + price2, then if total > 10: and else: with the two outputs.", "questions": [{"id": "s9a", "label": "9a", "prompt": "Run it again with 4.00 and 5.00. Write exactly what it outputs."}, {"id": "s9b", "label": "9b", "prompt": "Give two prices whose total is exactly 10, and state what your program should output for them."}], "expected_b64": "RGlzY291bnQ="}, {"kind": "questions", "nav": "10", "label": "Step 10: find and correct", "title": "Three errors", "intro": ["This pseudocode should output Pass when Score is 50 or more, and Fail otherwise. It contains three errors.", "For each error, give the line number and write the corrected line in full."], "readonly": "1   INPUT Score\n2   IF Score > 50\n3       OUTPUT \"Pass\"\n4   ELSE\n5       OUTPUT \"Fail\"", "hint": "Compare it with the syllabus layout in Step 4. Check the condition with a score of exactly 50.", "questions": [{"id": "s10a", "label": "10a", "prompt": "Error 1: the line number and the corrected line."}, {"id": "s10b", "label": "10b", "prompt": "Error 2: the line number and the corrected line."}, {"id": "s10c", "label": "10c", "prompt": "Error 3: the line number and the corrected line."}]}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer in pseudocode, without running anything."], "questions": [{"id": "e1", "label": "E1", "prompt": "Write the pseudocode line that reads a value into Age."}, {"id": "e2", "label": "E2", "prompt": "Write the pseudocode condition for: Score is 40 or more."}, {"id": "e3", "label": "E3", "prompt": "Which keyword closes a CASE statement?"}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

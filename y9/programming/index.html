@@ -33,6 +33,21 @@
   a span { display:block; font-size:14px; color:#5A6567; margin-top:2px; }
   a.back { display:inline-block; border:0; padding:6px 0; font-size:15px; color:#1F6F6B; }
   p.none { color:#5A6567; font-size:16px; }
+  div.group { padding:12px 14px; margin:8px 0; border:2px solid #8CC79C;
+               border-left:8px solid #3E8E57; border-radius:8px; background:#DDF1E2;
+               font-size:17px; font-weight:600; box-shadow:0 1px 3px rgba(0,0,0,.10); }
+  div.group b { font-weight:800; }
+  div.group > span { display:block; font-size:14px; color:#3F4A4C; font-weight:400; margin-top:2px; }
+  div.group a.part { margin:8px 0 0; padding:8px 10px; border:1px solid #8CC79C;
+                      border-radius:6px; background:#fff; font-size:15px; font-weight:600;
+                      color:#1F6F6B; }
+  div.group a.part:hover { border-color:#3E8E57; background:#F3FAF5; }
+  div.group span.part { display:block; margin:8px 0 0; padding:8px 10px;
+                         border:1px dashed #C9D0D0; border-radius:6px; background:#F7F8F8;
+                         color:#8A9496; font-size:15px; font-weight:400; }
+  div.group span.part i { display:block; font-style:normal; font-size:13px; margin-top:1px; }
+  div.group.shut { background:#F7F8F8; border:2px dashed #C9D0D0; border-left:2px dashed #C9D0D0;
+                    color:#8A9496; }
   div.locked { display:block; padding:12px 14px; margin:8px 0; border:2px dashed #C9D0D0;
                border-radius:8px; color:#8A9496; font-size:17px; background:#F7F8F8; cursor:default; }
   div.locked span { display:block; font-size:14px; margin-top:2px; }
@@ -48,13 +63,14 @@
 <a class="lesson" href="../variables/"><b>2</b>&nbsp;&nbsp;Variables<span>Store a value in a variable, use it by name, and change one line to change every place it is used.</span></a>
 <a class="lesson" href="../for-loop/"><b>3</b>&nbsp;&nbsp;The for loop<span>Use a for loop to repeat lines a set number of times, and work out the turn for a regular shape.</span></a>
 <a class="lesson" href="../while-loop/"><b>4</b>&nbsp;&nbsp;The while loop<span>Use a while loop that repeats while a condition is True, and change a variable inside it so the loop stops.</span></a>
-<a class="review" href="../r1-while-loop/"><b>R1</b>&nbsp;&nbsp;Start, condition, change<span>Name the start, condition and change of a while loop, and trace it to find how many times it runs and the value when it stops.</span></a>
 <a class="lesson" href="../input-and-validation/"><b>5</b>&nbsp;&nbsp;Input and validation<span>Turn typed text into a number with int(), and use a while loop to refuse a value until a sensible one is typed.</span></a>
 <a class="lesson" href="../strings/"><b>6</b>&nbsp;&nbsp;Counting characters<span>Find the length of a string, get one character by its index, and take the first few characters with a slice.</span></a>
 <a class="lesson" href="../div-and-mod/"><b>7</b>&nbsp;&nbsp;DIV and MOD<span>Use // for whole boxes and % for what is left over, and work out how many boxes an order needs.</span></a>
 <a class="lesson" href="../one-loop-many-shapes/"><b>8</b>&nbsp;&nbsp;One loop, many shapes<span>Use a for loop to draw the same shape in several places, going through a list of positions.</span></a>
 <a class="lesson" href="../arrays/"><b>9</b>&nbsp;&nbsp;Arrays: one name, many values<span>Store values in a list, get one out by its index, change one, and go through them all with a loop.</span></a>
 <a class="lesson" href="../sprint-times/"><b>10</b>&nbsp;&nbsp;Arrays 2: total, fastest and count<span>Use one loop over a list to find a total, an average, the smallest value and how many values meet a condition.</span></a>
+<h2>Review</h2>
+<a class="review" href="../r1-while-loop/"><b>R1</b>&nbsp;&nbsp;Start, condition, change<span>Name the start, condition and change of a while loop, and trace it to find how many times it runs and the value when it stops. Reviews lessons 1 to 4.</span></a>
 <h2>Free coding</h2>
 <a class="editor" href="../../editor/">Epsom Turtle<span>A blank editor for Python and turtle. Save your drawing as a PDF.</span></a>
 

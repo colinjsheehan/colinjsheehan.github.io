@@ -33,6 +33,21 @@
   a span { display:block; font-size:14px; color:#5A6567; margin-top:2px; }
   a.back { display:inline-block; border:0; padding:6px 0; font-size:15px; color:#1F6F6B; }
   p.none { color:#5A6567; font-size:16px; }
+  div.group { padding:12px 14px; margin:8px 0; border:2px solid #8CC79C;
+               border-left:8px solid #3E8E57; border-radius:8px; background:#DDF1E2;
+               font-size:17px; font-weight:600; box-shadow:0 1px 3px rgba(0,0,0,.10); }
+  div.group b { font-weight:800; }
+  div.group > span { display:block; font-size:14px; color:#3F4A4C; font-weight:400; margin-top:2px; }
+  div.group a.part { margin:8px 0 0; padding:8px 10px; border:1px solid #8CC79C;
+                      border-radius:6px; background:#fff; font-size:15px; font-weight:600;
+                      color:#1F6F6B; }
+  div.group a.part:hover { border-color:#3E8E57; background:#F3FAF5; }
+  div.group span.part { display:block; margin:8px 0 0; padding:8px 10px;
+                         border:1px dashed #C9D0D0; border-radius:6px; background:#F7F8F8;
+                         color:#8A9496; font-size:15px; font-weight:400; }
+  div.group span.part i { display:block; font-style:normal; font-size:13px; margin-top:1px; }
+  div.group.shut { background:#F7F8F8; border:2px dashed #C9D0D0; border-left:2px dashed #C9D0D0;
+                    color:#8A9496; }
   div.locked { display:block; padding:12px 14px; margin:8px 0; border:2px dashed #C9D0D0;
                border-radius:8px; color:#8A9496; font-size:17px; background:#F7F8F8; cursor:default; }
   div.locked span { display:block; font-size:14px; margin-top:2px; }
@@ -49,11 +64,11 @@
 <a class="lesson" href="../for-loop/"><b>3</b>&nbsp;&nbsp;The for loop<span>Use a for loop to repeat lines a set number of times, and work out the turn for a regular shape.</span></a>
 <a class="lesson" href="../conditions/"><b>4</b>&nbsp;&nbsp;Conditions<span>Use if, elif and else to choose one path, and test the value on the edge.</span></a>
 <a class="lesson" href="../ask-the-user/"><b>5</b>&nbsp;&nbsp;Ask the user<span>Ask the user a question, turn the answer into a number with int(), and choose what to do with a menu.</span></a>
-<a class="review" href="../r1-text-or-number/"><b>R1</b>&nbsp;&nbsp;Text or number? input() and int()<span>Say what kind of value input() gives, turn it into a number with int(), and use = to store and == to compare.</span></a>
 <a class="lesson" href="../making-it-insist/"><b>6</b>&nbsp;&nbsp;Making it insist<span>Use a while loop to refuse a value outside the range and ask again until a sensible one is typed.</span></a>
-<a class="lesson" href="../functions/"><b>7</b>&nbsp;&nbsp;Functions: define and call<span>Define a function that names a job, call it to carry the job out, and call it several times to reuse the same instructions.</span></a>
-<a class="review" href="../parameters/"><b>7b</b>&nbsp;&nbsp;Functions: parameters and arguments<span>Give a function parameters, call it with arguments in the right order, and pass it a value the user typed and the program checked.</span></a>
+<div class="group shut"><b>7</b>&nbsp;&nbsp;Functions<span>Name a job once with a function, call it whenever you need it, and give it values to work with.</span><span class="part">Part 1: define and call<i>Not open yet</i></span><span class="part">Part 2: parameters and arguments<i>Not open yet</i></span></div>
 <a class="lesson" href="../polygon-program/"><b>8</b>&nbsp;&nbsp;The polygon program<span>Put input, validation, selection and a function together in one program, and test it at the edges.</span></a>
+<h2>Review</h2>
+<a class="review" href="../r1-text-or-number/"><b>R1</b>&nbsp;&nbsp;Text or number? input() and int()<span>Say what kind of value input() gives, turn it into a number with int(), and use = to store and == to compare. Reviews lessons 1 to 5.</span></a>
 <h2>Free coding</h2>
 <a class="editor" href="../../editor/">Epsom Turtle<span>A blank editor for Python and turtle. Save your drawing as a PDF.</span></a>
 

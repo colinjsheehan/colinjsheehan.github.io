@@ -588,12 +588,24 @@
     if (step.images) cardEl.appendChild(pics(step.images));
 
     if (step.table) {
+      /* Column alignment. Digits read best centred and words read best from the
+         left, so each column is measured: a column whose longest body cell is
+         more than four characters is left-aligned, the rest stay centred. The
+         first column keeps its own left-aligned rule either way. */
+      var LONG = 4, wide = [];
+      step.table.rows.forEach(function (row) {
+        row.forEach(function (c, ci) {
+          if (String(c == null ? "" : c).length > LONG) wide[ci] = true;
+        });
+      });
       var t = el("table", "idx"), tr = el("tr");
-      step.table.headers.forEach(function (h) { tr.appendChild(el("th", "", h)); });
+      step.table.headers.forEach(function (h, ci) {
+        tr.appendChild(el("th", wide[ci] ? "lft" : "", h));
+      });
       t.appendChild(tr);
       step.table.rows.forEach(function (row) {
         var r2 = el("tr");
-        row.forEach(function (c) { r2.appendChild(el("td", "", c)); });
+        row.forEach(function (c, ci) { r2.appendChild(el("td", wide[ci] ? "lft" : "", c)); });
         t.appendChild(r2);
       });
       cardEl.appendChild(t);

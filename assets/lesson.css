@@ -62,6 +62,11 @@ table.idx { border-collapse:collapse; margin:8px 0; font-size:14px; }
 table.idx th, table.idx td { border:1px solid var(--grey); padding:4px 9px; text-align:center; }
 table.idx th { background:var(--teal); color:#fff; font-weight:700; }
 table.idx td:first-child { font-weight:700; text-align:left; background:var(--panel); }
+/* A column of words reads badly centred, a column of digits reads badly left.
+   lesson.js measures each column and adds .lft to the ones holding text longer
+   than four characters, so the index and place-value grids stay centred and a
+   table of pseudocode or explanations is left-aligned. Added 26 Sep 2026. */
+table.idx th.lft, table.idx td.lft { text-align:left; }
 pre.show { background:#F7F8F8; border:1px solid var(--grey); border-radius:5px;
            padding:7px 10px; margin:6px 0; font-size:14.5px; line-height:1.45;
            font-family:ui-monospace,Menlo,Consolas,monospace; white-space:pre; overflow-x:auto; }

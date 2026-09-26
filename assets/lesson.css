@@ -271,6 +271,10 @@ ul.wordlist b { color:var(--teal); }
                background:#fff; text-align:center; width:130px; }
 .pics img { display:block; max-width:100%; max-height:150px; width:auto; height:auto; margin:0 auto; }
 .pics figcaption { font-size:17px; font-weight:700; margin-top:2px; }
+/* A picture a student has to read, not glance at: the whole row, and tall
+   enough that the words inside it are no smaller than the words around it. */
+.pics figure.big { flex:1 1 100%; padding:8px; }
+.pics figure.big img { max-height:520px; }
 
 /* ---------------------------------------------------------------- pick one
    Tap a word or a picture. Big targets: these are pressed with a finger. */

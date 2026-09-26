@@ -687,8 +687,15 @@
       var f = el("figure");
       var im = el("img");
       im.src = p.src;
-      im.alt = p.label || "";
+      /* "alt" is for a picture that needs describing to a reader who cannot see
+         it but should not carry a caption on screen, such as a flowchart. With
+         no "alt", the caption is the description, as it has always been. */
+      im.alt = p.alt || p.label || "";
       im.loading = "eager";
+      /* "big" is a picture that has to be read, not glanced at: it takes the
+         whole row and is allowed to be tall. Added 26 Sep 2026 for the Year 10
+         flowchart, which is unreadable at the icon size. */
+      if (p.big) f.className = "big";
       f.appendChild(im);
       if (p.label) f.appendChild(el("figcaption", "", p.label));
       row.appendChild(f);

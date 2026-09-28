@@ -55,11 +55,22 @@ main.cardonly #card { max-height:none; flex:1; }
                    letter-spacing:.4px; }
 #card h2 { font-size:19px; margin:2px 0 8px; }
 #card p { margin:4px 0; font-size:15px; line-height:1.4; }
+/* READING WIDTH (28 Sep 2026). Prose was running 89 characters a line on a
+   Chromebook and 101 on an iPad held upright. A long line costs a reader in a
+   second language more than a first: losing your place in the middle means
+   reading the sentence again. Prose and question wording are capped near 66
+   characters; tables, code and the drill box keep the full width, because they
+   are read by their shape rather than left to right. */
+#card p, #card li { max-width:34em; }
+/* The question wording is an inline span beside its label, so it needs a box of
+   its own before a width can hold it. The answer area below is left full width. */
+#card .q .qprompt { display:inline-block; max-width:32em; vertical-align:top; }
 .remember { background:var(--lteal); border-left:4px solid var(--teal); padding:6px 9px;
             margin:6px 0; font-size:14.5px; }
 .remember b { color:var(--teal); }
 table.idx { border-collapse:collapse; margin:8px 0; font-size:14px; }
-table.idx th, table.idx td { border:1px solid var(--grey); padding:4px 9px; text-align:center; }
+table.idx th, table.idx td { border:1px solid var(--grey); padding:4px 9px; text-align:center;
+                             vertical-align:top; }
 table.idx th { background:var(--teal); color:#fff; font-weight:700; }
 table.idx td:first-child { font-weight:700; text-align:left; background:var(--panel); }
 /* A column of words reads badly centred, a column of digits reads badly left.
@@ -67,6 +78,23 @@ table.idx td:first-child { font-weight:700; text-align:left; background:var(--pa
    than four characters, so the index and place-value grids stay centred and a
    table of pseudocode or explanations is left-aligned. Added 26 Sep 2026. */
 table.idx th.lft, table.idx td.lft { text-align:left; }
+/* A column of code inside a table: monospace, line breaks kept, no wrapping, so
+   the lines a student has to type look like the lines they will type. */
+table.idx td.codecell { text-align:left; padding:3px 9px; }
+table.idx td.codecell pre { margin:0; font-size:13.5px; line-height:1.35;
+     font-family:ui-monospace,Menlo,Consolas,monospace; white-space:pre; }
+/* MAKE STEP furniture. The ideas list is short and scannable, the plan box holds
+   what is due in class and what is homework, the warning is one line, and the
+   standing line about saving is small print the writer never types. */
+#card ul.ideas, #card ol.points { margin:4px 0 6px; padding-left:22px; max-width:34em; }
+#card ol.points li { font-size:15px; line-height:1.4; margin:1px 0; }
+#card ul.ideas li { font-size:15px; line-height:1.4; margin:1px 0; }
+#card div.plan { background:var(--panel); border-left:4px solid var(--teal);
+     border-radius:4px; padding:5px 9px; margin:8px 0 4px; max-width:34em; }
+#card div.plan p { margin:2px 0; font-size:14.5px; }
+#card div.plan b { color:var(--teal); }
+#card p.watch { font-size:14.5px; margin:6px 0 2px; max-width:34em; }
+#card p.standing { font-size:12.5px; color:#5A6567; margin:6px 0 0; max-width:34em; }
 pre.show { background:#F7F8F8; border:1px solid var(--grey); border-radius:5px;
            padding:7px 10px; margin:6px 0; font-size:14.5px; line-height:1.45;
            font-family:ui-monospace,Menlo,Consolas,monospace; white-space:pre; overflow-x:auto; }

@@ -52,6 +52,10 @@
     locked: "Locked when Run was pressed.",
     yes: "Matches the expected output", no: "Does not match the expected output",
     err: "Stopped with an error", ok: "", waiting: "Shown after you run the code once.",
+    checkpoint: "In class: ", homework: "Homework: ",
+    handinNote: "Your work is saved in this browser on this device. Make the "
+      + "hand-in PDF before the end of the lesson: it holds your code, so you can "
+      + "paste it back in on another device and carry on.",
     reset: "Reset this step", resetArm: "Tap again to reset",
     noPdf: "The PDF tool did not load. Reload the page and try again.",
     saved: function (f) { return "Saved as \"" + f + "\". Upload it to this lesson's Google Classroom assignment."; }
@@ -585,6 +589,23 @@
       cardEl.appendChild(wl);
     }
     (step.intro || []).forEach(function (t) { cardEl.appendChild(el("p", "", t)); });
+    /* MAKE STEP (28 Sep 2026). The Make card used to be a free paragraph field and
+       grew to 200 words, most of it repeating what the page itself says. It now
+       has fixed places: one sentence saying what to make, an optional short list
+       of ideas, then, under the table, what has to be done in class and what is
+       homework, one warning line, and a standing line about saving. Nothing is
+       written twice, and the card cannot grow. */
+    if (step.make) {
+      if (step.make.task) cardEl.appendChild(el("p", "", step.make.task));
+      /* "rules" are the things every program must do, "choose" are ideas the
+         student may take or ignore. Both are short lines, never paragraphs. */
+      ["rules", "choose"].forEach(function (key) {
+        if (!step.make[key]) return;
+        var ul = el("ul", key === "rules" ? "ideas rules" : "ideas");
+        step.make[key].forEach(function (t) { ul.appendChild(el("li", "", t)); });
+        cardEl.appendChild(ul);
+      });
+    }
     if (step.images) cardEl.appendChild(pics(step.images));
 
     if (step.table) {
@@ -593,6 +614,11 @@
          more than four characters is left-aligned, the rest stay centred. The
          first column keeps its own left-aligned rule either way. */
       var LONG = 4, wide = [];
+      /* "code_cols": [1] renders that column as code: monospace, and the line
+         breaks in the cell are kept. Code written into a sentence is the hardest
+         thing on a page to read, so a column of lines to type is a column of
+         lines, not prose about them. Added 28 Sep 2026. */
+      var codeCols = step.table.code_cols || [];
       step.table.rows.forEach(function (row) {
         row.forEach(function (c, ci) {
           if (String(c == null ? "" : c).length > LONG) wide[ci] = true;
@@ -605,10 +631,41 @@
       t.appendChild(tr);
       step.table.rows.forEach(function (row) {
         var r2 = el("tr");
-        row.forEach(function (c, ci) { r2.appendChild(el("td", wide[ci] ? "lft" : "", c)); });
+        row.forEach(function (c, ci) {
+          if (codeCols.indexOf(ci) >= 0) {
+            var cell = el("td", "codecell");
+            cell.appendChild(el("pre", "", c));
+            r2.appendChild(cell);
+          } else {
+            r2.appendChild(el("td", wide[ci] ? "lft" : "", c));
+          }
+        });
         t.appendChild(r2);
       });
       cardEl.appendChild(t);
+    }
+    if (step.make) {
+      var m = step.make;
+      if (m.checkpoint || m.homework) {
+        var box = el("div", "plan");
+        if (m.checkpoint && TX.checkpoint) {
+          var c1 = el("p");
+          c1.appendChild(el("b", "", TX.checkpoint));
+          c1.appendChild(document.createTextNode(m.checkpoint));
+          box.appendChild(c1);
+        }
+        if (m.homework && TX.homework) {
+          var h1 = el("p");
+          h1.appendChild(el("b", "", TX.homework));
+          h1.appendChild(document.createTextNode(m.homework));
+          box.appendChild(h1);
+        }
+        cardEl.appendChild(box);
+      }
+      if (m.watch) cardEl.appendChild(el("p", "watch", m.watch));
+      /* The standing line is the page's own wording, not the lesson's. Year 7 (i)
+         pages are held to a taught-word list, so they do not show it. */
+      if (!SIMPLE) cardEl.appendChild(el("p", "standing", TX.handinNote));
     }
     if (step.readonly) cardEl.appendChild(el("pre", "show", step.readonly));
     if (step.kind === "convert") cardEl.appendChild(convertEl(step, i));

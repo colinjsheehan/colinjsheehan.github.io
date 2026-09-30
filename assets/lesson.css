@@ -73,6 +73,11 @@ table.idx th, table.idx td { border:1px solid var(--grey); padding:4px 9px; text
                              vertical-align:top; }
 table.idx th { background:var(--teal); color:#fff; font-weight:700; }
 table.idx td:first-child { font-weight:700; text-align:left; background:var(--panel); }
+/* 30 Sep 2026: alternate row shading, so a long row can be followed across. */
+table.idx tr:nth-child(odd) td { background:#fff; }
+table.idx tr:nth-child(even) td { background:#EAF1F1; }
+table.idx tr:nth-child(odd) td:first-child { background:var(--panel); }
+table.idx tr:nth-child(even) td:first-child { background:#DDE8E8; }
 /* A column of words reads badly centred, a column of digits reads badly left.
    lesson.js measures each column and adds .lft to the ones holding text longer
    than four characters, so the index and place-value grids stay centred and a
@@ -271,6 +276,12 @@ ul.wordlist b { color:var(--teal); }
 .drill .drill-head { font-size:12px; font-weight:700; text-transform:uppercase; color:#9C3D61;
                      letter-spacing:.04em; }
 #card .drill p { font-size:21px; font-weight:700; line-height:1.35; margin:4px 0 0; }
+/* 30 Sep 2026: the reading-width cap above (#card p) also caught the drill, so the
+   sentence sat in a 34em column at the left of a full-width, centred box. The
+   drill keeps the full width, as the reading-width note intends. */
+#card .drill p { max-width:none; }
+#card .drill p.marked { font-weight:400; }
+#card .drill p.marked b { font-weight:800; }
 
 /* Narrow screens (iPad portrait, phones): the whole page scrolls instead of each
    pane squeezing. Squeezed panes left the editor about four lines tall and cut

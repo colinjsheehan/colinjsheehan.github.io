@@ -707,11 +707,21 @@
     });
 
     /* DRILL: "drill": "A while loop needs ...". The key sentence of the lesson,
-       said aloud together (choral drill). Last thing on the card. */
+       said aloud together (choral drill). Last thing on the card.
+       Marking (30 Sep 2026): words between ** and ** are shown bold and the rest
+       of the sentence in normal weight, e.g. "We use **arguments** in the call".
+       A drill with no ** is shown all bold, as before. */
     if (step.drill) {
       var dr = el("div", "drill");
       dr.appendChild(el("div", "drill-head", TX.drill));
-      dr.appendChild(el("p", "", step.drill));
+      var parts = String(step.drill).split("**");
+      var dp = el("p", parts.length > 1 ? "marked" : "", null);
+      parts.forEach(function (part, i) {
+        if (!part) return;
+        if (i % 2) dp.appendChild(el("b", "", part));
+        else dp.appendChild(document.createTextNode(part));
+      });
+      dr.appendChild(dp);
       cardEl.appendChild(dr);
     }
     if (step.kind === "code" && step.expected == null && step.turtle && TX.drawOnly) {

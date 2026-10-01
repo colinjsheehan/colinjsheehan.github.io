@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<!--
+  Binary game. Year 9, Unit 2: Data representation. Epsom College Malaysia.
+
+  One self-contained page: its own CSS and JavaScript. The only shared file is
+  jsPDF at /assets/jspdf.umd.min.js, for the score PDF.
+
+  WHAT IT IS. Puzzle rows appear on a board under the column headings. A row is one
+  of two kinds:
+    - binary puzzle: a denary number is given; switch the bits until the row makes it.
+      The row clears the moment the switches are right.
+    - denary puzzle: the bits are given; type the denary number and press Check.
+  The two methods are the ones the lessons teach: add the columns that have a 1,
+  and "does it fit?" from the left.
+
+  SIZES follow the two lessons: nibble (4 bits), byte (8 bits), two bytes (16 bits).
+  Climb (the default) starts with nibbles and steps up: bytes from level 4, two bytes
+  from level 7 (in Practice, from row 5 and row 8).
+
+  HARDER AS IT GOES. Each level needs one more row, allows more 1s in a row, and
+  brings the rows faster: the gap between rows is 82% of the one before, down to a
+  floor (4, 6 and 10 seconds for 4, 8 and 16 bits). When Climb moves to a bigger
+  size the gap starts again from that size's first gap (12, 18, 30 seconds).
+
+  MODES.
+    Practice: one row at a time, no timer, 10 rows a round.
+    Timed:    rows arrive on a clock, with a countdown to the next row. A level is a
+              set number of rows; each level the rows arrive sooner. When a new row
+              arrives and the board is full, the game ends.
+  HINT (optional): a binary row shows what its switches make so far; a denary row
+  shows the column values of its 1s as a sum to finish.
+
+  RECORD. The PDF is the record for Google Classroom: name, settings, score, every
+  row with the answer given and the number of wrong tries. The best score is kept
+  only in this browser (localStorage key epsom:binary-game:v1), and every call to
+  localStorage is wrapped so a blocked store never stops the game.
+
+  VOICE: factual. No praise lines, no exclamation marks.
+-->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Binary game - Year 9</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+  :root {
+    --teal: #1F6F6B; --amber: #C8791A; --green: #3E8E5A; --near: #22292B;
+    --panel: #F4F6F6; --grey: #D8DEDE; --red: #B3261E; --lteal: #E6F1F0;
+    --lamber: #FBF1E3; --lgreen: #E3F2E8; --ink: #262626; --muted: #5A6466;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    color: var(--ink); background: #fff; font-size: 17px; line-height: 1.4;
+    min-height: 100vh; display: flex; flex-direction: column;
+  }
+  button, input, select { font: inherit; }
+  header.top { background: var(--near); color: #fff; padding: 10px 16px; }
+  header.top .school { font-size: 13px; opacity: .85; }
+  header.top h1 { margin: 0; font-size: 20px; font-weight: 700; }
+  main { flex: 1; width: 100%; max-width: 1100px; margin: 0 auto; padding: 12px 16px 24px; }
+  a.back { color: var(--teal); text-decoration: none; display: inline-block; min-height: 44px;
+           line-height: 44px; }
+  a.back:hover { text-decoration: underline; }
+  footer.bar { background: var(--panel); border-top: 1px solid var(--grey); font-size: 13px;
+               color: var(--muted); padding: 8px 16px; display: flex; gap: 12px;
+               justify-content: space-between; flex-wrap: wrap; }
+
+  h2 { color: var(--teal); margin: 8px 0 6px; font-size: 22px; }
+  p { margin: 6px 0; max-width: 46em; }
+  .hidden { display: none !important; }
+
+  /* ---------------------------------------------------------------- settings */
+  .setup { display: grid; gap: 14px; max-width: 760px; }
+  fieldset { border: 1px solid var(--grey); border-radius: 8px; margin: 0; padding: 10px 12px 12px; }
+  legend { font-weight: 700; color: var(--teal); padding: 0 4px; }
+  .choices { display: flex; flex-wrap: wrap; gap: 8px; }
+  .choice { position: relative; }
+  .choice input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .choice span { display: inline-flex; align-items: center; min-height: 48px; min-width: 44px;
+                 padding: 6px 16px; border: 2px solid var(--grey); border-radius: 8px;
+                 background: #fff; cursor: pointer; }
+  .choice span small { color: var(--muted); margin-left: 8px; }
+  .choice input:checked + span { border-color: var(--teal); background: var(--lteal); font-weight: 700; }
+  .choice input:focus-visible + span { outline: 3px solid var(--amber); outline-offset: 2px; }
+  label.name { display: grid; gap: 4px; font-weight: 700; color: var(--teal); }
+  label.name input { min-height: 48px; padding: 8px 12px; border: 2px solid var(--grey);
+                     border-radius: 8px; max-width: 420px; font-weight: 400; color: var(--ink); }
+  .btn { min-height: 48px; min-width: 44px; padding: 8px 20px; border-radius: 8px; border: 2px solid transparent;
+         cursor: pointer; font-weight: 700; }
+  .btn.go { background: var(--teal); color: #fff; }
+  .btn.alt { background: #fff; color: var(--teal); border-color: var(--teal); }
+  .btn.warn { background: var(--amber); color: #fff; }
+  .btn:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .rowbtns { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .best { color: var(--muted); }
+  .note { font-size: 15px; color: var(--muted); }
+  .msg { min-height: 1.4em; font-weight: 700; color: var(--teal); }
+  .msg.bad { color: var(--red); }
+
+  /* ------------------------------------------------------------------- game */
+  .hud { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin: 4px 0 10px; }
+  .hud .stat { background: var(--panel); border: 1px solid var(--grey); border-radius: 8px;
+               padding: 6px 12px; min-width: 92px; }
+  .hud .stat b { display: block; font-size: 12px; color: var(--muted); font-weight: 600;
+                 text-transform: uppercase; letter-spacing: .04em; }
+  .hud .stat span { font-size: 22px; font-weight: 700; color: var(--near); }
+  .hud .spacer { flex: 1; }
+  .clock { height: 10px; background: var(--grey); border-radius: 5px; overflow: hidden; margin: 0 0 10px; }
+  .clock i { display: block; height: 100%; width: 0; background: var(--amber); }
+
+  .board { border: 2px solid var(--grey); border-radius: 10px; background: var(--panel); padding: 8px; }
+  .line { display: grid; grid-template-columns: 1fr 210px; gap: 8px; align-items: stretch; }
+  .bits { display: grid; gap: 4px; grid-template-columns: repeat(var(--n), minmax(44px, 1fr)); }
+  .heads .bits div { text-align: center; font-weight: 700; color: #fff; background: var(--teal);
+                     border-radius: 6px; padding: 6px 0; font-size: 15px; }
+  .n16 .heads .bits div { font-size: 12.5px; letter-spacing: -.02em; }
+  .heads .side { display: flex; align-items: center; justify-content: center; font-weight: 700;
+                 color: #fff; background: var(--teal); border-radius: 6px; font-size: 15px; }
+  .slots { display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; margin-top: 6px;
+           min-height: calc(var(--slots) * 62px); }
+  .puzzle { background: #fff; border: 2px solid var(--grey); border-radius: 8px; padding: 4px;
+            transition: background .2s, border-color .2s; }
+  .puzzle.wrong { border-color: var(--amber); background: var(--lamber); }
+  .puzzle.done { border-color: var(--green); background: var(--lgreen); }
+  .bit { min-height: 48px; min-width: 44px; border-radius: 6px; border: 2px solid var(--grey);
+         background: #fff; color: var(--near); font-size: 22px; font-weight: 700; cursor: pointer;
+         padding: 0; font-family: ui-monospace, Menlo, Consolas, monospace; }
+  .bit[aria-pressed="true"] { background: var(--near); border-color: var(--near); color: #fff; }
+  .bit:focus-visible { outline: 3px solid var(--amber); outline-offset: 1px; }
+  .bit.fixed { cursor: default; display: flex; align-items: center; justify-content: center; }
+  .bit.fixed[data-v="1"] { background: var(--near); border-color: var(--near); color: #fff; }
+  .side { display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+  .target { font-size: 28px; font-weight: 800; text-align: center; color: var(--near); }
+  .kind { font-size: 13px; color: var(--muted); text-align: center; }
+  .answer { display: flex; gap: 6px; }
+  .answer input { width: 100%; min-width: 0; min-height: 48px; font-size: 22px; text-align: center;
+                  border: 2px solid var(--grey); border-radius: 6px; }
+  .answer button { min-height: 48px; min-width: 72px; padding: 8px 12px; flex: none; }
+  .hintline { font-size: 14px; color: var(--teal); text-align: center; min-height: 1.2em; }
+  .empty { border: 2px dashed var(--grey); border-radius: 8px; min-height: 56px; }
+
+  .summary table { border-collapse: collapse; margin: 8px 0; min-width: 280px; }
+  .summary td, .summary th { border-bottom: 1px solid var(--grey); padding: 6px 10px; text-align: left; }
+  .summary th { color: var(--muted); font-weight: 600; }
+
+  /* Two bytes on a narrow screen: sixteen columns as two lines of eight, so every
+     switch keeps a 44px target. The headings wrap the same way and stay above. */
+  @media (max-width: 899px) {
+    .n16 .bits { grid-template-columns: repeat(8, minmax(44px, 1fr)); }
+  }
+  /* A phone: a byte as two lines of four, two bytes as four lines of four. */
+  @media (max-width: 460px) {
+    main { padding-left: 8px; padding-right: 8px; }
+    .n8 .bits, .n16 .bits { grid-template-columns: repeat(4, minmax(44px, 1fr)); }
+  }
+  @media (max-width: 640px) {
+    .line { grid-template-columns: 1fr; }
+    .heads .side { display: none; }
+    .slots { min-height: 0; }
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="school">Epsom College Malaysia &middot; Year 9 Computer Science</div>
+  <h1>Binary game</h1>
+</header>
+
+<main>
+  <a class="back" href="/y9/">&larr; Year 9</a>
+
+  <!-- ============================================================ SETTINGS -->
+  <section id="setup" class="setup" aria-labelledby="setupHead">
+    <h2 id="setupHead">Switch the bits to match the number</h2>
+    <p>Each row is a puzzle. A binary puzzle gives a denary number: switch the bits on until the
+       row makes that number. A denary puzzle gives the bits: type the denary number and press Check.</p>
+
+    <label class="name">Your name (for the PDF)
+      <input id="name" type="text" autocomplete="name" maxlength="60" placeholder="First and last name">
+    </label>
+
+    <fieldset>
+      <legend>Size</legend>
+      <div class="choices" id="sizeChoices">
+        <label class="choice"><input type="radio" name="size" value="climb" checked><span>Climb <small>4 bits, then 8, then 16</small></span></label>
+        <label class="choice"><input type="radio" name="size" value="4"><span>Nibble <small>4 bits</small></span></label>
+        <label class="choice"><input type="radio" name="size" value="8"><span>Byte <small>8 bits</small></span></label>
+        <label class="choice"><input type="radio" name="size" value="16"><span>Two bytes <small>16 bits</small></span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Mode</legend>
+      <div class="choices">
+        <label class="choice"><input type="radio" name="mode" value="timed" checked><span>Timed <small>the clock gets faster each level</small></span></label>
+        <label class="choice"><input type="radio" name="mode" value="practice"><span>Practice <small>no timer, 10 rows</small></span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Puzzles</legend>
+      <div class="choices">
+        <label class="choice"><input type="radio" name="kinds" value="both" checked><span>Both kinds</span></label>
+        <label class="choice"><input type="radio" name="kinds" value="tobin"><span>Binary only <small>switch the bits</small></span></label>
+        <label class="choice"><input type="radio" name="kinds" value="toden"><span>Denary only <small>type the number</small></span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Hint</legend>
+      <div class="choices">
+        <label class="choice"><input type="radio" name="hint" value="off" checked><span>Off</span></label>
+        <label class="choice"><input type="radio" name="hint" value="on"><span>On <small>shows the column values you have</small></span></label>
+      </div>
+    </fieldset>
+
+    <div class="rowbtns">
+      <button class="btn go" id="start" type="button">Start</button>
+      <span class="best" id="bestLine"></span>
+    </div>
+    <p class="note">The best score is kept only in this browser. The PDF is the record: save it at the end and upload it to Google Classroom.</p>
+  </section>
+
+  <!-- ================================================================ GAME -->
+  <section id="game" class="hidden" aria-label="The game">
+    <div class="hud">
+      <div class="stat"><b>Score</b><span id="score">0</span></div>
+      <div class="stat"><b>Level</b><span id="level">1</span></div>
+      <div class="stat"><b id="leftLabel">Rows left</b><span id="left">0</span></div>
+      <div class="stat"><b>Bits</b><span id="bitsNow">4</span></div>
+      <div class="stat" id="nextStat"><b>Next row</b><span id="next">0 s</span></div>
+      <div class="spacer"></div>
+      <button class="btn alt" id="pause" type="button">Pause</button>
+      <button class="btn alt" id="end" type="button">End game</button>
+    </div>
+    <div class="clock" id="clockWrap" aria-hidden="true"><i id="clock"></i></div>
+    <p class="msg" id="status" role="status" aria-live="polite"></p>
+    <div class="board" id="board">
+      <div class="line heads">
+        <div class="bits" id="heads"></div>
+        <div class="side">Number</div>
+      </div>
+      <div class="slots" id="slots"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================= SUMMARY -->
+  <section id="summary" class="summary hidden" aria-labelledby="sumHead">
+    <h2 id="sumHead">The round is over</h2>
+    <p id="endWhy"></p>
+    <label class="name">Your name (for the PDF)
+      <input id="name2" type="text" autocomplete="name" maxlength="60" placeholder="First and last name">
+    </label>
+    <table>
+      <tbody id="sumTable"></tbody>
+    </table>
+    <div class="rowbtns">
+      <button class="btn go" id="pdf" type="button">Save the PDF</button>
+      <button class="btn alt" id="again" type="button">Play again</button>
+      <button class="btn alt" id="change" type="button">Change the settings</button>
+    </div>
+    <p class="msg" id="pdfMsg" role="status" aria-live="polite"></p>
+    <p class="note">The best score is kept only in this browser. The PDF is the record: upload it to Google Classroom.</p>
+  </section>
+</main>
+
+<footer class="bar">
+  <span>The best score is kept only in this browser. The PDF is the record.</span>
+  <span>Made by Colin Sheehan, 2026</span>
+</footer>
+
+<script src="/assets/jspdf.umd.min.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var KEY = "epsom:binary-game:v1";
+  var SIZE_NAME = { 4: "Nibble (4 bits)", 8: "Byte (8 bits)", 16: "Two bytes (16 bits)",
+                    climb: "Climb (4 bits, then 8, then 16)" };
+  var BITS_NAME = { 4: "nibbles, 4 bits", 8: "bytes, 8 bits", 16: "two bytes, 16 bits" };
+  var CLIMB_TIMED = [[1, 4], [4, 8], [7, 16]];      // Climb, timed: from level 1 nibbles, 4 bytes, 7 two bytes
+  var CLIMB_PRACTICE = [[0, 4], [4, 8], [7, 16]];   // Climb, practice: rows 1-4, 5-7, 8-10
+  var MODE_NAME = { practice: "Practice", timed: "Timed" };
+  var KIND_NAME = { both: "Both kinds", tobin: "Binary only", toden: "Denary only" };
+  var BASE = { 4: 10, 8: 20, 16: 40 };          // points for one row, by size
+  var SLOTS = 6;                               // timed: rows the board holds
+  var PRACTICE_ROWS = 10;
+  var FIRST_GAP = { 4: 12, 8: 18, 16: 30 };    // timed: seconds between rows at the first level of a size
+  var SPEED_UP = 0.82;                         // each level the gap is 82% of the one before
+  var MIN_GAP = { 4: 4, 8: 6, 16: 10 };
+
+  function $(id) { return document.getElementById(id); }
+
+  /* ------------------------------------------------------------- storage */
+  function load() {
+    try {
+      var raw = window.localStorage.getItem(KEY);
+      var v = raw ? JSON.parse(raw) : null;
+      return v && typeof v === "object" ? v : {};
+    } catch (e) { return {}; }
+  }
+  function store(v) {
+    try { window.localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) { /* blocked: ignore */ }
+  }
+  var saved = load();
+  if (!saved.best || typeof saved.best !== "object") saved.best = {};
+
+  /* ------------------------------------------------------------ settings */
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function setPick(name, value) {
+    var el = document.querySelector('input[name="' + name + '"][value="' + value + '"]');
+    if (el) el.checked = true;
+  }
+  if (saved.settings) {
+    ["size", "mode", "kinds", "hint"].forEach(function (k) {
+      if (saved.settings[k]) setPick(k, saved.settings[k]);
+    });
+  }
+  function settings() {
+    var sz = pick("size");
+    return { size: sz === "climb" ? "climb" : +sz, mode: pick("mode"), kinds: pick("kinds"),
+             hint: pick("hint") === "on" };
+  }
+  function bestKey(s) { return s.size + "-" + s.mode; }
+  function showBest() {
+    var s = settings(), b = saved.best[bestKey(s)];
+    $("bestLine").textContent = b ? "Best score in this browser for " + SIZE_NAME[s.size] +
+      ", " + MODE_NAME[s.mode] + ": " + b + "." : "";
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".setup input[type=radio]"),
+    function (el) { el.addEventListener("change", showBest); });
+  showBest();
+
+  /* ------------------------------------------------------------ the game */
+  var G = null;      // the round in play
+  var nextId = 1;
+
+  function columns(n) {
+    var c = [];
+    for (var k = n - 1; k >= 0; k--) c.push(Math.pow(2, k));
+    return c;
+  }
+  function toBits(v, n) {
+    var s = v.toString(2);
+    while (s.length < n) s = "0" + s;
+    return s;
+  }
+
+  /* A number for a new row. Bigger sizes start with fewer 1s, and more 1s are
+     allowed as the level goes up, so a two-byte row at level 1 is a handful of
+     columns to add, not sixteen. */
+  /* The size in play. Climb steps up: nibbles, then bytes, then two bytes. */
+  function sizeNow() {
+    if (G.s.size !== "climb") return G.s.size;
+    var at = G.s.mode === "timed" ? G.level : G.log.length, size = 4;
+    (G.s.mode === "timed" ? CLIMB_TIMED : CLIMB_PRACTICE).forEach(function (st) {
+      if (at >= st[0]) size = st[1];
+    });
+    return size;
+  }
+  /* How many levels into the current size: 0 on its first level. */
+  function stepInSize() {
+    if (G.s.size !== "climb") return G.level - 1;
+    var start = 1;
+    CLIMB_TIMED.forEach(function (st) { if (G.level >= st[0]) start = st[0]; });
+    return G.level - start;
+  }
+  function gapNow() {
+    var n = G.size;
+    return Math.max(MIN_GAP[n], Math.round(FIRST_GAP[n] * Math.pow(SPEED_UP, stepInSize()) * 10) / 10);
+  }
+
+  /* Harder as it goes: more 1s are allowed in each row as the levels go up. */
+  function newValue() {
+    var n = G.size;
+    var maxOnes = n === 4 ? Math.min(4, 2 + stepInSize())
+                          : Math.min(n, (n === 8 ? 3 : 2) + stepInSize());
+    var used = {};
+    G.rows.forEach(function (r) { used[r.value] = true; });
+    for (var tries = 0; tries < 50; tries++) {
+      var k = 1 + Math.floor(Math.random() * maxOnes), pos = [], v = 0;
+      while (pos.length < k) {
+        var p = Math.floor(Math.random() * n);
+        if (pos.indexOf(p) < 0) pos.push(p);
+      }
+      pos.forEach(function (p) { v += Math.pow(2, p); });
+      if (!used[v] && G.recent.indexOf(v) < 0) return v;
+    }
+    return v;
+  }
+  function newKind() {
+    if (G.s.kinds === "tobin") return "tobin";
+    if (G.s.kinds === "toden") return "toden";
+    return Math.random() < 0.5 ? "tobin" : "toden";
+  }
+
+  function start() {
+    var s = settings();
+    saved.settings = { size: String(s.size), mode: s.mode, kinds: s.kinds, hint: s.hint ? "on" : "off" };
+    store(saved);
+    G = {
+      s: s, score: 0, level: 1, rows: [], log: [], started: Date.now(), recent: [],
+      levelRows: 0, levelTarget: 5, gap: 0, sinceRow: 0, size: 4,
+      paused: false, over: false, timer: null, made: 0
+    };
+    $("setup").classList.add("hidden");
+    $("summary").classList.add("hidden");
+    $("game").classList.remove("hidden");
+    G.size = sizeNow();
+    G.gap = gapNow();
+    $("board").className = "board n" + G.size;
+    $("board").style.setProperty("--slots", s.mode === "timed" ? SLOTS : 1);
+    drawHeads();
+    $("clockWrap").classList.toggle("hidden", s.mode !== "timed");
+    $("nextStat").classList.toggle("hidden", s.mode !== "timed");
+    $("next").textContent = Math.ceil(G.gap) + " s";
+    $("pause").classList.toggle("hidden", s.mode !== "timed");
+    $("pause").textContent = "Pause";
+    $("leftLabel").textContent = s.mode === "timed" ? "Rows to next level" : "Rows left";
+    say("");
+    $("slots").innerHTML = "";
+    $("slots").style.visibility = "";
+    addRow();
+    if (s.mode === "timed") {
+      G.last = Date.now();
+      G.timer = setInterval(tick, 100);
+    }
+    hud();
+  }
+
+  function drawHeads() {
+    var h = $("heads");
+    h.innerHTML = "";
+    h.style.setProperty("--n", G.size);
+    columns(G.size).forEach(function (c) {
+      var d = document.createElement("div");
+      d.textContent = c;
+      h.appendChild(d);
+    });
+  }
+
+  function addRow() {
+    var v = newValue(), kind = newKind();
+    G.recent.push(v);
+    if (G.recent.length > Math.min(6, Math.pow(2, G.size) / 3)) G.recent.shift();
+    G.made++;
+    var row = { id: nextId++, value: v, kind: kind, bits: kind === "tobin" ? 0 : v,
+                wrong: 0, given: "", born: Date.now(), hint: G.s.hint };
+    G.rows.push(row);
+    var slots = $("slots");
+    slots.insertBefore(rowEl(row, G.size), slots.firstChild);
+    if (kind === "toden") {
+      var inp = document.querySelector('[data-row="' + row.id + '"] input');
+      if (inp && G.s.mode === "practice") inp.focus();
+    }
+  }
+
+  function rowEl(r, n) {
+    var line = document.createElement("div");
+    line.className = "line puzzle";
+    line.setAttribute("data-row", r.id);
+    var bits = document.createElement("div");
+    bits.className = "bits";
+    bits.style.setProperty("--n", n);
+    var cols = columns(n), pattern = toBits(r.bits, n);
+    cols.forEach(function (c, j) {
+      var b;
+      if (r.kind === "tobin") {
+        b = document.createElement("button");
+        b.type = "button";
+        b.className = "bit";
+        b.setAttribute("aria-pressed", pattern[j] === "1" ? "true" : "false");
+        b.addEventListener("click", function () { flip(r, c, b); });
+      } else {
+        b = document.createElement("span");
+        b.className = "bit fixed";
+      }
+      b.textContent = pattern[j];
+      b.setAttribute("data-v", pattern[j]);
+      b.setAttribute("aria-label", "Column " + c + ": " + pattern[j]);
+      bits.appendChild(b);
+    });
+    line.appendChild(bits);
+
+    var side = document.createElement("div");
+    side.className = "side";
+    if (r.kind === "tobin") {
+      var t = document.createElement("div");
+      t.className = "target";
+      t.textContent = r.value;
+      var k = document.createElement("div");
+      k.className = "kind";
+      k.textContent = "Switch the bits to make this";
+      side.appendChild(t);
+      side.appendChild(k);
+    } else {
+      /* Not a <form>: a page shown inside a sandboxed frame (a preview panel, an
+         embed) is not allowed to submit forms, and the browser then drops the
+         submit event, so Check did nothing. A click and the Enter key are always
+         allowed. */
+      var a = document.createElement("div");
+      a.className = "answer";
+      var inp = document.createElement("input");
+      inp.type = "text";
+      inp.inputMode = "numeric";
+      inp.autocomplete = "off";
+      inp.setAttribute("aria-label", "The denary number for this row");
+      inp.value = r.given;
+      var go = document.createElement("button");
+      go.type = "button";
+      go.className = "btn go";
+      go.textContent = "Check";
+      a.appendChild(inp);
+      a.appendChild(go);
+      go.addEventListener("click", function () { check(r, inp.value); });
+      inp.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") { e.preventDefault(); check(r, inp.value); }
+      });
+      inp.addEventListener("input", function () { r.given = inp.value; });
+      var k2 = document.createElement("div");
+      k2.className = "kind";
+      k2.textContent = "Type the denary number";
+      side.appendChild(a);
+      side.appendChild(k2);
+    }
+    var h = document.createElement("div");
+    h.className = "hintline";
+    if (r.hint) h.textContent = hintText(r, n);
+    side.appendChild(h);
+    line.appendChild(side);
+    return line;
+  }
+
+  function hintText(r, n) {
+    var parts = [];
+    columns(n).forEach(function (c) { if (r.bits & c) parts.push(c); });
+    if (r.kind === "tobin") {
+      var made = parts.reduce(function (a, b) { return a + b; }, 0);
+      return "Your switches make " + made + ".";
+    }
+    return parts.join(" + ") + " = ?";
+  }
+
+  function flip(r, c, b) {
+    if (!G || G.over || G.paused || r.done) return;
+    r.bits = r.bits ^ c;
+    var on = (r.bits & c) ? "1" : "0";
+    b.textContent = on;
+    b.setAttribute("data-v", on);
+    b.setAttribute("aria-pressed", on === "1" ? "true" : "false");
+    b.setAttribute("aria-label", "Column " + c + ": " + on);
+    if (r.hint) {
+      var el = document.querySelector('[data-row="' + r.id + '"] .hintline');
+      if (el) el.textContent = hintText(r, G.size);
+    }
+    if (r.bits === r.value) solved(r, toBits(r.bits, G.size));
+  }
+
+  function check(r, typed) {
+    if (!G || G.over || G.paused || r.done) return;
+    var t = String(typed).trim();
+    if (!/^\d+$/.test(t)) {
+      say("Type a whole number.", true);
+      return;
+    }
+    if (+t === r.value) {
+      solved(r, t);
+    } else {
+      r.wrong++;
+      r.lastWrong = t;
+      var el = document.querySelector('[data-row="' + r.id + '"]');
+      if (el) {
+        el.classList.add("wrong");
+        var inp = el.querySelector("input");
+        if (inp) { inp.select(); inp.focus(); }
+      }
+      say(t + " is not right. Add the columns that have a 1.", true);
+    }
+  }
+
+  function solved(r, given) {
+    var secs = (Date.now() - r.born) / 1000;
+    var pts = BASE[G.size];
+    if (G.s.mode === "timed") {
+      pts += Math.round(BASE[G.size] * (G.level - 1) / 2);
+      if (secs <= G.gap / 2) pts += Math.round(BASE[G.size] / 2);
+    }
+    r.done = true;
+    G.score += pts;
+    G.log.push({ kind: r.kind, value: r.value, bits: toBits(r.value, G.size), given: given, size: G.size,
+                 wrong: r.wrong, secs: secs, points: pts, level: G.level, hint: r.hint });
+    var el = document.querySelector('[data-row="' + r.id + '"]');
+    if (el) el.classList.add("done");
+    G.rows = G.rows.filter(function (x) { return x.id !== r.id; });
+    say(r.kind === "tobin" ? r.value + " is " + toBits(r.value, G.size) + "."
+                           : toBits(r.value, G.size) + " is " + r.value + ".");
+    if (G.s.mode === "timed") {
+      G.levelRows++;
+      if (G.levelRows >= G.levelTarget) levelUp();
+    }
+    var round = G;
+    setTimeout(function () {
+      if (el && el.parentNode) el.parentNode.removeChild(el);
+      if (G !== round || G.over) return;
+      if (G.s.mode === "practice") {
+        if (G.log.length >= PRACTICE_ROWS) return finish("practice");
+        var n = sizeNow();
+        if (n !== G.size) newSize(n);
+        addRow();
+      } else if (!G.rows.length) {
+        addRow();
+        G.sinceRow = 0;
+      }
+      hud();
+    }, 400);
+    hud();
+  }
+
+  function levelUp() {
+    G.level++;
+    G.levelRows = 0;
+    G.levelTarget = 4 + G.level;
+    var n = sizeNow(), stepped = n !== G.size;
+    if (stepped) newSize(n);
+    G.gap = gapNow();
+    G.sinceRow = 0;
+    say("Level " + G.level + "." + (stepped ? " Now " + BITS_NAME[n] + "." : "") +
+        " A new row every " + G.gap + " seconds.");
+  }
+
+  /* Climb moves to the next size: the board is cleared and the headings redrawn.
+     Rows still on the board are not counted against the student. */
+  function newSize(n) {
+    G.size = n;
+    G.rows = [];
+    $("slots").innerHTML = "";
+    $("board").className = "board n" + n;
+    drawHeads();
+  }
+
+  function tick() {
+    if (!G || G.over || G.paused) return;
+    var now = Date.now();
+    G.sinceRow += (now - G.last) / 1000;
+    G.last = now;
+    if (G.sinceRow >= G.gap || !G.rows.length) {
+      G.sinceRow = 0;
+      if (G.rows.length >= SLOTS) return finish("full");
+      addRow();
+    }
+    $("clock").style.width = Math.min(100, 100 * G.sinceRow / G.gap) + "%";
+    $("next").textContent = Math.max(0, Math.ceil(G.gap - G.sinceRow)) + " s";
+  }
+
+  function hud() {
+    if (!G) return;
+    $("score").textContent = G.score;
+    $("level").textContent = G.level;
+    $("bitsNow").textContent = G.size;
+    $("left").textContent = G.s.mode === "timed" ? (G.levelTarget - G.levelRows)
+                                                 : (PRACTICE_ROWS - G.log.length);
+  }
+
+  function say(t, bad) {
+    var m = $("status");
+    m.textContent = t;
+    m.classList.toggle("bad", !!bad);
+  }
+
+  function pause() {
+    if (!G || G.over || G.s.mode !== "timed") return;
+    G.paused = !G.paused;
+    G.last = Date.now();
+    $("pause").textContent = G.paused ? "Carry on" : "Pause";
+    $("slots").style.visibility = G.paused ? "hidden" : "";
+    say(G.paused ? "Paused. The rows are hidden until you carry on." : "");
+  }
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden && G && !G.over && !G.paused && G.s.mode === "timed") pause();
+  });
+
+  function finish(why) {
+    if (!G || G.over) return;
+    G.over = true;
+    G.ended = Date.now();
+    G.why = why;
+    clearInterval(G.timer);
+    var k = bestKey(G.s), prev = saved.best[k] || 0;
+    G.newBest = G.score > prev;
+    if (G.newBest) { saved.best[k] = G.score; store(saved); }
+    G.prevBest = prev;
+    $("game").classList.add("hidden");
+    $("summary").classList.remove("hidden");
+    $("endWhy").textContent = why === "full" ? "A new row arrived and the board was full."
+      : why === "practice" ? "You finished the " + PRACTICE_ROWS + " rows of the round."
+      : "You ended the game.";
+    var wrong = G.log.reduce(function (a, r) { return a + r.wrong; }, 0) +
+                G.rows.reduce(function (a, r) { return a + r.wrong; }, 0);
+    var rows = [
+      ["Score", G.score],
+      ["Best in this browser", Math.max(G.score, prev) + (G.newBest && prev ? " (new best)" : "")],
+      ["Size", SIZE_NAME[G.s.size] + (G.s.size === "climb" ? ", reached " + G.size + " bits" : "")],
+      ["Mode", MODE_NAME[G.s.mode] + (G.s.mode === "timed" ? ", reached level " + G.level : "")],
+      ["Rows solved", G.log.length],
+      ["Wrong tries", wrong],
+      ["Hint", G.s.hint ? "On" : "Off"],
+      ["Time", minsSecs((G.ended - G.started) / 1000)]
+    ];
+    var tb = $("sumTable");
+    tb.innerHTML = "";
+    rows.forEach(function (r) {
+      var tr = document.createElement("tr");
+      var th = document.createElement("th"); th.textContent = r[0];
+      var td = document.createElement("td"); td.textContent = r[1];
+      tr.appendChild(th); tr.appendChild(td); tb.appendChild(tr);
+    });
+    $("pdfMsg").textContent = "";
+    $("name2").value = $("name").value;
+    $("pdf").focus();
+  }
+
+  function minsSecs(s) {
+    s = Math.round(s);
+    return Math.floor(s / 60) + " min " + (s % 60) + " s";
+  }
+
+  /* ------------------------------------------------------------------ PDF */
+  function clean(s) {
+    return String(s == null ? "" : s)
+      .replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
+      .replace(/[–—]/g, "-").replace(/…/g, "...")
+      .replace(/[^\x00-\xFF]/g, "?");
+  }
+  function fileName(name) {
+    var safe = clean(name).replace(/[\\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim();
+    return "Year 9 Binary game - " + safe + ".pdf";
+  }
+  function buildPdf(name) {
+    var doc = new window.jspdf.jsPDF({ unit: "mm", format: "a4" });
+    var M = 15, W = 210 - 2 * M, BOTTOM = 297 - 16, y = M, PT = 0.3528;
+    function need(h) { if (y + h > BOTTOM) { doc.addPage(); y = M; } }
+    function text(s, size, style, x) {
+      doc.setFont("helvetica", style || "normal");
+      doc.setFontSize(size);
+      var lh = size * PT * 1.35;
+      doc.splitTextToSize(clean(s), W).forEach(function (ln) {
+        need(lh); doc.text(ln, x == null ? M : x, y + size * PT); y += lh;
+      });
+    }
+    function rule() { need(3); doc.setDrawColor(190); doc.line(M, y, M + W, y); y += 3; }
+    doc.setTextColor(20);
+    var now = new Date(G.ended || Date.now());
+    var when = now.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) +
+               ", " + now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+    text("Year 9 Binary game", 16, "bold");
+    text(name, 12, "bold");
+    text(when, 10);
+    y += 2; rule();
+    var wrong = G.log.reduce(function (a, r) { return a + r.wrong; }, 0);
+    [["Size", SIZE_NAME[G.s.size] + (G.s.size === "climb" ? ", reached " + G.size + " bits" : "")],
+     ["Mode", MODE_NAME[G.s.mode] + (G.s.mode === "timed" ? ", reached level " + G.level : "")],
+     ["Puzzles", KIND_NAME[G.s.kinds]],
+     ["Hint", G.s.hint ? "On" : "Off"],
+     ["Score", String(G.score)],
+     ["Rows solved", String(G.log.length)],
+     ["Wrong tries", String(wrong)],
+     ["Time", minsSecs(((G.ended || Date.now()) - G.started) / 1000)],
+     ["How it ended", $("endWhy").textContent]].forEach(function (p) {
+      need(6);
+      doc.setFont("helvetica", "bold"); doc.setFontSize(10);
+      doc.text(p[0], M, y + 10 * PT);
+      doc.setFont("helvetica", "normal");
+      doc.text(clean(p[1]), M + 38, y + 10 * PT);
+      y += 5.6;
+    });
+    y += 2; rule();
+    text("Every row solved", 12, "bold");
+    y += 1;
+    var X = [M, M + 10, M + 50, M + 100, M + 135, M + 160];
+    function head() {
+      need(7);
+      doc.setFillColor(235); doc.rect(M, y, W, 6.5, "F");
+      doc.setFont("helvetica", "bold"); doc.setFontSize(9);
+      ["", "Kind", "Question", "Answer given", "Wrong tries", "Seconds"].forEach(function (h, i) {
+        doc.text(h, X[i] + 1, y + 4.5);
+      });
+      y += 7.5;
+    }
+    head();
+    G.log.forEach(function (r, i) {
+      if (y + 6 > BOTTOM) { doc.addPage(); y = M; head(); }
+      doc.setFont("helvetica", "normal"); doc.setFontSize(9);
+      var q = r.kind === "tobin" ? "Make " + r.value : r.bits;
+      var a = r.given;
+      [String(i + 1), r.kind === "tobin" ? "Binary" : "Denary", q, a, String(r.wrong),
+       String(Math.round(r.secs))].forEach(function (c, j) {
+        doc.setFont(j === 2 || j === 3 ? "courier" : "helvetica", "normal");
+        doc.text(clean(c), X[j] + 1, y + 4);
+      });
+      y += 5.6;
+      doc.setDrawColor(215); doc.line(M, y - 0.8, M + W, y - 0.8);
+    });
+    if (!G.log.length) text("No rows were solved.", 10);
+    y += 4;
+    text("Binary puzzle: a denary number was given and the bits were switched to make it. " +
+         "Denary puzzle: the bits were given and the denary number was typed. " +
+         "The best score is kept only in the browser that played; this PDF is the record.", 9);
+    return doc;
+  }
+
+  /* ------------------------------------------------------------- buttons */
+  $("start").addEventListener("click", start);
+  $("end").addEventListener("click", function () { finish("ended"); });
+  $("pause").addEventListener("click", pause);
+  $("again").addEventListener("click", start);
+  $("change").addEventListener("click", function () {
+    $("summary").classList.add("hidden");
+    $("setup").classList.remove("hidden");
+    showBest();
+  });
+  $("name2").addEventListener("input", function () { $("name").value = $("name2").value; });
+  $("pdf").addEventListener("click", function () {
+    var name = $("name2").value.trim(), m = $("pdfMsg");
+    m.classList.remove("bad");
+    if (!name) {
+      m.classList.add("bad");
+      m.textContent = "Type your name first.";
+      $("name2").focus();
+      return;
+    }
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+      m.classList.add("bad");
+      m.textContent = "The PDF could not be made: open the game from the lesson website.";
+      return;
+    }
+    var f = fileName(name);
+    buildPdf(name).save(f);
+    m.textContent = "Saved as " + f + ". Upload it to Google Classroom.";
+  });
+
+  /* Hooks for the automated browser test only. */
+  window.__binaryGame = {
+    round: function () { return G; },
+    finish: finish,
+    buildPdf: buildPdf,
+    fileName: fileName,
+    storageKey: KEY
+  };
+  window.__binaryGameReady = true;
+})();
+</script>
+</body>
+</html>

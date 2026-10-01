@@ -536,6 +536,27 @@
   }
   function answered(q) { return !!(state.answers[q.id] || "").trim(); }
 
+  /* FIRST ANSWERS (1 Oct 2026). The page cannot mark a typed answer, because it
+     does not hold the right one. What it can keep is what the student thought
+     first: the answer as it stood when they pressed Run or moved to another step.
+     "first" is written once per question and never overwritten; "edits" counts
+     the changes made after it. A predict-first question was already locked on
+     Run, so for those the two are the same. The teacher's PDF shows the first
+     answer only when it differs from the one handed in, which is where a
+     misconception shows itself. Nothing new leaves the device. */
+  function keepFirstAnswers(i) {
+    var step = L.steps[i];
+    if (!step || !step.questions) return;
+    if (!state.first) state.first = {};
+    if (!state.edits) state.edits = {};
+    step.questions.forEach(function (q) {
+      var now = (state.answers[q.id] || "").trim();
+      if (!now) return;
+      if (state.first[q.id] === undefined) state.first[q.id] = now;
+      else if (state.first[q.id] !== now) state.edits[q.id] = (state.edits[q.id] || 0) + 1;
+    });
+  }
+
   function isDone(i) {
     var step = L.steps[i], s = state.steps[String(i)] || {};
     var qs = (step.questions || []).every(answered);
@@ -1002,6 +1023,7 @@
   /* ------------------------------------------------------------ navigation */
   var runToken = 0;
   function go(i) {
+    keepFirstAnswers(state.current);   // what they thought on the step they are leaving
     killed = true;           // stop anything still running on the old step
     runToken++;
     askRow.style.display = "none";
@@ -1173,6 +1195,7 @@
   function run() {
     var i = state.current, step = L.steps[i];
     if (running || step.kind !== "code" || predictBlocked(i)) return;
+    keepFirstAnswers(i);               // pressing Run commits what is written now
     running = true; killed = false;
     var token = ++runToken;
     clearConsole(); resetCanvas();
@@ -1354,6 +1377,13 @@
         var a = (state.answers[q.id] || "").trim();
         var tagged = state.locked[q.id] ? "  (prediction, locked before the code was run)" : "";
         text("Answer: " + (a || "(blank)") + tagged, 10, "normal", "helvetica", 4);
+        var f0 = ((state.first || {})[q.id] || "").trim();
+        if (f0 && f0 !== a) {
+          text("First answer: " + f0 + "     changed " +
+               ((state.edits || {})[q.id] || 1) + " time" +
+               (((state.edits || {})[q.id] || 1) === 1 ? "" : "s"),
+               9, "normal", "helvetica", 4);
+        }
       });
       if (step.kind === "code") {
         gap(1.5);
@@ -1390,7 +1420,61 @@
       doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(110);
       doc.text(clean(name + "  |  " + L.year + " " + L.short + "  |  page " + p + " of " + n), M, 297 - 8);
     }
+    doc.setProperties({
+      title: L.year + " " + L.short + " - " + name,
+      subject: "Epsom Computer Science hand-in",
+      author: name,
+      keywords: digest(name)
+    });
     return doc;
+  }
+
+  /* THE DIGEST (1 Oct 2026). The same facts the pages above print, written once
+     more in a form a script can read exactly: lesson, student, and for each step
+     the result and every answer, with the first answer and the wrong tries where
+     the page knows them. It goes in the PDF's own properties, not on a page, so
+     the document a student reads is unchanged and nothing is added to the look of
+     it. Read it back with pdfinfo, or any reader that shows document properties.
+     Nothing new is collected: every item here is already printed in the PDF, and
+     the file belongs to the student either way. */
+  function digest(name) {
+    var d = {
+      v: 1, id: L.id, ver: L.version || 1, year: L.year, short: L.short,
+      name: name, at: new Date().toISOString(), page: location.pathname, steps: []
+    };
+    L.steps.forEach(function (step, i) {
+      var s = state.steps[String(i)] || {}, row = { nav: step.nav, kind: step.kind };
+      if (step.kind === "code") {
+        row.ran = !!s.ran;
+        if (step.expected != null) row.matched = !!s.matched;
+        if (s.error) row.err = String(s.error).slice(0, 120);
+      }
+      if (step.hint) row.hint = !!s.hint;
+      if (step.kind === "convert") {
+        var cv = s.conv || {}, tr = s.tries || {};
+        row.conv = step.items.map(function (n, j) {
+          return { want: convAnswer(step, j), got: (cv[j] || "").trim(), tries: tr[j] || 0 };
+        });
+      }
+      if (step.questions && step.questions.length) {
+        row.qs = step.questions.map(function (q) {
+          var a = (state.answers[q.id] || "").trim();
+          var f0 = ((state.first || {})[q.id] || "").trim();
+          var o = { id: q.id, label: q.label, a: a };
+          if (f0 && f0 !== a) { o.first = f0; o.edits = (state.edits || {})[q.id] || 1; }
+          if (state.locked[q.id]) o.locked = true;
+          return o;
+        });
+      }
+      d.steps.push(row);
+    });
+    var json = JSON.stringify(d);
+    /* base64 so the properties field holds no quotes, newlines or accents, and a
+       length so a truncated copy is obvious rather than silently short. */
+    var b64;
+    try { b64 = window.btoa(unescape(encodeURIComponent(json))); }
+    catch (e) { return "epsom-digest v1 unavailable"; }
+    return "epsom-digest v1 len=" + json.length + " " + b64;
   }
 
   function fileName() {

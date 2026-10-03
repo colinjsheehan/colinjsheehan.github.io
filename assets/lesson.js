@@ -915,6 +915,8 @@
     if ((step.check || "once") === "always") dragMark(i, true);
     saveSoon();
     renderNavSoon();
+    renderCard(i);          /* ALWAYS. See the note above: a drop that does not
+                               repaint looks to a student like it did not work. */
   }
 
   /* THE ORDER IS THE POINT. The answers are written down first, with the time,
@@ -1040,10 +1042,9 @@
          a card in hand the whole group accepts it, cards included. */
       if (picked && picked.step === i && picked.card !== card.id && s.put[card.id]) {
         dragPlace(i, picked.card, s.put[card.id]);
-        renderCard(i);
         return;
       }
-      if (s.put[card.id]) { dragPlace(i, card.id, null); renderCard(i); return; }
+      if (s.put[card.id]) { dragPlace(i, card.id, null); return; }
       picked = (picked && picked.card === card.id && picked.step === i)
         ? null : { step: i, card: card.id };
       renderCard(i);
@@ -1083,8 +1084,8 @@
                    : TX.dragEmpty + ". " + (inner || "") + " " + TX.dragPutHere));
     b.addEventListener("click", function () {
       if (b.dataset.justDragged) { delete b.dataset.justDragged; return; }
-      if (picked && picked.step === i) { dragPlace(i, picked.card, t.id); renderCard(i); return; }
-      if (held.length) { dragPlace(i, held[0], null); renderCard(i); return; }
+      if (picked && picked.step === i) { dragPlace(i, picked.card, t.id); return; }
+      if (held.length) { dragPlace(i, held[0], null); return; }
     });
     dragArm(b, function () {
       var now = dragHeld(step, i, t.id);
@@ -1121,7 +1122,7 @@
           box.appendChild(zone);
           box.addEventListener("click", function (e) {
             if (e.target.closest(".dcard")) return;
-            if (picked && picked.step === i) { dragPlace(i, picked.card, t.id); renderCard(i); }
+            if (picked && picked.step === i) dragPlace(i, picked.card, t.id);
           });
         }
         groups.appendChild(box);

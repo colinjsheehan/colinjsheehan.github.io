@@ -404,7 +404,11 @@ ul.wordlist b { color:var(--teal); }
 .dbank { background:var(--panel); border:1px solid var(--grey); border-radius:8px;
          padding:10px 12px; margin:12px 0 0; display:flex; flex-wrap:wrap;
          gap:10px; align-items:center; }
-.dbank .dbankname { flex:0 0 100%; margin:0; font-size:12px; font-weight:700;
+/* #card p caps prose at 34em for readability, and that is an id selector, so it
+   beats a class rule. The bank label has to out-specify it or it is squeezed to
+   34em and the cards are pushed along the same line instead of wrapping under. */
+#card .dbank .dbankname { flex:0 0 100%; max-width:none; margin:0; font-size:12px;
+                    font-weight:700;
                     color:#6B7577; text-transform:uppercase; letter-spacing:.04em; }
 .dbank .dempty { margin:0; font-size:14px; color:#6B7577; }
 

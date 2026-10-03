@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 8 Design and MVP | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; Computer Science</div>
+    <h1>Year 8: Design and the smallest working version</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Hand in (PDF)</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Hand in makes a PDF to upload to Google Classroom.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y8-design-review", "order": 11, "version": 1, "year": "Year 8", "slug": "design-and-mvp", "folder": "y8", "title": "Design and the smallest working version", "short": "Design and MVP", "objective": "Turn your brief into requirements and a plan in steps, build the smallest version that works, and test it.", "keywords": ["requirement", "plan", "minimum viable product", "test", "review"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From earlier lessons", "intro": ["Answer all three. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "Write a while line for your own app, using the values it allows."}, {"id": "r2", "label": "R2", "prompt": "What does int() do to what input() gives you?"}, {"id": "r3", "label": "R3", "prompt": "Name the three kinds of value you test a program with."}]}, {"kind": "drag", "mode": "order", "nav": "1", "label": "The order of work", "title": "What you do, and when", "check": "once", "intro": ["Put the five parts in the order you do them."], "cards": [{"id": "o1", "text": "Write down who it is for"}, {"id": "o2", "text": "List three requirements"}, {"id": "o3", "text": "Write your plan in steps"}, {"id": "o4", "text": "Build the smallest version"}, {"id": "o5", "text": "Test it with three values"}], "targets": [{"id": "p1", "text": "First"}, {"id": "p2", "text": "Second"}, {"id": "p3", "text": "Third"}, {"id": "p4", "text": "Fourth"}, {"id": "p5", "text": "Fifth"}], "key_b64": "eyJvMSI6InAxIiwibzIiOiJwMiIsIm8zIjoicDMiLCJvNCI6InA0IiwibzUiOiJwNSJ9"}, {"kind": "drag", "mode": "match", "nav": "2", "label": "Which part", "title": "Each requirement needs one thing you already know", "check": "once", "intro": ["Match each line of Python to the job it does in your app."], "cards": [{"id": "m1", "text": "input()"}, {"id": "m2", "text": "while"}, {"id": "m3", "text": "if, elif, else"}, {"id": "m4", "text": "def"}], "targets": [{"id": "t3", "text": "Choose between three answers."}, {"id": "t1", "text": "Ask the user for a value."}, {"id": "t4", "text": "Name a job once, then use it whenever you need it."}, {"id": "t2", "text": "Keep asking until the value is allowed."}], "key_b64": "eyJtMSI6InQxIiwibTIiOiJ0MiIsIm0zIjoidDMiLCJtNCI6InQ0In0="}, {"kind": "drag", "mode": "sort", "nav": "3", "label": "Now or later", "title": "What goes in the first version", "check": "once", "intro": ["The first version is the smallest one that works.", "Put each card where it belongs."], "cards": [{"id": "c1", "text": "Ask the user for one value"}, {"id": "c2", "text": "Check the value is allowed"}, {"id": "c3", "text": "Choose with if, elif and else"}, {"id": "c4", "text": "Call my function once"}, {"id": "c5", "text": "Colours chosen by the user"}, {"id": "c6", "text": "A menu with four options"}, {"id": "c7", "text": "A second function"}, {"id": "c8", "text": "A score that counts up"}], "targets": [{"id": "now", "text": "In the first version"}, {"id": "later", "text": "Later, if there is time"}], "key_b64": "eyJjMSI6Im5vdyIsImMyIjoibm93IiwiYzMiOiJub3ciLCJjNCI6Im5vdyIsImM1IjoibGF0ZXIiLCJjNiI6ImxhdGVyIiwiYzciOiJsYXRlciIsImM4IjoibGF0ZXIifQ=="}, {"kind": "code", "nav": "4", "label": "A worked one", "title": "Somebody else's smallest working version", "intro": ["This app prices a ticket. It asks, checks, chooses and calls a function.", "Predict first. It is run with 0, then 10."], "predict_first": "s4a", "code": "def price(age):\n    if age < 13:\n        print(\"Price: 8\")\n    else:\n        print(\"Price: 15\")\n\nage = int(input(\"Age: \"))\nwhile age < 1 or age > 120:\n    print(\"Age must be from 1 to 120.\")\n    age = int(input(\"Age: \"))\n\nprice(age)\n", "inputs": ["0", "10"], "questions": [{"id": "s4a", "label": "4a", "prompt": "Predict the two lines it prints."}, {"id": "s4b", "label": "4b", "prompt": "Which line refuses a value that is not allowed?"}, {"id": "s4c", "label": "4c", "prompt": "Name one thing this app does not do yet, that could wait."}], "expected_b64": "QWdlIG11c3QgYmUgZnJvbSAxIHRvIDEyMC4KUHJpY2U6IDg="}, {"kind": "code", "nav": "Make", "label": "Make: your first version", "title": "Build the smallest version of your own app", "code": "# 1. Your function. Name the job once.\n\n\n# 2. Ask the user for one value.\n\n\n# 3. Check it with a while loop.\n\n\n# 4. Call your function with the value.\n", "make": {"task": "Build the smallest working version of the app from your brief.", "rules": ["It must ask, check, choose, and call your own function.", "Test it twice: a value that is refused, then a value that works."], "watch": "A while loop must ask again inside the loop, or it never stops.", "checkpoint": "your first version running, and your plan in steps.", "homework": "the third requirement, and your test table."}, "questions": [{"id": "k1", "label": "M1", "prompt": "Who is your app for, and what does it do?"}, {"id": "k2", "label": "M2", "prompt": "Write your plan as numbered steps."}, {"id": "k3", "label": "M3", "prompt": "Copy your while line."}, {"id": "k4", "label": "M4", "prompt": "Which value did you test that your app refused?"}]}, {"kind": "questions", "nav": "5", "label": "Review", "title": "Check it against the brief", "intro": ["Read your own app back against what you promised in Lesson 8."], "remember": "A working small app beats a broken big one. The task is in the week of 26 October.", "questions": [{"id": "v1", "label": "5a", "prompt": "Which of your three requirements is working now?"}, {"id": "v2", "label": "5b", "prompt": "Which one is not working yet, and what is the next thing to try?"}, {"id": "v3", "label": "5c", "prompt": "What did a partner find when they used your app?"}]}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything."], "questions": [{"id": "e1", "label": "E1", "prompt": "What does the smallest working version have to do?"}, {"id": "e2", "label": "E2", "prompt": "Why build that before the extra features?"}, {"id": "e3", "label": "E3", "prompt": "Name the three values you will test your app with."}, {"id": "e4", "label": "E4", "prompt": "What is the one thing you will finish before the next lesson?"}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

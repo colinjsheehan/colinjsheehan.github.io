@@ -327,3 +327,88 @@ ul.wordlist b { color:var(--teal); }
 .pick .opt.sel { border-color:var(--teal); background:var(--lteal); box-shadow:0 0 0 2px var(--teal) inset; }
 .pick .opt[disabled] { cursor:not-allowed; opacity:.8; }
 .pick.locked .opt.sel { opacity:1; }
+
+/* ---------------------------------------------------- drag steps (3 Oct 2026)
+   Cards into boxes. Every card and every box is a real button: that is what
+   makes tapping, the keyboard and VoiceOver work without a line of extra code,
+   and it gives the 44px target for free.
+   touch-action:none is on the CARD alone. It must never go on the bank, the
+   boxes or the page, or a finger that lands anywhere in the step stops being
+   able to scroll the lesson. */
+.drag { margin:10px 0 0; }
+.drag .dhow { font-size:14px; color:#5A6567; margin:0 0 10px; max-width:34em; }
+
+.dcard { display:inline-flex; align-items:center; gap:6px; min-height:48px;
+         padding:10px 14px; font:inherit; font-size:15px; font-weight:600;
+         background:#fff; color:var(--near); border:2px solid var(--teal);
+         border-radius:8px; -webkit-appearance:none; cursor:pointer;
+         touch-action:none; user-select:none; -webkit-user-select:none;
+         -webkit-touch-callout:none; text-align:left; }
+.dcard.dpicked { background:var(--teal); color:#fff; }
+.dcard.dok  { border-color:#2E7D32; background:#D6EEDD; }
+.dcard.dbad { border-color:var(--amber); background:#F6E3C6; }
+.dcard[disabled] { opacity:1; cursor:default; }
+.dcard:focus-visible { outline:3px solid var(--amber); outline-offset:2px; }
+.dcard.ghost { position:fixed; z-index:50; opacity:.95; pointer-events:none;
+               box-shadow:0 6px 18px rgba(0,0,0,.28); }
+.dans { font-size:13.5px; font-weight:700; color:var(--amber); white-space:nowrap; }
+
+.dslots { display:flex; flex-direction:column; gap:10px; }
+.dslot { display:flex; align-items:center; gap:10px; width:100%; min-height:52px;
+         padding:8px 10px; font:inherit; font-size:15px; text-align:left;
+         background:#fff; color:var(--near); border:2px dashed var(--grey);
+         border-radius:8px; -webkit-appearance:none; cursor:pointer; }
+.dslot .dwell { flex:none; width:122px; min-height:36px; display:flex;
+                align-items:center; justify-content:center; padding:4px 6px;
+                border-radius:6px; background:var(--panel); color:#6B7577;
+                font-size:15px; font-weight:700; }
+.dslot .dwell.dfull { background:var(--lteal); color:var(--near);
+                      border:1px solid var(--teal); }
+.dslot .dwhat { flex:1; }
+.dslot.dfilled { border-style:solid; border-color:var(--teal); }
+.dslot.dover { border-color:var(--teal); border-style:solid; background:var(--lteal); }
+.dslot.dok  { border-color:#2E7D32; border-style:solid; background:#F1F9F3; }
+.dslot.dok .dwell.dfull { background:#D6EEDD; border-color:#2E7D32; }
+.dslot.dbad { border-color:var(--amber); border-style:solid; background:var(--lamber); }
+.dslot.dbad .dwell.dfull { background:#F6E3C6; border-color:var(--amber); }
+.dslot[disabled] { opacity:1; cursor:default; }
+.dslot:focus-visible { outline:3px solid var(--teal); outline-offset:2px; }
+
+/* gapfill: the boxes sit in the sentence, so the line height has to carry them */
+.dsentence { font-size:17px; line-height:2.2; max-width:34em; }
+.dsentence .dslot { display:inline-flex; width:auto; min-width:128px;
+                    justify-content:center; vertical-align:middle; }
+.dsentence .dslot .dwell { width:auto; min-width:104px; }
+
+/* sort: the groups stack on a narrow screen and sit side by side on a wide one */
+.dgroups { display:grid; grid-template-columns:1fr; gap:10px; }
+@media (min-width:700px) { .dgroups { grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); } }
+.dgroup { border:2px dashed var(--grey); border-radius:8px; padding:8px; min-height:120px; }
+.dgroup.dover { border-color:var(--teal); border-style:solid; background:var(--lteal); }
+.dgroup h3 { font-size:14px; margin:0 0 8px; color:var(--teal);
+             text-transform:uppercase; letter-spacing:.03em; }
+.dgroup .dheld { display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
+.dgroup .dheld .dcard { width:100%; }
+/* a strip that never fills, so a group that is full of cards still has somewhere
+   safe to tap: without it a student aiming at the group hits a card and takes it
+   back out */
+.dzone { display:block; width:100%; min-height:48px; margin:8px 0 0; font:inherit;
+         font-size:14px; font-weight:700; color:#6B7577; background:#fff;
+         border:2px dashed var(--grey); border-radius:6px; -webkit-appearance:none;
+         cursor:pointer; }
+.dgroup.dover .dzone { border-color:var(--teal); color:var(--teal); }
+.dzone:focus-visible { outline:3px solid var(--teal); outline-offset:2px; }
+
+/* the bank sits in the page under its own step, never pinned to the bottom of
+   the screen, where it would cover the boxes being dropped into */
+.dbank { background:var(--panel); border:1px solid var(--grey); border-radius:8px;
+         padding:10px 12px; margin:12px 0 0; display:flex; flex-wrap:wrap;
+         gap:10px; align-items:center; }
+.dbank .dbankname { flex:0 0 100%; margin:0; font-size:12px; font-weight:700;
+                    color:#6B7577; text-transform:uppercase; letter-spacing:.04em; }
+.dbank .dempty { margin:0; font-size:14px; color:#6B7577; }
+
+.drow { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:12px 0 0; }
+.drow .dtally { margin:0; font-size:14px; font-weight:700; color:var(--near); }
+.drow .dtally.all { color:var(--green); }
+.drow .dnote { margin:0; font-size:13.5px; color:#6B7577; }

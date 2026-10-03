@@ -44,7 +44,20 @@
     yes: "\u2713 Same", no: "\u2717 Different", err: "\u2717 Stop. Look at the line.",
     ok: "\u2713", waiting: "\u25B6",
     reset: "\u21BA Again", resetArm: "Again?",
-    noPdf: "\u2717", saved: function (f) { return "\u2713 " + f; }
+    noPdf: "\u2717", saved: function (f) { return "\u2713 " + f; },
+    /* Symbols only. Every word on a Year 7 (i) page has to be a word that course
+       has taught, and none of the drag wording has been. Rather than smuggle
+       English onto those pages, this side is symbols, and verify_site.py refuses
+       a drag step on a Year 7 (i) page until Colin decides which words to teach
+       for it. (No word may be quoted in this comment: the Year 7 word check reads
+       string literals out of this block, and a comment is part of it.) */
+    dragHow: "", dragDrop: "?", dragBank: "", dragEmpty: "?",
+    dragAllPlaced: "\u2713", dragBoxes: "", dragCards: "",
+    dragCheck: "\u2713?", dragOneCheck: "", dragPutIn: "\u2192 ",
+    dragPutHere: "\u2192", dragTakeBack: "\u2190",
+    dragRight: "\u2713", dragAnswer: "\u2192 ",
+    dragScore: function (n, of) { return n + "/" + of + " \u2713"; },
+    dragRecordedFirst: ""
   } : {
     remember: "Remember: ", hint: "Hint", drill: "Say it together",
     drawOnly: "This step draws a picture. There is no text output to check.",
@@ -56,6 +69,21 @@
     handinNote: "Your work is saved in this browser on this device. Make the "
       + "hand-in PDF before the end of the lesson: it holds your code, so you can "
       + "paste it back in on another device and carry on.",
+    /* The drag step's own wording lives here, not in the lesson files. It is the
+       same sentence on every drag step, so a lesson that wrote its own would be
+       repeating the interface at the student, which is what the reading-load work
+       of 28 Sep took out of the cards. */
+    dragHow: "Tap a card, then tap where it goes. You can drag instead if you prefer.",
+    dragDrop: "drop here", dragBank: "Cards", dragEmpty: "Empty box",
+    dragAllPlaced: "Every card is placed.",
+    dragBoxes: " boxes filled", dragCards: " cards placed",
+    dragCheck: "Check my answers",
+    dragOneCheck: "You can check once everything is placed. You only get one check.",
+    dragPutIn: "Put it in ", dragPutHere: "Tap to put the picked card here.",
+    dragTakeBack: "Tap to take it back.", dragRight: "This is right.",
+    dragAnswer: "Answer: ",
+    dragScore: function (n, of) { return n + " out of " + of + " right"; },
+    dragRecordedFirst: "Your answers were recorded before these were shown.",
     reset: "Reset this step", resetArm: "Tap again to reset",
     noPdf: "The PDF tool did not load. Reload the page and try again.",
     saved: function (f) { return "Saved as \"" + f + "\". Upload it to this lesson's Google Classroom assignment."; }
@@ -561,6 +589,7 @@
     var step = L.steps[i], s = state.steps[String(i)] || {};
     var qs = (step.questions || []).every(answered);
     if (step.kind === "convert") return qs && convDone(i);
+    if (step.kind === "drag") return qs && dragDone(i);
     if (step.kind === "questions") return qs;
     var codeOk = step.expected != null ? !!s.matched : (!!s.ran && !s.error);
     return qs && codeOk;
@@ -690,6 +719,7 @@
     }
     if (step.readonly) cardEl.appendChild(el("pre", "show", step.readonly));
     if (step.kind === "convert") cardEl.appendChild(convertEl(step, i));
+    if (step.kind === "drag") cardEl.appendChild(dragEl(step, i));
 
     (step.questions || []).forEach(function (q) {
       var box = el("div", "q");
@@ -789,6 +819,367 @@
       row.appendChild(f);
     });
     return row;
+  }
+
+  /* DRAG. Cards into boxes (added 3 Oct 2026, at Colin's request).
+
+     A step with "kind": "drag" has "mode" (match, gapfill, sort or order),
+     "cards" and "targets". Every card belongs in exactly one target, or in none
+     when it is a spare. THE ANSWERS ARE NOT IN THE LESSON: they live in
+     TEACHER["drag"][nav] and build_site.py copies them in as key_b64, encoded,
+     and only when the step marks itself. A step with "check": "never" has no key
+     on the page at all.
+
+     HOW IT IS ANSWERED. Tap a card, then tap where it goes. Dragging does the
+     same thing and is the second way, not the first: tapping is what works on an
+     iPad without fighting the page, and because every card and every box is a
+     real button it is also what works from the keyboard and with VoiceOver.
+
+     WHAT MARKS IT. Nothing, until the student asks. "check": "once" (the default)
+     gives a Check button that turns on when every box is filled. One tap writes
+     the answers down with the time, shuts the step, and only then shows which
+     were right and what the right ones were. The recorded answer is always the
+     one the student reached on their own. "always" marks as they go, for a drill.
+     "never" shows no answers at all.
+
+     ON THE IPAD. touch-action:none is set on the cards alone, never on the page,
+     so a finger anywhere else still scrolls the lesson. A drag is not claimed
+     until the finger has moved DRAG_MOVED pixels, so a wobble is still a tap. The
+     finger hides the box, so a drop counts from DRAG_SNAP pixels outside it and
+     the nearest middle wins. */
+  var DRAG_MOVED = 8;
+  var DRAG_SNAP = 20;
+  var dragging = null;      /* the live pointer drag */
+  var picked = null;        /* {step: i, card: "c1"} waiting for a box */
+
+  function dragKey(step) {
+    if (!step.key_b64) return null;
+    try { return JSON.parse(atob(step.key_b64)); } catch (e) { return null; }
+  }
+  function dragSingle(step) { return step.mode !== "sort"; }
+  function dragMarks(step) { return (step.check || "once") !== "never"; }
+  function dragState(i) {
+    var s = st(i);
+    if (!s.put) s.put = {};
+    if (!s.first) s.first = {};
+    if (!s.moves) s.moves = {};
+    return s;
+  }
+  function dragShut(i) { return !!st(i).mark; }
+  function dragCard(step, id) {
+    return step.cards.filter(function (c) { return c.id === id; })[0];
+  }
+  function dragTargetText(step, id) {
+    var t = step.targets.filter(function (x) { return x.id === id; })[0];
+    return (t && t.text) || id;
+  }
+  function dragHeld(step, i, tid) {
+    var put = dragState(i).put;
+    return step.cards.filter(function (c) { return put[c.id] === tid; }).map(function (c) { return c.id; });
+  }
+  function dragProgress(step, i) {
+    var s = dragState(i);
+    if (dragSingle(step)) {
+      return { done: step.targets.filter(function (t) {
+                 return dragHeld(step, i, t.id).length > 0; }).length,
+               need: step.targets.length, what: TX.dragBoxes };
+    }
+    return { done: step.cards.filter(function (c) { return s.put[c.id]; }).length,
+             need: step.cards.length, what: TX.dragCards };
+  }
+  /* A drag step counts as answered when everything is placed. Being right has
+     nothing to do with it: the nav tick means the work is done, not correct. */
+  function dragDone(i) {
+    var p = dragProgress(L.steps[i], i);
+    return p.done >= p.need;
+  }
+
+  function dragPlace(i, cardId, targetId) {
+    var step = L.steps[i], s = dragState(i);
+    if (dragShut(i)) return;
+    if (targetId && dragSingle(step)) {
+      Object.keys(s.put).forEach(function (k) {       /* one card to a box */
+        if (s.put[k] === targetId && k !== cardId) delete s.put[k];
+      });
+    }
+    if (targetId) {
+      /* The first answer is kept and every change after it counted, the same way
+         a typed answer is, so the hand-in shows the thinking and not just the end. */
+      if (s.first[cardId] === undefined) s.first[cardId] = targetId;
+      else if (s.put[cardId] !== targetId) s.moves[cardId] = (s.moves[cardId] || 0) + 1;
+      s.put[cardId] = targetId;
+    } else {
+      delete s.put[cardId];
+    }
+    picked = null;
+    if ((step.check || "once") === "always") dragMark(i, true);
+    saveSoon();
+    renderNavSoon();
+  }
+
+  /* THE ORDER IS THE POINT. The answers are written down first, with the time,
+     and the key is only read after that. The step is shut in the same breath, so
+     nothing that happens once the answers are on screen can change the record. */
+  function dragMark(i, quiet) {
+    var step = L.steps[i], s = dragState(i);
+    if (!dragMarks(step)) return;
+    var answers = {};
+    step.cards.forEach(function (c) { if (s.put[c.id]) answers[c.id] = s.put[c.id]; });
+    var key = dragKey(step) || {};
+    var score = Object.keys(key).filter(function (cid) { return answers[cid] === key[cid]; }).length;
+    s.mark = { at: new Date().toISOString(), answers: answers,
+               score: score, of: Object.keys(key).length };
+    picked = null;
+    save();
+    if (!quiet) renderCard(i);
+    renderNavSoon();
+  }
+
+  function dragArm(node, whichCard, i) {
+    node.addEventListener("pointerdown", function (e) {
+      var id = whichCard();
+      if (dragging || !id || dragShut(i)) return;
+      dragging = { id: e.pointerId, card: id, step: i, x: e.clientX, y: e.clientY,
+                   moved: false, node: node, ghost: null };
+      try { node.setPointerCapture(e.pointerId); } catch (x) {}
+    });
+    node.addEventListener("pointermove", function (e) {
+      if (!dragging || e.pointerId !== dragging.id) return;
+      if (!dragging.moved) {
+        if (Math.abs(e.clientX - dragging.x) < DRAG_MOVED &&
+            Math.abs(e.clientY - dragging.y) < DRAG_MOVED) return;
+        dragging.moved = true;
+        var r = node.getBoundingClientRect(), w = Math.max(r.width, 110);
+        var g = document.createElement("div");
+        g.className = "dcard ghost";
+        g.textContent = dragCard(L.steps[i], dragging.card).text;
+        g.style.width = w + "px";
+        dragging.dx = Math.min(e.clientX - r.left, w / 2);
+        dragging.dy = e.clientY - r.top;
+        dragging.ghost = g;
+        document.body.appendChild(g);
+        node.style.opacity = ".35";
+      }
+      dragging.ghost.style.left = (e.clientX - dragging.dx) + "px";
+      dragging.ghost.style.top = (e.clientY - dragging.dy) + "px";
+      dragOver(dragNearest(e.clientX, e.clientY, L.steps[i], i));
+    });
+    function endDrag(e) {
+      if (!dragging || e.pointerId !== dragging.id) return;
+      var moved = dragging.moved, held = dragging.card;
+      var hit = moved ? dragNearest(e.clientX, e.clientY, L.steps[i], i) : null;
+      if (dragging.ghost) dragging.ghost.remove();
+      node.style.opacity = "";
+      dragging = null;
+      dragOver(null);
+      if (!moved) return;                /* a tap: the click handler has it */
+      node.dataset.justDragged = "1";
+      setTimeout(function () { delete node.dataset.justDragged; }, 400);
+      if (hit) dragPlace(i, held, hit);
+      else if (dragState(i).put[held]) dragPlace(i, held, null);
+      else renderCard(i);
+    }
+    node.addEventListener("pointerup", endDrag);
+    node.addEventListener("pointercancel", endDrag);
+  }
+
+  function dragNearest(x, y, step, i) {
+    var best = null, bestD = Infinity;
+    step.targets.forEach(function (t) {
+      var node = document.querySelector('[data-drop="' + i + ":" + t.id + '"]');
+      if (!node) return;
+      var r = node.getBoundingClientRect();
+      if (x < r.left - DRAG_SNAP || x > r.right + DRAG_SNAP ||
+          y < r.top - DRAG_SNAP || y > r.bottom + DRAG_SNAP) return;
+      var d = Math.pow(x - (r.left + r.right) / 2, 2) + Math.pow(y - (r.top + r.bottom) / 2, 2);
+      if (d < bestD) { bestD = d; best = t.id; }
+    });
+    return best;
+  }
+  function dragOver(tid) {
+    Array.prototype.forEach.call(document.querySelectorAll(".dover"), function (n) {
+      n.classList.remove("dover");
+    });
+    if (!tid) return;
+    var n = document.querySelector('[data-drop$=":' + tid + '"]');
+    if (n) n.classList.add("dover");
+  }
+
+  function dragCardEl(step, i, card) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "dcard";
+    b.textContent = card.text;
+    b.dataset.card = card.id;
+    var s = dragState(i), mark = s.mark;
+    if (mark) {
+      var key = dragKey(step) || {}, right = key[card.id], where = s.put[card.id];
+      if (right !== undefined) {
+        b.classList.add(where === right ? "dok" : "dbad");
+        if (where !== right && !dragSingle(step)) {
+          b.appendChild(el("span", "dans", TX.dragAnswer + dragTargetText(step, right)));
+        }
+      } else if (where) {
+        b.classList.add("dbad");
+      }
+      b.disabled = true;
+      return b;
+    }
+    if (picked && picked.step === i && picked.card === card.id) {
+      b.classList.add("dpicked");
+      b.setAttribute("aria-pressed", "true");
+    } else {
+      b.setAttribute("aria-pressed", "false");
+    }
+    b.addEventListener("click", function () {
+      if (b.dataset.justDragged) { delete b.dataset.justDragged; return; }
+      /* A card already in a group is part of that group's drop area while another
+         card is picked up. Found in class use: a group fills with cards until its
+         middle IS a card, so a student aiming at the group hits one, and treating
+         that as "take this card out" undoes work they did not mean to touch. With
+         a card in hand the whole group accepts it, cards included. */
+      if (picked && picked.step === i && picked.card !== card.id && s.put[card.id]) {
+        dragPlace(i, picked.card, s.put[card.id]);
+        renderCard(i);
+        return;
+      }
+      if (s.put[card.id]) { dragPlace(i, card.id, null); renderCard(i); return; }
+      picked = (picked && picked.card === card.id && picked.step === i)
+        ? null : { step: i, card: card.id };
+      renderCard(i);
+    });
+    dragArm(b, function () { return card.id; }, i);
+    return b;
+  }
+
+  function dragSlot(step, i, t, inner) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "dslot";
+    b.dataset.drop = i + ":" + t.id;
+    var held = dragHeld(step, i, t.id), s = dragState(i);
+    var well = el("span", "dwell" + (held.length ? " dfull" : ""),
+                  held.length ? dragCard(step, held[0]).text : TX.dragDrop);
+    b.appendChild(well);
+    if (inner) b.appendChild(el("span", "dwhat", inner));
+    if (held.length) b.classList.add("dfilled");
+    if (s.mark) {
+      var key = dragKey(step) || {};
+      var wants = Object.keys(key).filter(function (cid) { return key[cid] === t.id; })[0];
+      var ok = wants !== undefined && held[0] === wants;
+      b.classList.add(ok ? "dok" : "dbad");
+      if (!ok && wants !== undefined) {
+        b.appendChild(el("span", "dans", TX.dragAnswer + dragCard(step, wants).text));
+      }
+      b.setAttribute("aria-label",
+        (held.length ? dragCard(step, held[0]).text + ". " : TX.dragEmpty + ". ") + (inner || "")
+        + (ok ? " " + TX.dragRight
+             : (wants !== undefined ? " " + TX.dragAnswer + dragCard(step, wants).text : "")));
+      b.disabled = true;
+      return b;
+    }
+    b.setAttribute("aria-label",
+      (held.length ? dragCard(step, held[0]).text + ". " + (inner || "") + " " + TX.dragTakeBack
+                   : TX.dragEmpty + ". " + (inner || "") + " " + TX.dragPutHere));
+    b.addEventListener("click", function () {
+      if (b.dataset.justDragged) { delete b.dataset.justDragged; return; }
+      if (picked && picked.step === i) { dragPlace(i, picked.card, t.id); renderCard(i); return; }
+      if (held.length) { dragPlace(i, held[0], null); renderCard(i); return; }
+    });
+    dragArm(b, function () {
+      var now = dragHeld(step, i, t.id);
+      return now.length ? now[0] : null;
+    }, i);
+    return b;
+  }
+
+  function dragEl(step, i) {
+    var wrap = el("div", "drag drag-" + (step.mode || "match"));
+    var s = dragState(i);
+    if (!SIMPLE) wrap.appendChild(el("p", "dhow", TX.dragHow));
+
+    if (step.mode === "sort") {
+      var groups = el("div", "dgroups");
+      step.targets.forEach(function (t) {
+        var box = el("div", "dgroup");
+        box.dataset.drop = i + ":" + t.id;
+        box.appendChild(el("h3", "", t.text || t.id));
+        var held = el("div", "dheld");
+        dragHeld(step, i, t.id).forEach(function (cid) {
+          held.appendChild(dragCardEl(step, i, dragCard(step, cid)));
+        });
+        box.appendChild(held);
+        if (!s.mark) {
+          /* A strip that never fills, so there is always somewhere in the group
+             safe to tap once cards are sitting in it. */
+          var zone = document.createElement("button");
+          zone.type = "button";
+          zone.className = "dzone";
+          zone.textContent = picked && picked.step === i
+            ? TX.dragPutIn + (t.text || t.id) : TX.dragDrop;
+          zone.setAttribute("aria-label", TX.dragPutIn + (t.text || t.id));
+          box.appendChild(zone);
+          box.addEventListener("click", function (e) {
+            if (e.target.closest(".dcard")) return;
+            if (picked && picked.step === i) { dragPlace(i, picked.card, t.id); renderCard(i); }
+          });
+        }
+        groups.appendChild(box);
+      });
+      wrap.appendChild(groups);
+    } else if (step.mode === "gapfill") {
+      var sent = el("p", "dsentence");
+      String(step.sentence || "").split(/(\{[A-Za-z0-9_]+\})/).forEach(function (bit) {
+        var m = bit.match(/^\{([A-Za-z0-9_]+)\}$/);
+        if (!m) { sent.appendChild(document.createTextNode(bit)); return; }
+        var t = step.targets.filter(function (x) { return x.id === m[1]; })[0];
+        if (t) sent.appendChild(dragSlot(step, i, t, ""));
+      });
+      wrap.appendChild(sent);
+    } else {
+      var slots = el("div", "dslots");
+      step.targets.forEach(function (t) {
+        slots.appendChild(dragSlot(step, i, t, t.text || ""));
+      });
+      wrap.appendChild(slots);
+    }
+
+    /* the bank sits in the page, under its own step. It is never pinned to the
+       bottom of the screen: a bar down there covers the boxes being dropped into. */
+    var bank = el("div", "dbank");
+    bank.appendChild(el("p", "dbankname", TX.dragBank));
+    var loose = 0;
+    step.cards.forEach(function (c) {
+      if (s.put[c.id] || (s.mark && !dragSingle(step))) return;
+      loose++;
+      bank.appendChild(dragCardEl(step, i, c));
+    });
+    if (!loose) bank.appendChild(el("p", "dempty", TX.dragAllPlaced));
+    wrap.appendChild(bank);
+
+    var row = el("div", "drow");
+    if (s.mark) {
+      row.appendChild(el("p", "dtally" + (s.mark.score === s.mark.of ? " all" : ""),
+                         TX.dragScore(s.mark.score, s.mark.of)));
+      row.appendChild(el("p", "dnote", TX.dragRecordedFirst));
+    } else {
+      var p = dragProgress(step, i);
+      row.appendChild(el("p", "dtally" + (p.done === p.need ? " all" : ""),
+                         p.done + " of " + p.need + p.what));
+      if ((step.check || "once") === "once") {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn";
+        btn.dataset.check = String(i);
+        btn.textContent = TX.dragCheck;
+        btn.disabled = p.done < p.need;
+        btn.addEventListener("click", function () { dragMark(i); });
+        row.appendChild(btn);
+        if (btn.disabled) row.appendChild(el("p", "dnote", TX.dragOneCheck));
+      }
+    }
+    wrap.appendChild(row);
+    return wrap;
   }
 
   /* CONVERT. Self-correcting binary conversions (added 19 Sep 2026).
@@ -1370,6 +1761,31 @@
                10, "normal", "courier", 4);
         });
       }
+      if (step.kind === "drag") {
+        /* Every card, where it was put, and whether that was right. The mark is
+           the one taken at the check, not whatever is on screen now, and the line
+           says so, so the sheet can be trusted. An unchecked step still prints
+           the answers, with no mark. */
+        var dm = s.mark, dput = dm ? dm.answers : (s.put || {});
+        var dkey = dragKey(step) || {};
+        if (dm) text("Checked at " + dm.at.slice(11, 16) + ".  " + dm.score
+                     + " out of " + dm.of + " right.", 10, "bold");
+        else text("Not checked. The answers below were not marked.", 10, "bold");
+        step.cards.forEach(function (c) {
+          var where = dput[c.id];
+          var line = c.text + "  ->  "
+            + (where ? dragTargetText(step, where) : "(left out)");
+          if (dm && dkey[c.id] !== undefined) line += where === dkey[c.id] ? "     right" : "     wrong";
+          text(line, 10, "normal", "helvetica", 4);
+          var fz = (s.first || {})[c.id];
+          if (fz && fz !== where) {
+            text("First answer: " + dragTargetText(step, fz) + "     changed "
+                 + ((s.moves || {})[c.id] || 1) + " time"
+                 + (((s.moves || {})[c.id] || 1) === 1 ? "" : "s"),
+                 9, "italic", "helvetica", 8);
+          }
+        });
+      }
       (step.questions || []).forEach(function (q) {
         gap(1);
         text(q.label + "  " + q.prompt, 10, "bold");
@@ -1455,6 +1871,13 @@
         row.conv = step.items.map(function (n, j) {
           return { want: convAnswer(step, j), got: (cv[j] || "").trim(), tries: tr[j] || 0 };
         });
+      }
+      if (step.kind === "drag") {
+        var dm2 = s.mark;
+        row.drag = { mode: step.mode, put: dm2 ? dm2.answers : (s.put || {}),
+                     first: s.first || {}, moved: s.moves || {},
+                     checked: dm2 ? dm2.at : null,
+                     score: dm2 ? dm2.score : null, of: dm2 ? dm2.of : null };
       }
       if (step.questions && step.questions.length) {
         row.qs = step.questions.map(function (q) {

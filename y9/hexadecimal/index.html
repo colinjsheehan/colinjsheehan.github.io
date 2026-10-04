@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 9 Hexadecimal | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; Computer Science</div>
+    <h1>Year 9: Hexadecimal: splitting the byte</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Hand in (PDF)</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Hand in makes a PDF to upload to Google Classroom.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y9-hexadecimal", "order": 24, "unit": "data-representation", "version": 1, "year": "Year 9", "slug": "hexadecimal", "folder": "y9", "title": "Hexadecimal: splitting the byte", "short": "Hexadecimal", "objective": "Write a byte as two hex digits by cutting it into nibbles, turn hex back into binary, and read a colour code.", "keywords": ["hexadecimal", "hex digit", "nibble", "byte", "colour code"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From last lesson", "intro": ["Answer all three. Use the columns 8 4 2 1 for a nibble."], "questions": [{"id": "r1", "label": "R1", "prompt": "What is the nibble 1100 in denary?"}, {"id": "r2", "label": "R2", "prompt": "What is the largest number a nibble can hold?"}, {"id": "r3", "label": "R3", "prompt": "How many nibbles make one byte?"}]}, {"kind": "code", "nav": "P", "label": "Predict", "title": "A colour code", "turtle": true, "intro": ["You have typed colours since Lesson 1. This one is written in hex.", "Answer Pa. Then press Run and check."], "code": "from turtle import *\npensize(40)\npencolor(\"#FF0000\")\nforward(200)\n", "predict_first": "pa", "questions": [{"id": "pa", "label": "Pa", "prompt": "Predict the colour of the line."}, {"id": "pb", "label": "Pb", "prompt": "#FF0000 has three pairs: FF, 00 and 00. Which pair do you think is the red?"}]}, {"kind": "questions", "nav": "W", "label": "Words", "title": "Five words for today", "intro": ["Read each row. Say each word. Then answer W1 to W3."], "table": {"headers": ["Term", "What it means", "Example"], "code_cols": [2], "rows": [["hexadecimal", "Hexadecimal, or hex, writes numbers with sixteen digits: 0 to 9, then A to F.", "C8"], ["hex digit", "One hex digit stands for one nibble, 0 to 15.", "C"], ["nibble", "A nibble is 4 bits, half a byte.", "1100"], ["A to F", "The letters A to F stand for 10 to 15.", "F"], ["colour code", "A colour code is three bytes in hex: red, green, then blue.", "#FF0000"]]}, "drill": "Cut the byte in half: each **nibble** is one **hex** digit.", "questions": [{"id": "w1", "label": "W1", "prompt": "One byte is written with ...", "pick": [{"v": "1 hex digit"}, {"v": "2 hex digits"}, {"v": "8 hex digits"}]}, {"id": "w2", "label": "W2", "prompt": "A nibble can hold 0 to ...", "pick": [{"v": "9"}, {"v": "15"}, {"v": "16"}]}, {"id": "w3", "label": "W3", "prompt": "In a colour code, the first pair of hex digits is the amount of ...", "pick": [{"v": "red"}, {"v": "green"}, {"v": "blue"}]}]}, {"kind": "questions", "nav": "Cut", "label": "Cut the byte", "title": "One byte, cut in half", "intro": ["The picture cuts 11001000 in half and converts each nibble with 8 4 2 1.", "Use the same cut on 00101111. Answer K1 to K3."], "images": [{"src": "../img/y9_hex_cut.png", "big": true, "alt": "The byte 11001000 is cut in half. The left nibble 1100 is 8 + 4, which is 12, which is C. The right nibble 1000 is 8. Side by side, the byte is C8."}], "questions": [{"id": "k1", "label": "K1", "prompt": "00101111: what is the left nibble in hex?", "pick": [{"v": "2"}, {"v": "F"}, {"v": "4"}]}, {"id": "k2", "label": "K2", "prompt": "00101111: what is the right nibble in hex?", "pick": [{"v": "1"}, {"v": "15"}, {"v": "F"}]}, {"id": "k3", "label": "K3", "prompt": "So 00101111 in hex is ...", "pick": [{"v": "2F"}, {"v": "F2"}, {"v": "215"}]}]}, {"kind": "drag", "mode": "match", "nav": "1", "label": "The six letters", "title": "A to F", "check": "once", "intro": ["Hex counts 0 to 9, then carries on with letters.", "Match each letter to the number it stands for. One card is not needed."], "cards": [{"id": "d13", "text": "13"}, {"id": "d10", "text": "10"}, {"id": "d16", "text": "16"}, {"id": "d15", "text": "15"}, {"id": "d11", "text": "11"}, {"id": "d14", "text": "14"}, {"id": "d12", "text": "12"}], "targets": [{"id": "hC", "text": "C"}, {"id": "hA", "text": "A"}, {"id": "hF", "text": "F"}, {"id": "hB", "text": "B"}, {"id": "hE", "text": "E"}, {"id": "hD", "text": "D"}], "key_b64": "eyJkMTAiOiJoQSIsImQxMSI6ImhCIiwiZDEyIjoiaEMiLCJkMTMiOiJoRCIsImQxNCI6ImhFIiwiZDE1IjoiaEYifQ=="}, {"kind": "drag", "mode": "order", "nav": "2", "label": "The method", "title": "Binary to hex in four moves", "check": "once", "intro": ["Put the four moves in order."], "cards": [{"id": "m3", "text": "Change 10 to 15 into A to F"}, {"id": "m1", "text": "Cut the byte into two nibbles"}, {"id": "m4", "text": "Write the two hex digits side by side"}, {"id": "m2", "text": "Work out each nibble with 8 4 2 1"}], "targets": [{"id": "p1", "text": "First"}, {"id": "p2", "text": "Second"}, {"id": "p3", "text": "Third"}, {"id": "p4", "text": "Fourth"}], "key_b64": "eyJtMSI6InAxIiwibTIiOiJwMiIsIm0zIjoicDMiLCJtNCI6InA0In0="}, {"kind": "questions", "nav": "3", "label": "Step 3: binary to hex", "title": "Three bytes to hex", "remember": "Cut it in half. Convert each half. Join them up.", "intro": ["Work on paper first. Then type each answer as two hex digits."], "questions": [{"id": "s3a", "label": "3a", "prompt": "Write 01011010 in hex."}, {"id": "s3b", "label": "3b", "prompt": "Write 10101101 in hex."}, {"id": "s3c", "label": "3c", "prompt": "Write 00111100 in hex."}]}, {"kind": "questions", "nav": "4", "label": "Step 4: hex to binary", "title": "The same cut, backwards", "remember": "One hex digit is always four bits, zeros included: 2 is 0010.", "intro": ["Each hex digit becomes four bits. Type all eight bits."], "questions": [{"id": "s4a", "label": "4a", "prompt": "Write 1B in binary. All eight bits."}, {"id": "s4b", "label": "4b", "prompt": "Write 7E in binary. All eight bits."}, {"id": "s4c", "label": "4c", "prompt": "Write A0 in binary. All eight bits."}]}, {"kind": "drag", "mode": "match", "nav": "5", "label": "Colour codes", "title": "Read a colour in pairs", "check": "once", "intro": ["The table says how to read a colour code. All three at full makes white; none of any makes black.", "Match each code to its colour. One code is not needed."], "table": {"headers": ["Pair", "Amount of", "FF means", "00 means"], "rows": [["first", "red", "all of it", "none of it"], ["second", "green", "all of it", "none of it"], ["third", "blue", "all of it", "none of it"]]}, "cards": [{"id": "cW", "text": "#FFFFFF"}, {"id": "cG", "text": "#00FF00"}, {"id": "cGrey", "text": "#808080"}, {"id": "cR", "text": "#FF0000"}, {"id": "cK", "text": "#000000"}, {"id": "cB", "text": "#0000FF"}], "targets": [{"id": "tB", "text": "blue"}, {"id": "tW", "text": "white"}, {"id": "tR", "text": "red"}, {"id": "tK", "text": "black"}, {"id": "tG", "text": "green"}], "key_b64": "eyJjQiI6InRCIiwiY0ciOiJ0RyIsImNLIjoidEsiLCJjUiI6InRSIiwiY1ciOiJ0VyJ9"}, {"kind": "code", "nav": "6", "label": "Step 6: check with Python", "title": "One line that checks your paper", "remember": "Python writes hex with 0x in front and small letters: 0xc8 is C8.", "intro": ["hex() turns a denary number into hex. Press Run.", "Then change 90 to 173 and run it again. Answer 6a and 6b."], "code": "print(hex(200))\nprint(hex(90))\n", "questions": [{"id": "s6a", "label": "6a", "prompt": "What does hex(173) print, and is it your answer to 3b?"}, {"id": "s6b", "label": "6b", "prompt": "What does 0x mean?"}], "expected_b64": "MHhjOAoweDVh"}, {"kind": "code", "nav": "Make", "label": "Make: your own colours", "title": "Stripes in your own colours", "turtle": true, "remember": "A colour code is # and six hex digits: red, green, then blue.", "make": {"task": "Change the stripes to colours you mix yourself, then add more stripes.", "rules": ["Use at least four colour codes of your own.", "Comment each code with its red, green and blue in denary."], "choose": ["a flag", "a sunset", "a rainbow", "your own idea"], "checkpoint": "two colours of your own, each with its denary comment.", "homework": "four colours, then M1 and M2.", "watch": "Every colour code needs # and exactly six hex digits."}, "code": "from turtle import *\npensize(40)\n\n# stripe 1: red\npenup()\ngoto(-150, 60)\npendown()\npencolor(\"#FF0000\")\nforward(300)\n\n# stripe 2: green\npenup()\ngoto(-150, 0)\npendown()\npencolor(\"#00FF00\")\nforward(300)\n\n# stripe 3: blue\npenup()\ngoto(-150, -60)\npendown()\npencolor(\"#0000FF\")\nforward(300)\n", "hint": "80 is 128, about half. Try #FF8000: all of the red, half of the green, no blue.", "questions": [{"id": "mk1", "label": "M1", "prompt": "Write one of your colour codes and its red, green and blue in denary."}, {"id": "mk2", "label": "M2", "prompt": "What colour is #808080, and why?"}]}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer on paper first, without Python."], "questions": [{"id": "e1", "label": "E1", "prompt": "Write 10110110 in hex."}, {"id": "e2", "label": "E2", "prompt": "Write 4D in binary. All eight bits."}, {"id": "e3", "label": "E3", "prompt": "What is FF in denary, and why?"}, {"id": "e4", "label": "E4", "prompt": "Why is a colour written with six hex digits and not 24 ones and zeros?"}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

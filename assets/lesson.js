@@ -52,7 +52,7 @@
        for it. (No word may be quoted in this comment: the Year 7 word check reads
        string literals out of this block, and a comment is part of it.) */
     dragHow: "", dragDrop: "?", dragBank: "", dragEmpty: "?",
-    dragAllPlaced: "\u2713", dragBoxes: "", dragCards: "",
+    dragAllPlaced: "\u2713", dragBoxes: "", dragCards: "", dragGroups: "",
     dragCheck: "\u2713?", dragOneCheck: "", dragPutIn: "\u2192 ",
     dragPutHere: "\u2192", dragTakeBack: "\u2190",
     dragRight: "\u2713", dragAnswer: "\u2192 ",
@@ -78,6 +78,7 @@
     dragDrop: "drop here", dragBank: "Cards", dragEmpty: "Empty box",
     dragAllPlaced: "Every card is placed.",
     dragBoxes: " boxes filled", dragCards: " cards placed",
+    dragGroups: " groups filled",
     dragCheck: "Check my answers",
     dragOneCheck: "You can check once everything is placed. You only get one check.",
     dragPutIn: "Put it in ", dragPutHere: "Tap to put the picked card here.",
@@ -895,8 +896,9 @@
                  return dragHeld(step, i, t.id).length > 0; }).length,
                need: step.targets.length, what: TX.dragBoxes };
     }
-    return { done: step.cards.filter(function (c) { return s.put[c.id]; }).length,
-             need: step.cards.length, what: TX.dragCards };
+    return { done: step.targets.filter(function (t) {
+               return dragHeld(step, i, t.id).length > 0; }).length,
+             need: step.targets.length, what: TX.dragGroups };
   }
   /* A drag step counts as answered when everything is placed. Being right has
      nothing to do with it: the nav tick means the work is done, not correct. */
@@ -939,9 +941,11 @@
     var answers = {};
     step.cards.forEach(function (c) { if (s.put[c.id]) answers[c.id] = s.put[c.id]; });
     var key = dragKey(step) || {};
-    var score = Object.keys(key).filter(function (cid) { return answers[cid] === key[cid]; }).length;
+    var score = step.cards.filter(function (c) {
+      return key[c.id] === undefined ? !answers[c.id] : answers[c.id] === key[c.id];
+    }).length;
     s.mark = { at: new Date().toISOString(), answers: answers,
-               score: score, of: Object.keys(key).length };
+               score: score, of: step.cards.length };
     picked = null;
     openThem(i);                       // the reference it closed comes back
     save();
@@ -1076,8 +1080,11 @@
         if (where !== right && !dragSingle(step)) {
           b.appendChild(el("span", "dans", TX.dragAnswer + dragTargetText(step, right)));
         }
-      } else if (where) {
-        b.classList.add("dbad");
+      } else {
+        /* A card that belongs nowhere: right to leave it in the bank, wrong to
+           have put it in a group. Every card gets a verdict, so the colours and
+           the score agree. */
+        b.classList.add(where ? "dbad" : "dok");
       }
       b.disabled = true;
       return b;
@@ -1207,7 +1214,7 @@
     bank.appendChild(el("p", "dbankname", TX.dragBank));
     var loose = 0;
     step.cards.forEach(function (c) {
-      if (s.put[c.id] || (s.mark && !dragSingle(step))) return;
+      if (s.put[c.id]) return;
       loose++;
       bank.appendChild(dragCardEl(step, i, c));
     });
@@ -1880,7 +1887,10 @@
           var where = dput[c.id];
           var line = c.text + "  ->  "
             + (where ? dragTargetText(step, where) : "(left out)");
-          if (dm && dkey[c.id] !== undefined) line += where === dkey[c.id] ? "     right" : "     wrong";
+          if (dm) {
+            var ok = dkey[c.id] === undefined ? !where : where === dkey[c.id];
+            line += ok ? "     right" : "     wrong";
+          }
           text(line, 10, "normal", "helvetica", 4);
           var fz = (s.first || {})[c.id];
           if (fz && fz !== where) {

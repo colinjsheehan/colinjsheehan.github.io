@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<!--
+  Hex colours. Year 9, Unit 2: Data representation. Epsom College Malaysia.
+
+  One self-contained page: its own CSS and JavaScript. The only shared file is
+  jsPDF at /assets/jspdf.umd.min.js, for the score PDF.
+
+  WHAT IT IS. Four parts, chosen with the tabs:
+    Mix     three sliders, red, green and blue, 0 to 255. Each shows its value in
+            denary, in binary as two nibbles, and in hex. The colour and its code
+            change as the sliders move. Preset buttons give the main colours.
+    Wheel   a colour wheel. Tap any point to see its colour, its code and its three
+            pairs. Round the edge one or two pairs are FF; towards the middle all
+            three rise towards FF, which is white.
+    Colour from code   a code is shown; pick its colour from four.
+    Code from colour   a colour is shown; pick its code from four.
+
+  THE METHOD is the lesson's: a colour code is three bytes, red, green, then blue,
+  written as six hex digits. Each pair is read with the same cut as Hexadecimal:
+  two nibbles, 8 4 2 1 on each.
+
+  HARDER AS IT GOES. A round is 10 questions. Questions 1 to 3 use only 00 and FF
+  in each pair (eight colours). Questions 4 to 6 add 80 (half). Questions 7 to 10
+  add 40 and C0 (a quarter and three quarters). The three wrong answers each differ
+  from the right one in ONE pair only, so every pair has to be read.
+
+  SPLASH. A right answer throws a burst of paint in that colour from the button. A
+  student who has asked the computer for less motion (prefers-reduced-motion) sees
+  the button outlined instead.
+
+  RECORD. The PDF is the record for Google Classroom: name, game, score, every
+  question with the answer given. The best score is kept only in this browser
+  (localStorage key epsom:hex-colours:v1); every call to localStorage is wrapped so
+  a blocked store never stops the page.
+
+  VOICE: factual. No praise lines, no exclamation marks.
+-->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hex colours - Year 9</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+  :root {
+    --teal: #1F6F6B; --amber: #C8791A; --green: #3E8E5A; --near: #22292B;
+    --panel: #F4F6F6; --grey: #D8DEDE; --red: #B3261E; --lteal: #E6F1F0;
+    --lamber: #FBF1E3; --lgreen: #E3F2E8; --ink: #262626; --muted: #5A6466;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    color: var(--ink); background: #fff; font-size: 17px; line-height: 1.4;
+    min-height: 100vh; display: flex; flex-direction: column;
+  }
+  button, input { font: inherit; }
+  header.top { background: var(--near); color: #fff; padding: 10px 16px; }
+  header.top .school { font-size: 13px; opacity: .85; }
+  header.top h1 { margin: 0; font-size: 20px; font-weight: 700; }
+  .rainbow { height: 8px; background: linear-gradient(90deg, #FF0000, #FFFF00, #00FF00,
+             #00FFFF, #0000FF, #FF00FF, #FF0000); }
+  main { flex: 1; width: 100%; max-width: 1100px; margin: 0 auto; padding: 12px 16px 24px; }
+  a.back { color: var(--teal); text-decoration: none; display: inline-block; min-height: 44px;
+           line-height: 44px; }
+  a.back:hover { text-decoration: underline; }
+  footer.bar { background: var(--panel); border-top: 1px solid var(--grey); font-size: 13px;
+               color: var(--muted); padding: 8px 16px; display: flex; gap: 12px;
+               justify-content: space-between; flex-wrap: wrap; }
+  h2 { color: var(--teal); margin: 8px 0 6px; font-size: 22px; }
+  p { margin: 6px 0; max-width: 46em; }
+  .hidden { display: none !important; }
+  .mono { font-family: ui-monospace, Menlo, Consolas, monospace; }
+  .note { font-size: 15px; color: var(--muted); }
+
+  /* ------------------------------------------------------------------- tabs */
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 14px; }
+  .tab { min-height: 48px; padding: 8px 16px; border-radius: 8px; border: 2px solid var(--grey);
+         background: #fff; color: var(--near); font-weight: 700; cursor: pointer; }
+  .tab[aria-selected="true"] { border-color: var(--teal); background: var(--lteal); color: var(--teal); }
+  .tab:focus-visible, .btn:focus-visible, .opt:focus-visible, input[type=range]:focus-visible {
+    outline: 3px solid var(--amber); outline-offset: 2px; }
+  .btn { min-height: 48px; min-width: 44px; padding: 8px 20px; border-radius: 8px;
+         border: 2px solid transparent; cursor: pointer; font-weight: 700; }
+  .btn.go { background: var(--teal); color: #fff; }
+  .btn.alt { background: #fff; color: var(--teal); border-color: var(--teal); }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .rowbtns { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+  /* -------------------------------------------------------------------- mix */
+  .mix { display: grid; grid-template-columns: minmax(260px, 1fr) minmax(300px, 1.2fr); gap: 18px; }
+  .swatch { border-radius: 14px; border: 2px solid var(--grey); min-height: 190px;
+            display: flex; align-items: flex-end; justify-content: center; padding: 12px;
+            transition: background .15s; }
+  .code { background: #fff; border: 2px solid var(--near); border-radius: 10px; padding: 6px 16px;
+          font-size: 34px; font-weight: 800; letter-spacing: .04em; }
+  .code .r { color: #C00000; } .code .g { color: #007A20; } .code .b { color: #0030C0; }
+  .chan { display: grid; grid-template-columns: 70px 1fr; gap: 4px 12px; align-items: center;
+          padding: 10px 12px; border: 2px solid var(--grey); border-radius: 10px; margin-bottom: 10px; }
+  .chan .lab { font-weight: 800; }
+  .chan.red .lab { color: #C00000; } .chan.green .lab { color: #007A20; } .chan.blue .lab { color: #0030C0; }
+  .chan input[type=range] { width: 100%; min-height: 44px; }
+  .chan .vals { grid-column: 2; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 15px; color: var(--muted); }
+  .chan .vals b { color: var(--near); }
+  .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .preset { min-height: 44px; min-width: 44px; padding: 6px 12px 6px 6px; border-radius: 8px;
+            border: 2px solid var(--grey); background: #fff; cursor: pointer; display: inline-flex;
+            align-items: center; gap: 8px; font-size: 15px; }
+  .preset i { width: 28px; height: 28px; border-radius: 6px; border: 1px solid #999; display: inline-block; }
+
+  /* ------------------------------------------------------------------ wheel */
+  .wheelbox { display: grid; grid-template-columns: minmax(260px, 420px) 1fr; gap: 18px; align-items: start; }
+  #wheel { width: 100%; max-width: 420px; aspect-ratio: 1 / 1; touch-action: none; cursor: crosshair;
+           border-radius: 50%; display: block; }
+  .picked { display: grid; gap: 10px; }
+  .picked .swatch { min-height: 120px; }
+  .pairs { border-collapse: collapse; font-size: 16px; }
+  .pairs td, .pairs th { border-bottom: 1px solid var(--grey); padding: 6px 10px; text-align: left; }
+  .pairs th { color: var(--muted); font-weight: 600; }
+
+  /* ------------------------------------------------------------------- game */
+  .hud { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 4px 0 10px; }
+  .hud .stat { background: var(--panel); border: 1px solid var(--grey); border-radius: 8px;
+               padding: 6px 12px; min-width: 88px; }
+  .hud .stat b { display: block; font-size: 12px; color: var(--muted); font-weight: 600;
+                 text-transform: uppercase; letter-spacing: .04em; }
+  .hud .stat span { font-size: 22px; font-weight: 700; color: var(--near); }
+  .ask { border: 2px solid var(--grey); border-radius: 12px; padding: 16px; background: var(--panel);
+         display: flex; justify-content: center; align-items: center; min-height: 150px; margin-bottom: 12px; }
+  .ask .bigcode { font-size: 44px; font-weight: 800; }
+  .ask .bigswatch { width: min(100%, 420px); height: 140px; border-radius: 12px; border: 2px solid var(--near); }
+  .opts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .opt { min-height: 96px; border-radius: 12px; border: 3px solid var(--grey); background: #fff;
+         cursor: pointer; font-size: 24px; font-weight: 800; padding: 6px; position: relative; }
+  .opt.sw { color: transparent; }
+  .opt .letter { position: absolute; left: 8px; top: 6px; font-size: 14px; font-weight: 800;
+                 background: #fff; color: var(--near); border-radius: 5px; padding: 0 5px; }
+  .opt.right { border-color: var(--green); box-shadow: 0 0 0 4px var(--lgreen); }
+  .opt.wrong { border-color: var(--amber); animation: shake .35s; }
+  .opt:disabled { cursor: default; color: var(--ink); opacity: 1; }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); }
+                     75% { transform: translateX(6px); } }
+  .why { min-height: 3em; margin: 12px 0; font-weight: 600; }
+  .why.ok { color: var(--green); } .why.no { color: var(--red); }
+  .summary table { border-collapse: collapse; margin: 8px 0; min-width: 280px; }
+  .summary td, .summary th { border-bottom: 1px solid var(--grey); padding: 6px 10px; text-align: left; }
+  .summary th { color: var(--muted); font-weight: 600; }
+  label.name { display: grid; gap: 4px; font-weight: 700; color: var(--teal); max-width: 420px; }
+  label.name input { min-height: 48px; padding: 8px 12px; border: 2px solid var(--grey);
+                     border-radius: 8px; font-weight: 400; color: var(--ink); }
+  .msg { min-height: 1.4em; font-weight: 700; color: var(--teal); }
+  .msg.bad { color: var(--red); }
+
+  #splash { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
+
+  @media (max-width: 760px) {
+    .mix, .wheelbox { grid-template-columns: 1fr; }
+    .opts { grid-template-columns: repeat(2, 1fr); }
+    .code { font-size: 28px; }
+    .ask .bigcode { font-size: 34px; }
+  }
+  @media (max-width: 460px) { main { padding-left: 8px; padding-right: 8px; } }
+  @media (prefers-reduced-motion: reduce) { .opt.wrong { animation: none; } .swatch { transition: none; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="school">Epsom College Malaysia &middot; Year 9 Computer Science</div>
+  <h1>Hex colours</h1>
+</header>
+<div class="rainbow" aria-hidden="true"></div>
+
+<main>
+  <a class="back" href="/y9/">&larr; Year 9</a>
+  <div class="tabs" role="tablist" aria-label="Parts">
+    <button class="tab" role="tab" id="tab-mix" aria-selected="true" aria-controls="p-mix">Mix</button>
+    <button class="tab" role="tab" id="tab-wheel" aria-selected="false" aria-controls="p-wheel">Wheel</button>
+    <button class="tab" role="tab" id="tab-c2s" aria-selected="false" aria-controls="p-game">Colour from code</button>
+    <button class="tab" role="tab" id="tab-s2c" aria-selected="false" aria-controls="p-game">Code from colour</button>
+  </div>
+
+  <!-- ================================================================= MIX -->
+  <section id="p-mix" role="tabpanel" aria-labelledby="tab-mix">
+    <h2>Three bytes make a colour</h2>
+    <p>A colour code is three bytes in hex: how much red light, then green, then blue.
+       00 is none of it. FF is 255, all of it. Move the sliders and watch the code.</p>
+    <div class="mix">
+      <div>
+        <div class="swatch" id="mixSwatch"><div class="code mono" id="mixCode">#FF0000</div></div>
+        <div class="presets" id="presets"></div>
+      </div>
+      <div id="chans"></div>
+    </div>
+    <p class="note">Light adds up: red and green light together make yellow, and all three at FF make white.</p>
+  </section>
+
+  <!-- =============================================================== WHEEL -->
+  <section id="p-wheel" role="tabpanel" aria-labelledby="tab-wheel" class="hidden">
+    <h2>The colour wheel</h2>
+    <p>Tap any point on the wheel. Round the edge, at least one pair is FF and at least one is 00. Towards the
+       middle, all three pairs rise towards FF, which is white.</p>
+    <div class="wheelbox">
+      <canvas id="wheel" width="840" height="840" aria-label="A colour wheel. Tap a point to read its code."></canvas>
+      <div class="picked">
+        <div class="swatch" id="wheelSwatch"><div class="code mono" id="wheelCode">#FF0000</div></div>
+        <table class="pairs" aria-label="The three pairs">
+          <thead><tr><th>Pair</th><th>Hex</th><th>Binary</th><th>Denary</th></tr></thead>
+          <tbody id="wheelPairs"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================ GAME -->
+  <section id="p-game" role="tabpanel" class="hidden">
+    <div id="gameSetup">
+      <h2 id="gameHead">Colour from code</h2>
+      <p id="gameIntro"></p>
+      <p class="note">A round is 10 questions. The first three use only 00 and FF. Then 80 (half) joins
+         in, then 40 and C0. Each wrong answer differs from the right one in one pair only.</p>
+      <div class="rowbtns">
+        <button class="btn go" id="startBtn" type="button">Start a round</button>
+        <span class="note" id="bestLine"></span>
+      </div>
+    </div>
+
+    <div id="gamePlay" class="hidden">
+      <div class="hud">
+        <div class="stat"><b>Question</b><span id="hQ">1</span></div>
+        <div class="stat"><b>Score</b><span id="hScore">0</span></div>
+        <div class="stat"><b>In a row</b><span id="hStreak">0</span></div>
+        <div class="stat"><b>Pairs used</b><span id="hLevel" class="mono">00 FF</span></div>
+      </div>
+      <div class="ask" id="ask"></div>
+      <div class="opts" id="opts"></div>
+      <p class="why" id="why" role="status" aria-live="polite"></p>
+      <div class="rowbtns"><button class="btn go hidden" id="nextBtn" type="button">Next</button></div>
+    </div>
+
+    <div id="gameEnd" class="hidden summary">
+      <h2>Round finished</h2>
+      <table><tbody id="endTable"></tbody></table>
+      <label class="name">Your name (for the PDF)
+        <input id="name" type="text" autocomplete="name" maxlength="60" placeholder="First and last name">
+      </label>
+      <div class="rowbtns" style="margin-top:10px">
+        <button class="btn go" id="pdfBtn" type="button">Save the PDF</button>
+        <button class="btn alt" id="againBtn" type="button">Play again</button>
+      </div>
+      <p class="msg" id="pdfMsg" role="status" aria-live="polite"></p>
+      <p class="note">The best score is kept only in this browser. The PDF is the record: upload it to Google Classroom.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="bar">
+  <span>The best score is kept only in this browser. The PDF is the record.</span>
+  <span>Made by Colin Sheehan, 2026</span>
+</footer>
+<canvas id="splash" aria-hidden="true"></canvas>
+
+<script src="/assets/jspdf.umd.min.js"></script>
+<script>
+(function () {
+  "use strict";
+  var KEY = "epsom:hex-colours:v1";
+  var ROUND = 10;
+  var LEVELS = [["00", "FF"], ["00", "80", "FF"], ["00", "40", "80", "C0", "FF"]];
+  var GAME_NAME = { c2s: "Colour from code", s2c: "Code from colour" };
+  var CH = [["red", "Red"], ["green", "Green"], ["blue", "Blue"]];
+  var PRESETS = [["red", "#FF0000"], ["green", "#00FF00"], ["blue", "#0000FF"],
+                 ["yellow", "#FFFF00"], ["cyan", "#00FFFF"], ["magenta", "#FF00FF"],
+                 ["white", "#FFFFFF"], ["black", "#000000"], ["grey", "#808080"],
+                 ["orange", "#FF8000"], ["purple", "#800080"], ["brown", "#804000"]];
+  var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function $(id) { return document.getElementById(id); }
+  function hex2(n) { return ("0" + n.toString(16).toUpperCase()).slice(-2); }
+  function code(rgb) { return "#" + hex2(rgb[0]) + hex2(rgb[1]) + hex2(rgb[2]); }
+  function parse(c) { return [1, 3, 5].map(function (i) { return parseInt(c.substr(i, 2), 16); }); }
+  function nibbles(n) { var b = ("0000000" + n.toString(2)).slice(-8); return b.slice(0, 4) + " " + b.slice(4); }
+  function codeHtml(c) {
+    return '#<span class="r">' + c.substr(1, 2) + '</span><span class="g">' + c.substr(3, 2) +
+           '</span><span class="b">' + c.substr(5, 2) + '</span>';
+  }
+  function load() { try { return JSON.parse(window.localStorage.getItem(KEY) || "{}") || {}; } catch (e) { return {}; } }
+  function save(v) { try { window.localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) { /* blocked */ } }
+
+  /* ------------------------------------------------------------------ tabs */
+  var current = "mix";
+  function show(which) {
+    current = which;
+    ["mix", "wheel", "c2s", "s2c"].forEach(function (t) {
+      $("tab-" + t).setAttribute("aria-selected", String(t === which));
+    });
+    $("p-mix").classList.toggle("hidden", which !== "mix");
+    $("p-wheel").classList.toggle("hidden", which !== "wheel");
+    $("p-game").classList.toggle("hidden", which !== "c2s" && which !== "s2c");
+    if (which === "wheel") drawWheel();
+    if (which === "c2s" || which === "s2c") setupGame(which);
+  }
+  ["mix", "wheel", "c2s", "s2c"].forEach(function (t) {
+    $("tab-" + t).addEventListener("click", function () { show(t); });
+  });
+
+  /* ------------------------------------------------------------------- mix */
+  var mix = [255, 0, 0];
+  function chanRow(i) {
+    var div = document.createElement("div");
+    div.className = "chan " + CH[i][0];
+    div.innerHTML = '<span class="lab">' + CH[i][1] + '</span>' +
+      '<input type="range" min="0" max="255" step="1" aria-label="' + CH[i][1] + ', 0 to 255">' +
+      '<div class="vals"><span>Denary <b class="d"></b></span><span>Binary <b class="mono bn"></b></span>' +
+      '<span>Hex <b class="mono h"></b></span></div>';
+    var r = div.querySelector("input");
+    r.addEventListener("input", function () { mix[i] = Number(r.value); paintMix(); });
+    return div;
+  }
+  for (var i = 0; i < 3; i++) $("chans").appendChild(chanRow(i));
+  PRESETS.forEach(function (p) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "preset";
+    b.innerHTML = '<i style="background:' + p[1] + '"></i><span>' + p[0] + ' <span class="mono">' + p[1] + '</span></span>';
+    b.addEventListener("click", function () { mix = parse(p[1]); paintMix(); });
+    $("presets").appendChild(b);
+  });
+  function paintMix() {
+    var c = code(mix);
+    $("mixSwatch").style.background = c;
+    $("mixCode").innerHTML = codeHtml(c);
+    var rows = $("chans").children;
+    for (var k = 0; k < 3; k++) {
+      rows[k].querySelector("input").value = mix[k];
+      rows[k].querySelector(".d").textContent = mix[k];
+      rows[k].querySelector(".bn").textContent = nibbles(mix[k]);
+      rows[k].querySelector(".h").textContent = hex2(mix[k]);
+    }
+  }
+  paintMix();
+
+  /* ----------------------------------------------------------------- wheel */
+  var wheelDrawn = false;
+  function hsvToRgb(h, s, v) {
+    var c = v * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = v - c, r, g, b;
+    if (h < 60) { r = c; g = x; b = 0; } else if (h < 120) { r = x; g = c; b = 0; }
+    else if (h < 180) { r = 0; g = c; b = x; } else if (h < 240) { r = 0; g = x; b = c; }
+    else if (h < 300) { r = x; g = 0; b = c; } else { r = c; g = 0; b = x; }
+    return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
+  }
+  function wheelAt(cv, px, py) {
+    var R = cv.width / 2, dx = px - R, dy = R - py, d = Math.sqrt(dx * dx + dy * dy);
+    if (d > R - 1) return null;
+    /* Red at the right, yellow above it, then green, cyan, blue, magenta anticlockwise, as in the lesson picture. */
+    var h = (Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360;
+    /* The outer rim is full colour, so a tap near the edge reads a pure hue such as #FF0000. */
+    return hsvToRgb(h, Math.min(1, d / (R * 0.9)), 1);
+  }
+  function drawWheel() {
+    if (wheelDrawn) return;
+    var cv = $("wheel"), ctx = cv.getContext("2d"), W = cv.width, img = ctx.createImageData(W, W);
+    for (var y = 0; y < W; y++) for (var x = 0; x < W; x++) {
+      var rgb = wheelAt(cv, x + 0.5, y + 0.5), o = (y * W + x) * 4;
+      if (!rgb) { img.data[o + 3] = 0; continue; }
+      img.data[o] = rgb[0]; img.data[o + 1] = rgb[1]; img.data[o + 2] = rgb[2]; img.data[o + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+    wheelDrawn = true;
+    pickWheel([255, 0, 0]);
+  }
+  function pickWheel(rgb) {
+    var c = code(rgb);
+    $("wheelSwatch").style.background = c;
+    $("wheelCode").innerHTML = codeHtml(c);
+    $("wheelPairs").innerHTML = CH.map(function (ch, k) {
+      return "<tr><td>" + ch[1] + '</td><td class="mono">' + hex2(rgb[k]) + '</td><td class="mono">' +
+             nibbles(rgb[k]) + "</td><td>" + rgb[k] + "</td></tr>";
+    }).join("");
+  }
+  function wheelPointer(e) {
+    var cv = $("wheel"), r = cv.getBoundingClientRect();
+    var px = (e.clientX - r.left) * cv.width / r.width, py = (e.clientY - r.top) * cv.height / r.height;
+    var rgb = wheelAt(cv, px, py);
+    if (rgb) pickWheel(rgb);
+  }
+  $("wheel").addEventListener("pointerdown", function (e) { wheelPointer(e); $("wheel").setPointerCapture(e.pointerId); });
+  $("wheel").addEventListener("pointermove", function (e) { if (e.buttons) wheelPointer(e); });
+
+  /* ------------------------------------------------------------------ game */
+  var G = null;
+  function levelFor(q) { return q < 3 ? 0 : q < 6 ? 1 : 2; }
+  function rnd(n) { return Math.floor(Math.random() * n); }
+  function makeQuestion(q) {
+    var vals = LEVELS[levelFor(q)];
+    var right = [vals[rnd(vals.length)], vals[rnd(vals.length)], vals[rnd(vals.length)]];
+    var opts = [right.join("")], tries = 0;
+    while (opts.length < 4 && tries < 200) {
+      tries++;
+      var k = rnd(3), alt = right.slice();
+      var choices = vals.filter(function (v) { return v !== right[k]; });
+      alt[k] = choices[rnd(choices.length)];
+      var s = alt.join("");
+      if (opts.indexOf(s) < 0) opts.push(s);
+    }
+    opts = opts.map(function (s) { return "#" + s; });
+    for (var i = opts.length - 1; i > 0; i--) { var j = rnd(i + 1), t = opts[i]; opts[i] = opts[j]; opts[j] = t; }
+    return { answer: "#" + right.join(""), opts: opts, level: levelFor(q) };
+  }
+  function setupGame(kind) {
+    $("gameHead").textContent = GAME_NAME[kind];
+    $("gameIntro").textContent = kind === "c2s"
+      ? "A colour code is shown. Read its three pairs, red, green and blue, and pick its colour."
+      : "A colour is shown. Pick its code: how much red, green and blue does it have?";
+    var best = load()[kind];
+    $("bestLine").textContent = best != null ? "Best score in this browser: " + best : "";
+    if (!G || G.kind !== kind || G.done) {
+      $("gameSetup").classList.remove("hidden");
+      $("gamePlay").classList.add("hidden");
+      $("gameEnd").classList.add("hidden");
+    }
+  }
+  function start() {
+    var kind = current;
+    G = { kind: kind, q: 0, score: 0, streak: 0, log: [], started: Date.now(), done: false };
+    $("gameSetup").classList.add("hidden");
+    $("gameEnd").classList.add("hidden");
+    $("gamePlay").classList.remove("hidden");
+    ask();
+  }
+  function ask() {
+    parts = [];  /* the last splash stops when the next question appears */
+    var Q = makeQuestion(G.q);
+    G.cur = Q; G.answered = false;
+    $("hQ").textContent = (G.q + 1) + " of " + ROUND;
+    $("hScore").textContent = G.score;
+    $("hStreak").textContent = G.streak;
+    $("hLevel").textContent = LEVELS[Q.level].join(" ");
+    $("why").textContent = ""; $("why").className = "why";
+    $("nextBtn").classList.add("hidden");
+    var a = $("ask");
+    a.innerHTML = G.kind === "c2s"
+      ? '<div class="bigcode mono code">' + codeHtml(Q.answer) + "</div>"
+      : '<div class="bigswatch" style="background:' + Q.answer + '" role="img" aria-label="The colour to name"></div>';
+    var box = $("opts"); box.innerHTML = "";
+    Q.opts.forEach(function (c, i) {
+      var b = document.createElement("button");
+      b.type = "button"; b.dataset.code = c;
+      var letter = "ABCD".charAt(i);
+      if (G.kind === "c2s") {
+        b.className = "opt sw"; b.style.background = c;
+        b.setAttribute("aria-label", "Colour " + letter);
+        b.innerHTML = '<span class="letter">' + letter + "</span>";
+      } else {
+        b.className = "opt mono code";
+        b.innerHTML = '<span class="letter">' + letter + "</span>" + codeHtml(c);
+      }
+      b.addEventListener("click", function () { choose(b); });
+      box.appendChild(b);
+    });
+  }
+  function explain(c) {
+    var p = parse(c);
+    function amt(v) { return v === 255 ? "all" : v === 0 ? "none" : v === 128 ? "half" :
+                             v === 64 ? "a quarter" : v === 192 ? "three quarters" : String(v); }
+    return c.substr(1, 2) + " is " + amt(p[0]) + " of the red, " + c.substr(3, 2) + " is " +
+           amt(p[1]) + " of the green, " + c.substr(5, 2) + " is " + amt(p[2]) + " of the blue.";
+  }
+  function choose(btn) {
+    if (G.answered) return;
+    G.answered = true;
+    var given = btn.dataset.code, ok = given === G.cur.answer;
+    G.log.push({ code: G.cur.answer, given: given, ok: ok, pairs: LEVELS[G.cur.level].join(" ") });
+    Array.prototype.forEach.call($("opts").children, function (b) {
+      b.disabled = true;
+      if (b.dataset.code === G.cur.answer) b.classList.add("right");
+    });
+    if (ok) {
+      G.score += 10 + 2 * G.streak; G.streak += 1;
+      $("why").className = "why ok";
+      $("why").textContent = "Right. " + explain(G.cur.answer);
+      splash(btn, G.cur.answer);
+    } else {
+      G.streak = 0;
+      btn.classList.add("wrong");
+      $("why").className = "why no";
+      $("why").textContent = "Not that one. The answer is outlined. " + explain(G.cur.answer);
+    }
+    $("hScore").textContent = G.score;
+    $("hStreak").textContent = G.streak;
+    $("nextBtn").textContent = G.q + 1 >= ROUND ? "See the score" : "Next";
+    $("nextBtn").classList.remove("hidden");
+    $("nextBtn").focus();
+  }
+  function next() {
+    G.q += 1;
+    if (G.q >= ROUND) return finish();
+    ask();
+  }
+  function finish() {
+    G.done = true; G.ended = Date.now();
+    var store = load(), was = store[G.kind];
+    if (was == null || G.score > was) { store[G.kind] = G.score; save(store); }
+    var right = G.log.filter(function (r) { return r.ok; }).length;
+    $("endTable").innerHTML = [["Game", GAME_NAME[G.kind]], ["Score", G.score],
+      ["Right", right + " of " + ROUND], ["Best in this browser", load()[G.kind]]].map(function (r) {
+        return "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td></tr>";
+      }).join("");
+    $("gamePlay").classList.add("hidden");
+    $("gameEnd").classList.remove("hidden");
+  }
+  $("startBtn").addEventListener("click", start);
+  $("nextBtn").addEventListener("click", next);
+  $("againBtn").addEventListener("click", start);
+
+  /* ---------------------------------------------------------------- splash */
+  var cv = $("splash"), sctx = cv.getContext("2d"), parts = [], running = false;
+  function fit() { cv.width = window.innerWidth; cv.height = window.innerHeight; }
+  fit(); window.addEventListener("resize", fit);
+  function splash(el, colour) {
+    if (reduced) return;
+    var r = el.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+    for (var k = 0; k < 46; k++) {
+      var a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 7;
+      parts.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 3,
+                   r: 4 + Math.random() * 9, c: k % 7 ? colour : "#FFFFFF", life: 1 });
+    }
+    if (!running) { running = true; requestAnimationFrame(tick); }
+  }
+  function tick() {
+    sctx.clearRect(0, 0, cv.width, cv.height);
+    parts = parts.filter(function (p) { return p.life > 0; });
+    parts.forEach(function (p) {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.35; p.vx *= 0.98; p.life -= 0.018;
+      sctx.globalAlpha = Math.max(0, p.life);
+      sctx.fillStyle = p.c; sctx.strokeStyle = "rgba(0,0,0,.25)";
+      sctx.beginPath(); sctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); sctx.fill(); sctx.stroke();
+    });
+    sctx.globalAlpha = 1;
+    if (parts.length) requestAnimationFrame(tick); else { running = false; sctx.clearRect(0, 0, cv.width, cv.height); }
+  }
+
+  /* ------------------------------------------------------------------- PDF */
+  function clean(s) {
+    return String(s == null ? "" : s).replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
+      .replace(/[–—]/g, "-").replace(/[^\x00-\xFF]/g, "?");
+  }
+  function fileName(name) {
+    var safe = clean(name).replace(/[\\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim();
+    return "Year 9 Hex colours - " + safe + ".pdf";
+  }
+  function buildPdf(name) {
+    var doc = new window.jspdf.jsPDF({ unit: "mm", format: "a4" });
+    var M = 15, W = 210 - 2 * M, y = M, PT = 0.3528;
+    function text(s, size, style) {
+      doc.setFont("helvetica", style || "normal"); doc.setFontSize(size);
+      doc.splitTextToSize(clean(s), W).forEach(function (ln) { doc.text(ln, M, y + size * PT); y += size * PT * 1.35; });
+    }
+    var now = new Date(G.ended || Date.now());
+    text("Year 9 Hex colours", 16, "bold");
+    text(name, 12, "bold");
+    text(now.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + ", " +
+         now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }), 10);
+    y += 3;
+    var right = G.log.filter(function (r) { return r.ok; }).length;
+    text("Game: " + GAME_NAME[G.kind] + "    Score: " + G.score + "    Right: " + right + " of " + ROUND, 11, "bold");
+    y += 3;
+    var X = [M, M + 12, M + 50, M + 95, M + 130];
+    doc.setFillColor(235); doc.rect(M, y, W, 6.5, "F");
+    doc.setFont("helvetica", "bold"); doc.setFontSize(9);
+    ["", "Colour code", "Answer given", "Right?", "Pairs used"].forEach(function (h, i) { doc.text(h, X[i] + 1, y + 4.5); });
+    y += 8;
+    G.log.forEach(function (r, i) {
+      [String(i + 1), r.code, r.given, r.ok ? "yes" : "no", r.pairs].forEach(function (c, j) {
+        doc.setFont(j === 1 || j === 2 || j === 4 ? "courier" : "helvetica", "normal"); doc.setFontSize(9);
+        doc.text(clean(c), X[j] + 1, y + 4);
+      });
+      var p = parse(r.code);
+      doc.setFillColor(p[0], p[1], p[2]); doc.setDrawColor(150); doc.rect(M + 165, y, 12, 5, "FD");
+      y += 6;
+      doc.setDrawColor(215); doc.line(M, y - 0.8, M + W, y - 0.8);
+    });
+    y += 4;
+    text("A colour code is three bytes in hex: red, green, then blue. 00 is none, FF (255) is all. " +
+         "Each wrong answer differed from the right one in one pair only. " +
+         "The best score is kept only in the browser that played; this PDF is the record.", 9);
+    return doc;
+  }
+  $("pdfBtn").addEventListener("click", function () {
+    var name = $("name").value.trim(), m = $("pdfMsg");
+    m.classList.remove("bad");
+    if (!name) { m.classList.add("bad"); m.textContent = "Type your name first."; $("name").focus(); return; }
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+      m.classList.add("bad"); m.textContent = "The PDF could not be made: open the page from the lesson website."; return;
+    }
+    var f = fileName(name);
+    buildPdf(name).save(f);
+    m.textContent = "Saved as " + f + ". Upload it to Google Classroom.";
+  });
+
+  /* Hooks for the automated browser test only. */
+  window.__hexColours = {
+    state: function () { return G; }, show: show, makeQuestion: makeQuestion, buildPdf: buildPdf,
+    fileName: fileName, code: code, wheelAt: function (x, y) { return wheelAt($("wheel"), x, y); },
+    storageKey: KEY
+  };
+  window.__hexColoursReady = true;
+})();
+</script>
+</body>
+</html>

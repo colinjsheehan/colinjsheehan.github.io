@@ -239,7 +239,7 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
                       background:#fff; width:100%; min-width:0; }
 .conv-cell { font-size:18px; -webkit-appearance:none; }
 .conv-grid .nb { margin-left:6px; width:calc(100% - 6px); }
-.conv-ans { display:flex; align-items:center; gap:6px; font-weight:700; }
+.conv-ans { display:flex; align-items:center; gap:6px; font-weight:700; flex-wrap:wrap; }
 .conv-in { font-size:18px; width:6.5em; padding:6px 8px; border:2px solid #AEB8BA; border-radius:6px;
            font-family:ui-monospace,Menlo,Consolas,monospace; }
 .conv-in.conv-ok, .conv-grid.conv-ok { border-color:#2E7D32; background:#D6EEDD; }
@@ -248,7 +248,22 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 /* Hexadecimal answers (4 Oct 2026): one box per nibble, and the row must not
    stretch the way the bit grid does. 44px wide for a finger, as everywhere. */
 .conv-hex { flex:0 0 auto; max-width:none; }
-.conv-hex .conv-cell { min-width:44px; text-transform:uppercase; }
+.conv-hex .conv-cell { width:2.6em; min-width:44px; text-transform:uppercase; }
+/* The width is stated (4 Oct, after the Year 9 chat found it at 390px): an input
+   with only a min-width falls back to the browser's default size, about 170px, so
+   two boxes pushed a phone sideways. The label wraps above them instead. */
+/* A 16 bit row does not fit a phone: sixteen columns headed 32768 down to 1
+   need about 450px before the headings start running into each other. Rather
+   than shrink the numbers past reading, the grid scrolls on its own below
+   700px, so the row can be swiped and the page itself stays still. Found by
+   the phone width sweep, 4 Oct 2026; 4 and 8 bit rows are unaffected. */
+@media (max-width:699px) {
+  .conv-16 .conv-grid { overflow-x:auto; }
+  /* 30px, which is what 32768 takes at this size. The class works on iPads and
+     Chromebooks; a phone is a last resort, and a swipe is better there than
+     headings printed on top of each other. */
+  .conv-16 .conv-h, .conv-16 .conv-b, .conv-16 .conv-cell { min-width:30px; }
+}
 .conv-tally { font-weight:700; color:#4A5456; margin-top:8px !important; }
 .conv-tally.all { color:#1F5B34; }
 

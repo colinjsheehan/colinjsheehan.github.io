@@ -24,6 +24,14 @@
       try { s.expected = decodeURIComponent(escape(window.atob(s.expected_b64))); }
       catch (e) { s.expected = window.atob(s.expected_b64); }
     }
+    /* REQUIRED LINES (4 Oct 2026). Same bargain as the expected output: the
+       fragments a step insists on are shipped encoded, and the page never shows
+       them. A student who has the output but not the lines is told exactly that,
+       and nothing more, so the fix is still theirs to find. */
+    if (s.req_b64 != null) {
+      try { s.requires = JSON.parse(decodeURIComponent(escape(window.atob(s.req_b64)))); }
+      catch (e) { s.requires = null; }
+    }
   });
   /* The version is part of the key. Bump it whenever a lesson's steps are
      renumbered, or work saved under the old numbering lands on the wrong steps.
@@ -58,7 +66,13 @@
     dragRight: "\u2713", dragAnswer: "\u2192 ",
     dragScore: function (n, of) { return n + "/" + of + " \u2713"; },
     dragRecordedFirst: "",
-    shut: function (label) { return label; }
+    shut: function (label) { return label; },
+    /* No word here either. The verifier refuses a code step with required lines
+       on a simple page until Colin decides the wording for it, so this is the
+       fallback and not something a class reads. (Nothing may be quoted in this
+       comment: the Year 7 word check reads string literals out of this block,
+       and a comment is part of it.) */
+    missing: function (n) { return "✓ → ✗ " + n; }
   } : {
     remember: "Remember: ", hint: "Hint", drill: "Say it together",
     drawOnly: "This step draws a picture. There is no text output to check.",
@@ -66,6 +80,13 @@
     locked: "Locked when Run was pressed.",
     yes: "Matches the expected output", no: "Does not match the expected output",
     err: "Stopped with an error", ok: "", waiting: "Shown after you run the code once.",
+    /* The output is right and the work is not. Said plainly, because a student
+       who reads "does not match" here goes looking for the wrong fault. */
+    missing: function (n) {
+      return "The output matches, but " + (n === 1 ? "a line" : n + " lines")
+        + " you were asked to change " + (n === 1 ? "is" : "are")
+        + " still missing from your code.";
+    },
     checkpoint: "In class: ", homework: "Homework: ",
     handinNote: "Your work is saved in this browser on this device. Make the "
       + "hand-in PDF before the end of the lesson: it holds your code, so you can "
@@ -570,6 +591,24 @@
   }
   function answered(q) { return !!(state.answers[q.id] || "").trim(); }
 
+  /* REQUIRED LINES (4 Oct 2026). Two Year 10 students reached the expected output
+     of a debugging step without touching either error: one printed the answers,
+     one rewrote the loop as three prints. The output was right, so the page said
+     so, and the lesson had taught them nothing. A step may now list fragments that
+     have to be in the code it is marking.
+
+     The comparison collapses runs of whitespace on both sides, so a fragment
+     matches however the student has spaced or indented it, and it is left
+     case-sensitive, because Python is. It counts what is absent and no more: the
+     page never says which fragment is missing, and never shows one. */
+  function flat(s) { return String(s || "").replace(/\s+/g, " ").trim(); }
+  function reqMissing(step, code) {
+    var want = (step && step.requires) || [];
+    if (!want.length) return 0;
+    var have = flat(code);
+    return want.filter(function (f) { return have.indexOf(flat(f)) === -1; }).length;
+  }
+
   /* FIRST ANSWERS (1 Oct 2026). The page cannot mark a typed answer, because it
      does not hold the right one. What it can keep is what the student thought
      first: the answer as it stood when they pressed Run or moved to another step.
@@ -598,6 +637,7 @@
     if (step.kind === "drag") return qs && dragDone(i);
     if (step.kind === "questions") return qs;
     var codeOk = step.expected != null ? !!s.matched : (!!s.ran && !s.error);
+    if (codeOk && s.missing) codeOk = false;   // output right, required lines absent
     return qs && codeOk;
   }
 
@@ -1246,22 +1286,58 @@
     return wrap;
   }
 
-  /* CONVERT. Self-correcting binary conversions (added 19 Sep 2026).
-     A step with "kind": "convert" has "bits" (4, 8 or 16), "direction"
-     ("to_denary" or "to_binary") and "items" (the denary numbers). The column
-     headings sit above every question. The answer box turns green the moment
-     the answer is right, and amber when a complete answer is wrong, so the
-     student corrects it there and then. Every attempt is saved: what is in the
-     box, whether it is right, and how many complete wrong answers came first. */
+  /* CONVERT. Self-correcting conversions (added 19 Sep 2026, extended 4 Oct
+     2026 for Year 10). A step with "kind": "convert" has "bits" (4, 8 or 16),
+     "direction", and "items" (the numbers, written in DENARY whichever way round
+     the question is asked). The column headings sit above every question. The
+     answer box turns green the moment the answer is right, and amber when a
+     complete answer is wrong, so the student corrects it there and then. Every
+     attempt is saved: what is in the box, whether it is right, and how many
+     complete wrong answers came first.
+
+     DIRECTION names a pair: what is shown, and what the student types. The two
+     names from 19 Sep are kept exactly as they were, so no lesson written
+     against them changes.
+
+     HEXADECIMAL answers are the full width, one digit per nibble: 10 in 8 bits is
+     0A, not A. That is how 0478 writes them, and the width is the point of the
+     exercise, so a short answer is not accepted. Nothing is accepted with 0x on
+     the front either.
+
+     TWO'S COMPLEMENT is "signed": true, on 8 or 16 bits. The items may then be
+     negative, the denary box takes a minus sign, and the top column heading is
+     -128 rather than 128, which is the whole idea written where the student is
+     looking. Hexadecimal of a signed number is the hexadecimal of its bit
+     pattern, so FB is -5 in 8 bits. */
+  var CONV_WAYS = {
+    to_denary: ["bin", "den"], to_binary: ["den", "bin"],   /* the 19 Sep names */
+    bin_to_den: ["bin", "den"], den_to_bin: ["den", "bin"],
+    den_to_hex: ["den", "hex"], hex_to_den: ["hex", "den"],
+    bin_to_hex: ["bin", "hex"], hex_to_bin: ["hex", "bin"]
+  };
+  function convWay(step) { return CONV_WAYS[step.direction] || CONV_WAYS.to_denary; }
+  function convPattern(n, bits) {
+    /* The bit pattern, which for a negative number is its two's complement. */
+    return n < 0 ? n + Math.pow(2, bits) : n;
+  }
   function toBin(n, bits) {
-    var b = n.toString(2);
+    var b = convPattern(n, bits).toString(2);
     while (b.length < bits) b = "0" + b;
     return b;
   }
-  function convAnswer(step, j) {
-    var n = step.items[j];
-    return step.direction === "to_denary" ? String(n) : toBin(n, step.bits);
+  function toHex(n, bits) {
+    var h = convPattern(n, bits).toString(16).toUpperCase();
+    while (h.length < bits / 4) h = "0" + h;
+    return h;
   }
+  function convSide(step, j, which) {
+    var n = step.items[j];
+    if (which === "bin") return toBin(n, step.bits);
+    if (which === "hex") return toHex(n, step.bits);
+    return String(n);
+  }
+  function convShown(step, j) { return convSide(step, j, convWay(step)[0]); }
+  function convAnswer(step, j) { return convSide(step, j, convWay(step)[1]); }
   function convDone(i) {
     var step = L.steps[i], s = state.steps[String(i)] || {}, c = s.conv || {};
     return step.items.every(function (n, j) { return c[j] === convAnswer(step, j); });
@@ -1270,8 +1346,13 @@
     var s = st(i);
     if (!s.conv) s.conv = {};
     if (!s.tries) s.tries = {};
+    var way = convWay(step), from = way[0], to = way[1];
+    var hexw = step.bits / 4;
     var heads = [];
-    for (var k = step.bits - 1; k >= 0; k--) heads.push(Math.pow(2, k));
+    for (var k = step.bits - 1; k >= 0; k--) {
+      /* The sign column, where there is one, is the only negative heading. */
+      heads.push(step.signed && k === step.bits - 1 ? -Math.pow(2, k) : Math.pow(2, k));
+    }
     var wrap = el("div", "conv conv-" + step.bits);
     var tally = el("p", "conv-tally");
     function recount() {
@@ -1301,32 +1382,74 @@
       var row = el("div", "conv-q");
       row.id = "conv-" + i + "-" + j;
       row.appendChild(el("span", "qlabel", (j + 1) + "."));
+      var saved = s.conv[j] || "", want = convAnswer(step, j);
+      /* ---- the side that is SHOWN */
       var grid = el("div", "conv-grid");
       grid.style.gridTemplateColumns = "repeat(" + step.bits + ", minmax(0, 1fr))";
-      headRow(grid);
-      var saved = s.conv[j] || "";
-      if (step.direction === "to_denary") {
-        toBin(n, step.bits).split("").forEach(function (c, k) {
+      if (from === "bin" || to === "bin") headRow(grid);
+      if (from === "bin") {
+        convShown(step, j).split("").forEach(function (c, k) {
           grid.appendChild(el("div", "conv-b" + (k && k % 4 === 0 ? " nb" : ""), c));
         });
         row.appendChild(grid);
+      } else {
+        row.appendChild(el("span", "conv-n", convShown(step, j)));
+      }
+      /* ---- the side the student TYPES */
+      if (to === "den") {
         var line = el("div", "conv-ans");
         line.appendChild(el("span", "", "Denary:"));
         var inp = el("input", "conv-in");
         inp.type = "text";
-        inp.setAttribute("inputmode", "numeric");
+        inp.setAttribute("inputmode", step.signed ? "text" : "numeric");
         ["autocapitalize", "autocorrect", "autocomplete"].forEach(function (a) { inp.setAttribute(a, "off"); });
         inp.spellcheck = false;
         inp.value = saved;
         inp.addEventListener("input", function () {
-          inp.value = inp.value.replace(/[^0-9]/g, "");
-          mark(inp, j, inp.value, inp.value.length >= String(n).length);
+          inp.value = step.signed
+            ? inp.value.replace(/[^0-9-]/g, "").replace(/(?!^)-/g, "")
+            : inp.value.replace(/[^0-9]/g, "");
+          mark(inp, j, inp.value, inp.value.replace("-", "").length >= want.replace("-", "").length);
         });
         line.appendChild(inp);
         row.appendChild(line);
-        if (saved) mark(inp, j, saved, saved.length >= String(n).length);
+        if (saved) mark(inp, j, saved,
+                        saved.replace("-", "").length >= want.replace("-", "").length);
+      } else if (to === "hex") {
+        /* One box per nibble, so the digits line up with what they came from. */
+        var hline = el("div", "conv-ans");
+        hline.appendChild(el("span", "", "Hex:"));
+        var hgrid = el("div", "conv-grid conv-hex");
+        hgrid.style.gridTemplateColumns = "repeat(" + hexw + ", minmax(0, 1fr))";
+        var hcells = [];
+        for (var k4 = 0; k4 < hexw; k4++) {
+          var hc = el("input", "conv-cell");
+          hc.type = "text";
+          hc.maxLength = 1;
+          hc.setAttribute("aria-label", "hexadecimal digit " + (k4 + 1) + " of " + hexw);
+          ["autocapitalize", "autocorrect", "autocomplete"].forEach(function (a) { hc.setAttribute(a, "off"); });
+          hc.spellcheck = false;
+          hc.value = /^[0-9A-F]$/.test(saved.charAt(k4)) ? saved.charAt(k4) : "";
+          hcells.push(hc);
+          hgrid.appendChild(hc);
+        }
+        var readHex = function () {
+          return hcells.map(function (x) { return x.value || " "; }).join("").replace(/\s+$/, "");
+        };
+        hcells.forEach(function (hc2, k5) {
+          hc2.addEventListener("input", function () {
+            hc2.value = hc2.value.replace(/[^0-9A-Fa-f]/g, "").slice(-1).toUpperCase();
+            if (hc2.value && k5 + 1 < hcells.length) hcells[k5 + 1].focus();
+            mark(hgrid, j, readHex(), hcells.every(function (x) { return x.value; }));
+          });
+          hc2.addEventListener("keydown", function (e) {
+            if (e.key === "Backspace" && !hc2.value && k5 > 0) hcells[k5 - 1].focus();
+          });
+        });
+        hline.appendChild(hgrid);
+        row.appendChild(hline);
+        if (saved) mark(hgrid, j, readHex(), hcells.every(function (x) { return x.value; }));
       } else {
-        row.insertBefore(el("span", "conv-n", String(n)), null);
         var cells = [];
         for (var k2 = 0; k2 < step.bits; k2++) {
           var c = el("input", "conv-cell" + (k2 && k2 % 4 === 0 ? " nb" : ""));
@@ -1430,7 +1553,11 @@
     matchEl.className = "";
     matchEl.textContent = "";
     if (step.kind !== "code" || !s.ran) return;
-    if (step.expected != null) {
+    if (s.missing && !s.error && (step.expected == null || s.matched)) {
+      /* The one case where the output is no longer the whole verdict. */
+      matchEl.className = "no";
+      matchEl.textContent = TX.missing(s.missing);
+    } else if (step.expected != null) {
       matchEl.className = s.matched ? "yes" : "no";
       matchEl.textContent = s.matched ? TX.yes : TX.no;
     } else if (s.error) {
@@ -1741,6 +1868,9 @@
       s.errmsg = errMsg || "";
       s.output = buf + (errMsg ? (buf && !/\n$/.test(buf) ? "\n" : "") + errMsg : "");
       s.matched = step.expected != null ? (!errMsg && norm(buf) === norm(step.expected)) : null;
+      /* Counted against the code that was actually run, not whatever is in the
+         editor by the time the student reads the verdict. */
+      s.missing = errMsg ? 0 : reqMissing(step, code);
       showMatch(i);
       showExpected(i);
       var after = function () {
@@ -1824,12 +1954,16 @@
                ", " + now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 
     var codeSteps = 0, matched = 0, hints = 0, qTotal = 0, qDone = 0, cvTotal = 0, cvRight = 0;
+    var reqSteps = 0, reqShort = 0;
     L.steps.forEach(function (step, i) {
       var s = state.steps[String(i)] || {};
       if (step.kind === "convert") step.items.forEach(function (n, j) {
         cvTotal++; if ((s.conv || {})[j] === convAnswer(step, j)) cvRight++;
       });
       if (step.kind === "code" && step.expected != null) { codeSteps++; if (s.matched) matched++; }
+      if (step.kind === "code" && (step.requires || []).length) {
+        reqSteps++; if (s.missing) reqShort++;
+      }
       if (s.hint) hints++;
       (step.questions || []).forEach(function (q) { qTotal++; if (answered(q)) qDone++; });
     });
@@ -1846,7 +1980,9 @@
     text("Steps with the expected output: " + matched + " of " + codeSteps +
          "     Questions answered: " + qDone + " of " + qTotal +
          "     Hints opened: " + hints +
-         (cvTotal ? "     Conversions correct: " + cvRight + " of " + cvTotal : ""), 10, "bold");
+         (cvTotal ? "     Conversions correct: " + cvRight + " of " + cvTotal : "")
+         + (reqSteps ? "     Steps short of a required line: " + reqShort + " of " + reqSteps : ""),
+         10, "bold");
     gap(2); rule();
 
     L.steps.forEach(function (step, i) {
@@ -1859,12 +1995,17 @@
         else if (step.expected != null) result = s.matched ? "Output matched the expected output"
                                                            : "Output did not match the expected output";
         else result = s.error ? "Stopped with an error" : "Ran without an error";
+        if (s.ran && (step.requires || []).length) {
+          result += s.missing
+            ? "     Required lines missing: " + s.missing + " of " + step.requires.length
+            : "     All " + step.requires.length + " required lines present";
+        }
         text("Result: " + result + (step.hint ? "     Hint opened: " + (s.hint ? "yes" : "no") : ""), 10);
       }
       if (step.kind === "convert") {
         var cv = s.conv || {}, tr = s.tries || {};
         step.items.forEach(function (n, j) {
-          var shown = step.direction === "to_denary" ? toBin(n, step.bits) : String(n);
+          var shown = convShown(step, j);
           var got = (cv[j] || "").trim(), ok = got === convAnswer(step, j);
           var how = ok ? (tr[j] ? "correct after " + tr[j] + " wrong " + (tr[j] === 1 ? "try" : "tries")
                                 : "correct first time")
@@ -1967,10 +2108,18 @@
      the document a student reads is unchanged and nothing is added to the look of
      it. Read it back with pdfinfo, or any reader that shows document properties.
      Nothing new is collected: every item here is already printed in the PDF, and
-     the file belongs to the student either way. */
+     the file belongs to the student either way.
+
+     VERSION 2 (4 Oct 2026) adds, for each code step, the student's own code, the
+     same text the PDF prints a page or two below, capped at CODE_CAP characters
+     with "cut": true where it was cut. It also carries "need" and "missing" for a
+     step with required lines. Nothing was removed and nothing changed meaning, so
+     a reader written against v1 works unaltered on a v2 digest; a reader that
+     wants the code checks the v field first. */
+  var CODE_CAP = 2000;
   function digest(name) {
     var d = {
-      v: 1, id: L.id, ver: L.version || 1, year: L.year, short: L.short,
+      v: 2, id: L.id, ver: L.version || 1, year: L.year, short: L.short,
       name: name, at: new Date().toISOString(), page: location.pathname, steps: []
     };
     L.steps.forEach(function (step, i) {
@@ -1979,6 +2128,16 @@
         row.ran = !!s.ran;
         if (step.expected != null) row.matched = !!s.matched;
         if (s.error) row.err = String(s.error).slice(0, 120);
+        if ((step.requires || []).length) {
+          row.need = step.requires.length;
+          row.missing = s.ran ? (s.missing || 0) : null;
+        }
+        /* The same source the PDF's Code block prints, so the two cannot differ:
+           what the student has in the editor, or the step's starter where they
+           never touched it. */
+        var ct = (s.code != null ? s.code : (step.code || "")).replace(/\n+$/, "");
+        if (ct.length > CODE_CAP) { ct = ct.slice(0, CODE_CAP); row.cut = true; }
+        row.code = ct;
       }
       if (step.hint) row.hint = !!s.hint;
       if (step.kind === "convert") {
@@ -2011,8 +2170,8 @@
        length so a truncated copy is obvious rather than silently short. */
     var b64;
     try { b64 = window.btoa(unescape(encodeURIComponent(json))); }
-    catch (e) { return "epsom-digest v1 unavailable"; }
-    return "epsom-digest v1 len=" + json.length + " " + b64;
+    catch (e) { return "epsom-digest v2 unavailable"; }
+    return "epsom-digest v2 len=" + json.length + " " + b64;
   }
 
   function fileName() {

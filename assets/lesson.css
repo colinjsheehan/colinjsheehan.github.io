@@ -245,6 +245,10 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 .conv-in.conv-ok, .conv-grid.conv-ok { border-color:#2E7D32; background:#D6EEDD; }
 .conv-grid.conv-ok .conv-cell { background:#E7F5EA; border-color:#8CC79A; }
 .conv-in.conv-bad, .conv-grid.conv-bad { border-color:var(--amber); background:#FBF1E3; }
+/* Hexadecimal answers (4 Oct 2026): one box per nibble, and the row must not
+   stretch the way the bit grid does. 44px wide for a finger, as everywhere. */
+.conv-hex { flex:0 0 auto; max-width:none; }
+.conv-hex .conv-cell { min-width:44px; text-transform:uppercase; }
 .conv-tally { font-weight:700; color:#4A5456; margin-top:8px !important; }
 .conv-tally.all { color:#1F5B34; }
 

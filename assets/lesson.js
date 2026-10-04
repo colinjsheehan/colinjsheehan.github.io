@@ -937,52 +937,95 @@
     renderNavSoon();
   }
 
+  /* THE DRAG IS ENDED FROM THE DOCUMENT, NOT FROM THE CARD (4 Oct 2026).
+
+     A card only hears a pointerup that happens over it, and the ghost follows the
+     pointer away from it. Pointer capture is meant to cover that, but it is
+     released the moment the card is replaced in a redraw, and a capture that is
+     not held leaves the ghost floating with the drag never ending: the card stays
+     faded, nothing can be picked up afterwards, and because the ghost lives on
+     document.body it survives moving to another step. Colin hit exactly that.
+     Listening on the document ends the drag wherever the button comes up, and
+     dragSweep clears anything left behind by a drag that got away. */
+  function dragSweep() {
+    Array.prototype.forEach.call(document.querySelectorAll(".dcard.ghost"),
+                                 function (g) { g.remove(); });
+    Array.prototype.forEach.call(document.querySelectorAll(".dcard, .dslot"),
+                                 function (n) { if (n.style.opacity) n.style.opacity = ""; });
+  }
+
+  /* dragEsc, NOT dragKey: dragKey(step) decodes the answer key, and a second
+     function of that name quietly replaced it and made every step mark 0 out of 0. */
+  function dragEsc(e) {                       /* Escape drops what is being dragged */
+    if (e.key === "Escape" || e.key === "Esc") dragAbort();
+  }
+
+  function dragListen(on) {
+    var f = on ? "addEventListener" : "removeEventListener";
+    document[f]("pointermove", dragMove, true);
+    document[f]("pointerup", dragEnd, true);
+    document[f]("pointercancel", dragEnd, true);
+    document[f]("keydown", dragEsc, true);
+    window[f]("blur", dragAbort);
+  }
+
+  /* Stop without placing anything: the window lost focus, or Escape was pressed. */
+  function dragAbort() {
+    if (!dragging) return;
+    dragging = null;
+    dragListen(false);
+    dragSweep();
+    dragOver(null);
+  }
+
+  function dragMove(e) {
+    if (!dragging || e.pointerId !== dragging.id) return;
+    var i = dragging.step, node = dragging.node;
+    if (!dragging.moved) {
+      if (Math.abs(e.clientX - dragging.x) < DRAG_MOVED &&
+          Math.abs(e.clientY - dragging.y) < DRAG_MOVED) return;
+      dragging.moved = true;
+      var r = node.getBoundingClientRect(), w = Math.max(r.width, 110);
+      var g = document.createElement("div");
+      g.className = "dcard ghost";
+      g.textContent = dragCard(L.steps[i], dragging.card).text;
+      g.style.width = w + "px";
+      dragging.dx = Math.min(e.clientX - r.left, w / 2);
+      dragging.dy = e.clientY - r.top;
+      dragging.ghost = g;
+      document.body.appendChild(g);
+      node.style.opacity = ".35";
+    }
+    dragging.ghost.style.left = (e.clientX - dragging.dx) + "px";
+    dragging.ghost.style.top = (e.clientY - dragging.dy) + "px";
+    dragOver(dragNearest(e.clientX, e.clientY, L.steps[i], i));
+  }
+
+  function dragEnd(e) {
+    if (!dragging || e.pointerId !== dragging.id) return;
+    var i = dragging.step, node = dragging.node;
+    var moved = dragging.moved, held = dragging.card;
+    var hit = moved ? dragNearest(e.clientX, e.clientY, L.steps[i], i) : null;
+    dragging = null;
+    dragListen(false);
+    dragSweep();
+    dragOver(null);
+    if (!moved) return;                /* a tap: the click handler has it */
+    node.dataset.justDragged = "1";
+    setTimeout(function () { try { delete node.dataset.justDragged; } catch (x) {} }, 400);
+    if (hit) dragPlace(i, held, hit);
+    else if (dragState(i).put[held]) dragPlace(i, held, null);
+    else renderCard(i);
+  }
+
   function dragArm(node, whichCard, i) {
     node.addEventListener("pointerdown", function (e) {
       var id = whichCard();
       if (dragging || !id || dragShut(i)) return;
       dragging = { id: e.pointerId, card: id, step: i, x: e.clientX, y: e.clientY,
                    moved: false, node: node, ghost: null };
-      try { node.setPointerCapture(e.pointerId); } catch (x) {}
+      dragListen(true);
     });
-    node.addEventListener("pointermove", function (e) {
-      if (!dragging || e.pointerId !== dragging.id) return;
-      if (!dragging.moved) {
-        if (Math.abs(e.clientX - dragging.x) < DRAG_MOVED &&
-            Math.abs(e.clientY - dragging.y) < DRAG_MOVED) return;
-        dragging.moved = true;
-        var r = node.getBoundingClientRect(), w = Math.max(r.width, 110);
-        var g = document.createElement("div");
-        g.className = "dcard ghost";
-        g.textContent = dragCard(L.steps[i], dragging.card).text;
-        g.style.width = w + "px";
-        dragging.dx = Math.min(e.clientX - r.left, w / 2);
-        dragging.dy = e.clientY - r.top;
-        dragging.ghost = g;
-        document.body.appendChild(g);
-        node.style.opacity = ".35";
-      }
-      dragging.ghost.style.left = (e.clientX - dragging.dx) + "px";
-      dragging.ghost.style.top = (e.clientY - dragging.dy) + "px";
-      dragOver(dragNearest(e.clientX, e.clientY, L.steps[i], i));
-    });
-    function endDrag(e) {
-      if (!dragging || e.pointerId !== dragging.id) return;
-      var moved = dragging.moved, held = dragging.card;
-      var hit = moved ? dragNearest(e.clientX, e.clientY, L.steps[i], i) : null;
-      if (dragging.ghost) dragging.ghost.remove();
-      node.style.opacity = "";
-      dragging = null;
-      dragOver(null);
-      if (!moved) return;                /* a tap: the click handler has it */
-      node.dataset.justDragged = "1";
-      setTimeout(function () { delete node.dataset.justDragged; }, 400);
-      if (hit) dragPlace(i, held, hit);
-      else if (dragState(i).put[held]) dragPlace(i, held, null);
-      else renderCard(i);
-    }
-    node.addEventListener("pointerup", endDrag);
-    node.addEventListener("pointercancel", endDrag);
   }
 
   function dragNearest(x, y, step, i) {
@@ -1095,6 +1138,7 @@
   }
 
   function dragEl(step, i) {
+    dragSweep();                 /* a ghost from a drag that got away is on body */
     var wrap = el("div", "drag drag-" + (step.mode || "match"));
     var s = dragState(i);
     if (!SIMPLE) wrap.appendChild(el("p", "dhow", TX.dragHow));

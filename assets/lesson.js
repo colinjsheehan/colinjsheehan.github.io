@@ -57,7 +57,8 @@
     dragPutHere: "\u2192", dragTakeBack: "\u2190",
     dragRight: "\u2713", dragAnswer: "\u2192 ",
     dragScore: function (n, of) { return n + "/" + of + " \u2713"; },
-    dragRecordedFirst: ""
+    dragRecordedFirst: "",
+    shut: function (label) { return label; }
   } : {
     remember: "Remember: ", hint: "Hint", drill: "Say it together",
     drawOnly: "This step draws a picture. There is no text output to check.",
@@ -84,6 +85,10 @@
     dragAnswer: "Answer: ",
     dragScore: function (n, of) { return n + " out of " + of + " right"; },
     dragRecordedFirst: "Your answers were recorded before these were shown.",
+    shut: function (label) {
+      return label + " is closed while you answer this step. Check your answers "
+        + "to open it again.";
+    },
     reset: "Reset this step", resetArm: "Tap again to reset",
     noPdf: "The PDF tool did not load. Reload the page and try again.",
     saved: function (f) { return "Saved as \"" + f + "\". Upload it to this lesson's Google Classroom assignment."; }
@@ -608,7 +613,13 @@
       b.title = step.label + ": " + step.title;
       if (i === state.current) b.classList.add("current");
       if (isDone(i)) b.classList.add("done");
-      b.addEventListener("click", function () { go(i); });
+      if (isShut(i)) {
+        b.classList.add("shut");
+        b.disabled = true;
+        b.title = TX.shut(step.label);
+      } else {
+        b.addEventListener("click", function () { go(i); });
+      }
       navEl.appendChild(b);
     });
   }
@@ -932,6 +943,7 @@
     s.mark = { at: new Date().toISOString(), answers: answers,
                score: score, of: Object.keys(key).length };
     picked = null;
+    openThem(i);                       // the reference it closed comes back
     save();
     if (!quiet) renderCard(i);
     renderNavSoon();
@@ -1458,7 +1470,54 @@
 
   /* ------------------------------------------------------------ navigation */
   var runToken = 0;
+  /* CLOSING AN EARLIER STEP (4 Oct 2026, Colin's request).
+
+     A step may carry "closes": ["Parts"], naming EARLIER steps by their nav. The
+     first use is Year 8 Lesson 10: the Label step closes Parts, which shows the
+     same diagram with the answers on it, so the labelling is done from memory.
+
+     Opening the closing step shuts the named ones: they show a lock in the step
+     bar and cannot be opened. Checking the closing step opens them again, so a
+     student is never stuck. Any card can go in any box and the check only needs
+     everything placed, so committing an answer is always possible and is the way
+     back to the reference. That is the bargain: look again once you have put your
+     name to something.
+
+     Shut steps are kept in the saved state, so a reload does not reopen them.
+     This is a bar and not a lock: clearing site data or another browser reopens
+     the step, exactly as with the drag answer key. It suits a classroom and is
+     not an exam condition.
+
+     A step is closed whenever the closing step is opened, whether or not the
+     student has been to it. The alternative, only closing what they have already
+     seen, rewards going straight to the closing step and leaves the reference
+     open for the rest of the lesson. */
+  function closedBy(step) { return (step && step.closes) || []; }
+
+  function isShut(i) {
+    return !!(state.shut && state.shut[L.steps[i].nav]);
+  }
+
+  function shutThem(i) {
+    var list = closedBy(L.steps[i]);
+    if (!list.length) return;
+    if (!state.shut) state.shut = {};
+    var changed = false;
+    list.forEach(function (nav) {
+      if (!state.shut[nav]) { state.shut[nav] = true; changed = true; }
+    });
+    if (changed) save();
+  }
+
+  function openThem(i) {
+    var list = closedBy(L.steps[i]);
+    if (!list.length || !state.shut) return;
+    list.forEach(function (nav) { delete state.shut[nav]; });
+    save();
+  }
+
   function go(i) {
+    if (isShut(i)) return;             // a closed step cannot be opened
     keepFirstAnswers(state.current);   // what they thought on the step they are leaving
     killed = true;           // stop anything still running on the old step
     runToken++;
@@ -1477,6 +1536,7 @@
       syncEditor();
       $("reset").textContent = TX.reset;
     }
+    shutThem(i);                       // this step may close earlier ones
     renderCard(i);
     applySplit();
     applyRSplit();

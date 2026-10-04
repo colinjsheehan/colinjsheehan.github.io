@@ -38,6 +38,12 @@ nav button { flex:none; min-width:44px; height:36px; padding:0 10px; font-size:1
 nav button.current { background:var(--teal); color:#fff; border-color:var(--teal); }
 nav button.done::after { content:" \2713"; color:var(--green); }
 nav button.current.done::after { color:#CFEBD8; }
+/* A step closed by a later one (see "closes" in lesson.js). Greyed, not a link,
+   and carrying a padlock rather than the words used for a lesson that is not
+   open yet, which is a different thing on the year pages. */
+nav button.shut { background:var(--panel); color:#8A9496; border-color:var(--grey);
+                  cursor:not-allowed; }
+nav button.shut::after { content:" \01F512"; }
 
 /* ---------------------------------------------------------------- layout */
 main { flex:1; display:flex; min-height:0; }

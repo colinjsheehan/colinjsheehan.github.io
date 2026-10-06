@@ -1196,6 +1196,10 @@
     return b;
   }
 
+  /* The longest a match box's label may be and still be laid out as a tile. A
+     label longer than this is a sentence, and a sentence needs its own row. */
+  var DRAG_TILE_CHARS = 24;
+
   function dragEl(step, i) {
     dragSweep();                 /* a ghost from a drag that got away is on body */
     var wrap = el("div", "drag drag-" + (step.mode || "match"));
@@ -1242,6 +1246,23 @@
       wrap.appendChild(sent);
     } else {
       var slots = el("div", "dslots");
+      /* TILES (6 Oct 2026). A match step with eight boxes drew eight full width
+         rows, about 520px of them, which pushed the card tray below the fold on a
+         1366x768 Chromebook: the student tapped a card they could see, then
+         scrolled back up to find the box. Where the boxes are short labels, they
+         are laid out as a grid instead and the whole step fits one screen. The
+         CSS turns it off below 700px, so a phone still gets one column.
+
+         Only MATCH. An order step is a sequence and reads down the page; putting
+         First to Fifth across a grid would be a different instruction. And only
+         where every label is short: a box holding a sentence does not belong in a
+         220px column, so those steps keep their rows. */
+      var dmode = step.mode || "match";
+      var tiles = dmode === "match" && step.targets.length >= 4
+        && step.targets.every(function (t) {
+          return String(t.text || t.id).length <= DRAG_TILE_CHARS;
+        });
+      if (tiles) slots.classList.add("dtiles");
       step.targets.forEach(function (t) {
         slots.appendChild(dragSlot(step, i, t, t.text || ""));
       });

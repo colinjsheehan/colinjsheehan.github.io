@@ -97,13 +97,13 @@
   .code { background: #fff; border: 2px solid var(--near); border-radius: 10px; padding: 6px 16px;
           font-size: 34px; font-weight: 800; letter-spacing: .04em; }
   .code .r { color: #C00000; } .code .g { color: #007A20; } .code .b { color: #0030C0; }
-  .chan { display: grid; grid-template-columns: 70px 1fr; gap: 4px 12px; align-items: center;
+  .pairrow { display: grid; grid-template-columns: 70px 1fr; gap: 4px 12px; align-items: center;
           padding: 10px 12px; border: 2px solid var(--grey); border-radius: 10px; margin-bottom: 10px; }
-  .chan .lab { font-weight: 800; }
-  .chan.red .lab { color: #C00000; } .chan.green .lab { color: #007A20; } .chan.blue .lab { color: #0030C0; }
-  .chan input[type=range] { width: 100%; min-height: 44px; }
-  .chan .vals { grid-column: 2; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 15px; color: var(--muted); }
-  .chan .vals b { color: var(--near); }
+  .pairrow .lab { font-weight: 800; }
+  .pairrow.red .lab { color: #C00000; } .pairrow.green .lab { color: #007A20; } .pairrow.blue .lab { color: #0030C0; }
+  .pairrow input[type=range] { width: 100%; min-height: 44px; }
+  .pairrow .vals { grid-column: 2; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 15px; color: var(--muted); }
+  .pairrow .vals b { color: var(--near); }
   .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
   .preset { min-height: 44px; min-width: 44px; padding: 6px 12px 6px 6px; border-radius: 8px;
             border: 2px solid var(--grey); background: #fff; cursor: pointer; display: inline-flex;
@@ -191,7 +191,7 @@
         <div class="swatch" id="mixSwatch"><div class="code mono" id="mixCode">#FF0000</div></div>
         <div class="presets" id="presets"></div>
       </div>
-      <div id="chans"></div>
+      <div id="pairs"></div>
     </div>
     <p class="note">Light adds up: red and green light together make yellow, and all three at FF make white.</p>
   </section>
@@ -307,9 +307,9 @@
 
   /* ------------------------------------------------------------------- mix */
   var mix = [255, 0, 0];
-  function chanRow(i) {
+  function pairRow(i) {
     var div = document.createElement("div");
-    div.className = "chan " + CH[i][0];
+    div.className = "pairrow " + CH[i][0];
     div.innerHTML = '<span class="lab">' + CH[i][1] + '</span>' +
       '<input type="range" min="0" max="255" step="1" aria-label="' + CH[i][1] + ', 0 to 255">' +
       '<div class="vals"><span>Denary <b class="d"></b></span><span>Binary <b class="mono bn"></b></span>' +
@@ -318,7 +318,7 @@
     r.addEventListener("input", function () { mix[i] = Number(r.value); paintMix(); });
     return div;
   }
-  for (var i = 0; i < 3; i++) $("chans").appendChild(chanRow(i));
+  for (var i = 0; i < 3; i++) $("pairs").appendChild(pairRow(i));
   PRESETS.forEach(function (p) {
     var b = document.createElement("button");
     b.type = "button"; b.className = "preset";
@@ -330,7 +330,7 @@
     var c = code(mix);
     $("mixSwatch").style.background = c;
     $("mixCode").innerHTML = codeHtml(c);
-    var rows = $("chans").children;
+    var rows = $("pairs").children;
     for (var k = 0; k < 3; k++) {
       rows[k].querySelector("input").value = mix[k];
       rows[k].querySelector(".d").textContent = mix[k];

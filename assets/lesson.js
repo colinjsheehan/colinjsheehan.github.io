@@ -666,8 +666,15 @@
   }
 
   /* --------------------------------------------------------------- the card */
-  function renderCard(i) {
+  /* SCROLL. A redraw of the step already on screen (a pick, a drop, a mark)
+     keeps the panel where the student had it; moving to a step starts at the
+     top. go() passes fresh = true; every other caller leaves it out. At laptop
+     width #card is the scrolling element, so resetting it on a pick threw the
+     student back above the cards they were using. */
+  var lastRendered = null;
+  function renderCard(i, fresh) {
     var step = L.steps[i];
+    var keep = (!fresh && i === lastRendered) ? cardEl.scrollTop : 0;
     cardEl.innerHTML = "";
     cardEl.appendChild(el("div", "steplabel", step.label));
     cardEl.appendChild(el("h2", "", step.title));
@@ -845,7 +852,8 @@
       });
       cardEl.appendChild(d);
     }
-    cardEl.scrollTop = 0;
+    cardEl.scrollTop = keep;
+    lastRendered = i;
   }
 
   /* PICTURES. A row of images with an optional word under each. The src is
@@ -1692,7 +1700,7 @@
       $("reset").textContent = TX.reset;
     }
     shutThem(i);                       // this step may close earlier ones
-    renderCard(i);
+    renderCard(i, true);
     applySplit();
     applyRSplit();
     plainView();

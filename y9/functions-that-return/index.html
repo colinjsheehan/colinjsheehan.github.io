@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 9 Functions | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; Computer Science</div>
+    <h1>Year 9: Functions that return a value</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Hand in (PDF)</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Hand in makes a PDF to upload to Google Classroom.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y9-functions-return", "order": 26, "version": 1, "year": "Year 9", "slug": "functions-that-return", "folder": "y9", "title": "Functions that return a value", "short": "Functions", "objective": "Write a function with parameters that returns a value, call it with arguments, and call it once for every item in a list.", "keywords": ["function", "parameter", "argument", "return", "call"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From the arrays lessons", "intro": ["Answer all three. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "What does print(prices[2]) print?", "code": "prices = [4, 10, 7, 3]"}, {"id": "r2", "label": "R2", "prompt": "Which indexes does range(4) give?"}, {"id": "r3", "label": "R3", "prompt": "What does this program print?", "code": "prices = [4, 10, 7, 3]\ntotal = 0\nfor index in range(4):\n    total = total + prices[index]\nprint(total)"}]}, {"kind": "code", "nav": "P", "label": "Predict", "title": "A job with a name", "remember": "def defines a function. Nothing inside it runs until it is called.", "intro": ["calculate_cost works out a price times a quantity and gives the answer back.", "Answer Pa and Pb. Then press Run and check."], "code": "def calculate_cost(price, quantity):\n    return price * quantity\n\ncost = calculate_cost(5, 3)\nprint(\"Cost:\", cost)\n", "predict_first": "pa", "questions": [{"id": "pa", "label": "Pa", "prompt": "Predict the line it prints."}, {"id": "pb", "label": "Pb", "prompt": "The def line comes first. Does it print anything on its own?", "pick": [{"v": "yes"}, {"v": "no"}]}], "expected_b64": "Q29zdDogMTU="}, {"kind": "questions", "nav": "W", "label": "Words", "title": "Five words for today", "intro": ["Read each row. Say each word. Then answer W1 to W3."], "table": {"headers": ["Term", "What it means", "Example"], "code_cols": [2], "rows": [["function", "A function is a named job that gives one value back.", "calculate_cost"], ["parameter", "A parameter is a name in the def line that waits for a value.", "price"], ["argument", "An argument is the value put in the brackets when the function is called.", "5"], ["return", "return sends one value back to the line that called the function.", "return"], ["call", "A call runs the function by its name.", "calculate_cost(5, 3)"]]}, "drill": "A function takes in **arguments** and gives one value back with **return**.", "questions": [{"id": "w1", "label": "W1", "prompt": "In calculate_cost(5, 3), 5 and 3 are ...", "pick": [{"v": "arguments"}, {"v": "parameters"}]}, {"id": "w2", "label": "W2", "prompt": "In def calculate_cost(price, quantity), price and quantity are ...", "pick": [{"v": "arguments"}, {"v": "parameters"}]}, {"id": "w3", "label": "W3", "prompt": "The word that sends the answer back is ...", "pick": [{"v": "print"}, {"v": "return"}, {"v": "def"}]}]}, {"kind": "drag", "mode": "match", "nav": "1", "label": "Step 1: name the parts", "title": "Every part of one function", "check": "once", "intro": ["Read the program. Match each card to its part. One card is not needed."], "readonly": "def double(number):\n    return number * 2\n\nanswer = double(6)\nprint(\"Result:\", answer)", "cards": [{"id": "kName", "text": "double"}, {"id": "k2", "text": "2"}, {"id": "kParam", "text": "number"}, {"id": "kOut", "text": "Result: 12"}, {"id": "kArg", "text": "6"}, {"id": "kRet", "text": "12"}], "targets": [{"id": "tName", "text": "the function's name"}, {"id": "tParam", "text": "the parameter"}, {"id": "tArg", "text": "the argument"}, {"id": "tRet", "text": "the value returned"}, {"id": "tOut", "text": "what is printed"}], "key_b64": "eyJrQXJnIjoidEFyZyIsImtOYW1lIjoidE5hbWUiLCJrT3V0IjoidE91dCIsImtQYXJhbSI6InRQYXJhbSIsImtSZXQiOiJ0UmV0In0="}, {"kind": "code", "nav": "2", "label": "Step 2: two calls", "title": "The function machine", "remember": "Each call sends new arguments in and gets a new value back.", "intro": ["The function is called twice, with different arguments.", "Answer 2a and 2b. Then press Run and check."], "code": "def calculate_cost(price, quantity):\n    return price * quantity\n\nfirst_cost = calculate_cost(5, 3)\nsecond_cost = calculate_cost(12, 2)\ntotal = first_cost + second_cost\nprint(total)\n", "predict_first": "s2a", "questions": [{"id": "s2a", "label": "2a", "prompt": "Predict what it prints."}, {"id": "s2b", "label": "2b", "prompt": "What value does calculate_cost(12, 2) return?"}], "expected_b64": "Mzk="}, {"kind": "code", "nav": "3", "label": "Step 3: find and fix", "title": "It prints, but it does not return", "intro": ["This function prints its answer instead of returning it.", "Predict 3a first, then press Run. Fix the function so result holds the area."], "code": "def calculate_area(length, width):\n    area = length * width\n    print(area)\n\nresult = calculate_area(5, 3)\nprint(\"Stored result:\", result)\n", "predict_first": "s3a", "hint": "Change one line inside the function. A function gives its value back with return.", "questions": [{"id": "s3a", "label": "3a", "prompt": "Predict the two lines it prints."}, {"id": "s3b", "label": "3b", "prompt": "Why does result hold None before the fix?"}], "expected_b64": "U3RvcmVkIHJlc3VsdDogMTU=", "req_b64": "WyJyZXR1cm4gYXJlYSJd"}, {"kind": "code", "nav": "4", "label": "Step 4: fill two gaps", "title": "The rectangle calculator", "remember": "The value after return is what the call becomes.", "intro": ["Fill the two gaps. Run it and type 5, then 3.", "Then run it again with 0 and 7, and answer 4a and 4b."], "code": "def calculate_area(length, width):\n    return ____\n\ndef display_area(area):\n    print(\"Rectangle area:\", area)\n\nlength = int(input(\"Enter the length: \"))\nwidth = int(input(\"Enter the width: \"))\narea = ____\ndisplay_area(area)\n", "inputs": ["5", "3"], "hint": "The first gap multiplies the two parameters. The second gap calls calculate_area with length and width.", "questions": [{"id": "s4a", "label": "4a", "prompt": "What does it print with 0 and 7?"}, {"id": "s4b", "label": "4b", "prompt": "Which of the two does a job but returns nothing?", "pick": [{"v": "calculate_area"}, {"v": "display_area"}]}], "expected_b64": "UmVjdGFuZ2xlIGFyZWE6IDE1"}, {"kind": "code", "nav": "5", "label": "Step 5: once per item", "title": "Call it for every price in a list", "remember": "range(3) gives the indexes 0, 1 and 2.", "intro": ["The loop calls calculate_cost once for each price, with a quantity of 2.", "Fill the gap so total adds up every cost. Run it, then answer 5a and 5b."], "code": "def calculate_cost(price, quantity):\n    return price * quantity\n\nprices = [4, 10, 7]\ntotal = 0\n\nfor index in range(3):\n    cost = calculate_cost(prices[index], 2)\n    print(prices[index], cost)\n    total = total + ____\n\nprint(\"Total:\", total)\n", "questions": [{"id": "s5a", "label": "5a", "prompt": "How many times is calculate_cost called?", "pick": [{"v": "1"}, {"v": "2"}, {"v": "3"}]}, {"id": "s5b", "label": "5b", "prompt": "Change the quantity 2 to 3 and run it. What is the total now?"}], "expected_b64": "NCA4CjEwIDIwCjcgMTQKVG90YWw6IDQy"}, {"kind": "code", "nav": "Make", "label": "Make: an order report", "title": "An order report", "remember": "A function takes in arguments and gives one value back with return.", "make": {"task": "Write the order report in the six numbered parts of the starter.", "rules": ["Use the while loop, if, elif and else, a list, a function that returns, a loop and a total.", "Test it: type 0, which is refused, then 2. The total should be 60.", "Test quantity 1 and quantity 3, and write what you expect first."], "checkpoint": "parts 1 to 3 running.", "homework": "parts 4 to 6, then your test table.", "watch": "The loop must call the function. Do not work out the costs yourself."}, "code": "# 1. Ask for the quantity, 1 to 3. Refuse anything else with a while loop.\n\n\n# 2. Choose the label: 1 is Single, 2 is Double, 3 is Triple.\n\n\n# 3. Store the prices 6, 9 and 15 in a list called prices.\n\n\n# 4. Define calculate_cost(price, quantity). Return price * quantity.\n\n\n# 5. Loop over the list. Call the function once for each price.\n#    Print the price and its cost. Add the cost to a total.\n\n\n# 6. Print the quantity, the label and the total, each with a label.\n", "inputs": ["0", "2"], "hint": "Step 5 has the loop and the total. The validation loop is the one from Input and validation.", "questions": [{"id": "mk1", "label": "M1", "prompt": "Copy the line in your loop that calls the function."}, {"id": "mk2", "label": "M2", "prompt": "Write your test table: quantity, expected total, actual total."}]}, {"kind": "questions", "nav": "C1", "label": "Challenge 1: pseudocode", "title": "The same function in pseudocode", "intro": ["Exam papers write functions in pseudocode. Read this one. Answer C1a to C1d without running anything."], "questions": [{"id": "c1a", "label": "C1a", "prompt": "What are the parameters?", "code": "FUNCTION CalculateTotal(Price : REAL, Quantity : INTEGER) RETURNS REAL\n    RETURN Price * Quantity\nENDFUNCTION\n\nDECLARE cost : REAL\ncost \u2190 CalculateTotal(6.50, 4)\nOUTPUT cost"}, {"id": "c1b", "label": "C1b", "prompt": "What are the arguments?"}, {"id": "c1c", "label": "C1c", "prompt": "What value is returned?"}, {"id": "c1d", "label": "C1d", "prompt": "Which Python word does the same job as RETURN?"}]}, {"kind": "questions", "nav": "C2", "label": "Challenge 2: find the fault", "title": "Two faults in pseudocode", "intro": ["Each program has one fault. Answer C2a and C2b."], "questions": [{"id": "c2a", "label": "C2a", "prompt": "Program A: what is missing, and what should the line be?", "code": "FUNCTION CalculateArea(Length : REAL, Width : REAL) RETURNS REAL\n    Area \u2190 Length * Width\nENDFUNCTION"}, {"id": "c2b", "label": "C2b", "prompt": "Program B: the procedure never runs. What word is missing from the last line?", "code": "PROCEDURE ShowMessage(Message : STRING)\n    OUTPUT Message\nENDPROCEDURE\n\nShowMessage(\"Welcome\")"}]}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Use this line. Answer without running anything: total = calculate_cost(8.50, 4)"], "questions": [{"id": "e1", "label": "E1", "prompt": "What is the function's name?"}, {"id": "e2", "label": "E2", "prompt": "What are the two arguments?"}, {"id": "e3", "label": "E3", "prompt": "What value is returned into total?"}, {"id": "e4", "label": "E4", "prompt": "Why must calculate_cost use return and not print?"}]}]};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

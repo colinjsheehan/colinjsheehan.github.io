@@ -27,6 +27,7 @@ header label { font-size:13px; opacity:.9; }
 .btn.amber { background:var(--amber); }
 .btn.grey  { background:#5A6567; }
 .btn.small { font-size:13px; padding:7px 10px; font-weight:600; }
+#send-word { font-size:16px; padding:6px 8px; border-radius:5px; border:0; width:120px; }
 #handin-msg { font-size:13px; color:#FFD9A0; font-weight:600; }
 
 /* ---------------------------------------------------------------- step nav */

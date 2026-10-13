@@ -2224,6 +2224,119 @@
     msgEl.textContent = TX.saved(f);
   });
 
+  /* SEND TO MY TEACHER (13 Oct 2026, proof of concept). A second way to hand in:
+     the same PDF the button above downloads is posted to a Google Apps Script web
+     app (handin_receiver/receiver.js), which saves it into a Drive folder that
+     belongs to the teacher. The download stays, because it is the fallback when
+     this does not work and the only route on a page with no address configured.
+
+     OFF UNLESS CONFIGURED. build_site.py writes window.HANDIN = {url, word} into
+     a page only when handin_receiver/handin_config.json holds an address. Without
+     one nothing below runs and no button is added, so every page is as it was.
+     The Year 7 (i) pages (SIMPLE) never get the button: its wording is not among
+     the words that course has taught.
+
+     HOW IT TALKS. One POST with Content-Type text/plain, because that is a
+     "simple" request and the browser sends no preflight, which an Apps Script
+     web app cannot answer. The body is JSON: {v, lesson, name, pdf (base64),
+     word?}. The reply is JSON: {ok: true} or {ok: false, error: <short code>}.
+     The reply says nothing about the pupil, and the page tells the pupil nothing
+     the reply did not say. A reply that cannot be read (no network, a Google
+     error page) is reported as "not known whether it arrived", never as sent.
+     The server keeps every hand-in with a time stamp, so sending twice is safe. */
+  var HANDIN = (!SIMPLE && window.HANDIN && typeof window.HANDIN.url === "string"
+                && window.HANDIN.url) ? window.HANDIN : null;
+  if (HANDIN) (function () {
+    var SEND_MAX = 4 * 1024 * 1024;           /* PDF bytes; the server's limit is 5 MB */
+    var WORDKEY = "epsom:handin-word";
+    var FALLBACK = " Use Hand in (PDF) and upload it to Google Classroom.";
+    var SX = {
+      label: "Send to my teacher", sending: "Sending...",
+      sent: function (t) { return "Sent to your teacher at " + t + "."; },
+      noWord: "Type the class word first.",
+      bigLocal: "The file is too big to send." + FALLBACK,
+      word: "The class word is not right.",
+      refused: "Your teacher's inbox did not accept the file." + FALLBACK,
+      unknown: "Could not reach your teacher's inbox, so it is not known whether "
+        + "the file arrived." + FALLBACK
+    };
+    var sendBtn = document.createElement("button");
+    sendBtn.className = "btn"; sendBtn.id = "send"; sendBtn.textContent = SX.label;
+    var after = $("handin");
+    after.parentNode.insertBefore(sendBtn, after.nextSibling);
+    var wordEl = null;
+    if (HANDIN.word) {
+      wordEl = document.createElement("input");
+      wordEl.id = "send-word"; wordEl.placeholder = "Class word";
+      wordEl.setAttribute("autocomplete", "off"); wordEl.setAttribute("autocapitalize", "off");
+      try { wordEl.value = localStorage.getItem(WORDKEY) || ""; } catch (e) {}
+      wordEl.addEventListener("input", function () {
+        try { localStorage.setItem(WORDKEY, wordEl.value); } catch (e) {}
+      });
+      after.parentNode.insertBefore(wordEl, sendBtn);
+    }
+    msgEl.setAttribute("role", "status");
+
+    function toBase64(buf) {
+      var bytes = new Uint8Array(buf), s = "", step = 0x8000;
+      for (var i = 0; i < bytes.length; i += step) {
+        s += String.fromCharCode.apply(null, bytes.subarray(i, i + step));
+      }
+      return window.btoa(s);
+    }
+    function clock() {
+      var d = new Date(), p = function (n) { return (n < 10 ? "0" : "") + n; };
+      return p(d.getHours()) + ":" + p(d.getMinutes());
+    }
+    function done(text) { msgEl.textContent = text; sendBtn.disabled = false; }
+
+    sendBtn.addEventListener("click", function () {
+      if (sendBtn.disabled) return;
+      if (!nameEl.value.trim()) {
+        msgEl.textContent = "Type your name first.";
+        nameEl.focus();
+        return;
+      }
+      if (wordEl && !wordEl.value.trim()) {
+        msgEl.textContent = SX.noWord;
+        wordEl.focus();
+        return;
+      }
+      if (!window.jspdf || !window.jspdf.jsPDF) { msgEl.textContent = TX.noPdf; return; }
+      sendBtn.disabled = true;
+      msgEl.textContent = SX.sending;
+      save();
+      /* Let the status line paint before the PDF is built, which takes a moment. */
+      setTimeout(function () {
+        var payload;
+        try {
+          var buf = buildPdf().output("arraybuffer");
+          if (buf.byteLength > SEND_MAX) { done(SX.bigLocal); return; }
+          payload = { v: 1, lesson: L.id, name: nameEl.value.trim(), pdf: toBase64(buf) };
+          if (wordEl) payload.word = wordEl.value.trim();
+        } catch (e) { done(SX.unknown); return; }
+
+        var ctl = window.AbortController ? new AbortController() : null;
+        var timer = setTimeout(function () { if (ctl) ctl.abort(); }, 60000);
+        fetch(HANDIN.url, {
+          method: "POST", redirect: "follow",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload), signal: ctl ? ctl.signal : undefined
+        }).then(function (r) { return r.json(); }).then(function (r) {
+          clearTimeout(timer);
+          if (r && r.ok === true) { done(SX.sent(clock())); return; }
+          if (r && r.ok === false) {
+            if (r.error === "word") { done(SX.word); return; }
+            if (r.error === "too_big") { done(SX.bigLocal); return; }
+            done(SX.refused);
+            return;
+          }
+          done(SX.unknown);
+        }).catch(function () { clearTimeout(timer); done(SX.unknown); });
+      }, 30);
+    });
+  })();
+
   /* Hooks for the automated browser test only. */
   window.__lesson = { state: function () { return state; }, go: go, run: run, buildPdf: buildPdf,
     applySplit: applySplit,

@@ -53,6 +53,14 @@
     ok: "\u2713", waiting: "\u25B6",
     reset: "\u21BA Again", resetArm: "Again?",
     noPdf: "\u2717", saved: function (f) { return "\u2713 " + f; },
+    /* The send button, symbols only. The key stands for the class word and the
+       envelope for sending. A tick with the time means it arrived. A cross means
+       it did not, and Hand in is still there. (No word may be quoted in this
+       comment: the Year 7 word check reads string literals out of this block.) */
+    sendLabel: "\u2709 \u2192", sendWordPh: "\uD83D\uDD11", sending: "\u23F3",
+    sent: function (t) { return "\u2713 " + t; },
+    sendNoName: "\u2717", sendNoWord: "\uD83D\uDD11 ?", sendBig: "\u2717",
+    sendWord: "\uD83D\uDD11 \u2717", sendRefused: "\u2717", sendUnknown: "\u2717",
     /* Symbols only. Every word on a Year 7 (i) page has to be a word that course
        has taught, and none of the drag wording has been. Rather than smuggle
        English onto those pages, this side is symbols, and verify_site.py refuses
@@ -113,7 +121,14 @@
     },
     reset: "Reset this step", resetArm: "Tap again to reset",
     noPdf: "The PDF tool did not load. Reload the page and try again.",
-    saved: function (f) { return "Saved as \"" + f + "\". Upload it to this lesson's Google Classroom assignment."; }
+    saved: function (f) { return "Saved as \"" + f + "\". Upload it to this lesson's Google Classroom assignment."; },
+    sendLabel: "Send to my teacher", sendWordPh: "Class word", sending: "Sending...",
+    sent: function (t) { return "Sent to your teacher at " + t + "."; },
+    sendNoName: "Type your name first.", sendNoWord: "Type the class word first.",
+    sendBig: "The file is too big to send. Use Hand in (PDF) and upload it to Google Classroom.",
+    sendWord: "The class word is not right.",
+    sendRefused: "Your teacher's inbox did not accept the file. Use Hand in (PDF) and upload it to Google Classroom.",
+    sendUnknown: "Could not reach your teacher's inbox, so it is not known whether the file arrived. Use Hand in (PDF) and upload it to Google Classroom."
   };
   var NAMEKEY = "epsom:name";
 
@@ -2233,8 +2248,8 @@
      OFF UNLESS CONFIGURED. build_site.py writes window.HANDIN = {url, word} into
      a page only when handin_receiver/handin_config.json holds an address. Without
      one nothing below runs and no button is added, so every page is as it was.
-     The Year 7 (i) pages (SIMPLE) never get the button: its wording is not among
-     the words that course has taught.
+     The Year 7 (i) pages (SIMPLE) get it too, with symbols in place of words (see
+     the send entries in TX): that course has taught no word for it.
 
      HOW IT TALKS. One POST with Content-Type text/plain, because that is a
      "simple" request and the browser sends no preflight, which an Apps Script
@@ -2244,30 +2259,19 @@
      the reply did not say. A reply that cannot be read (no network, a Google
      error page) is reported as "not known whether it arrived", never as sent.
      The server keeps every hand-in with a time stamp, so sending twice is safe. */
-  var HANDIN = (!SIMPLE && window.HANDIN && typeof window.HANDIN.url === "string"
+  var HANDIN = (window.HANDIN && typeof window.HANDIN.url === "string"
                 && window.HANDIN.url) ? window.HANDIN : null;
   if (HANDIN) (function () {
     var SEND_MAX = 4 * 1024 * 1024;           /* PDF bytes; the server's limit is 5 MB */
     var WORDKEY = "epsom:handin-word";
-    var FALLBACK = " Use Hand in (PDF) and upload it to Google Classroom.";
-    var SX = {
-      label: "Send to my teacher", sending: "Sending...",
-      sent: function (t) { return "Sent to your teacher at " + t + "."; },
-      noWord: "Type the class word first.",
-      bigLocal: "The file is too big to send." + FALLBACK,
-      word: "The class word is not right.",
-      refused: "Your teacher's inbox did not accept the file." + FALLBACK,
-      unknown: "Could not reach your teacher's inbox, so it is not known whether "
-        + "the file arrived." + FALLBACK
-    };
     var sendBtn = document.createElement("button");
-    sendBtn.className = "btn"; sendBtn.id = "send"; sendBtn.textContent = SX.label;
+    sendBtn.className = "btn"; sendBtn.id = "send"; sendBtn.textContent = TX.sendLabel;
     var after = $("handin");
     after.parentNode.insertBefore(sendBtn, after.nextSibling);
     var wordEl = null;
     if (HANDIN.word) {
       wordEl = document.createElement("input");
-      wordEl.id = "send-word"; wordEl.placeholder = "Class word";
+      wordEl.id = "send-word"; wordEl.placeholder = TX.sendWordPh;
       wordEl.setAttribute("autocomplete", "off"); wordEl.setAttribute("autocapitalize", "off");
       try { wordEl.value = localStorage.getItem(WORDKEY) || ""; } catch (e) {}
       wordEl.addEventListener("input", function () {
@@ -2293,28 +2297,28 @@
     sendBtn.addEventListener("click", function () {
       if (sendBtn.disabled) return;
       if (!nameEl.value.trim()) {
-        msgEl.textContent = "Type your name first.";
+        msgEl.textContent = TX.sendNoName;
         nameEl.focus();
         return;
       }
       if (wordEl && !wordEl.value.trim()) {
-        msgEl.textContent = SX.noWord;
+        msgEl.textContent = TX.sendNoWord;
         wordEl.focus();
         return;
       }
       if (!window.jspdf || !window.jspdf.jsPDF) { msgEl.textContent = TX.noPdf; return; }
       sendBtn.disabled = true;
-      msgEl.textContent = SX.sending;
+      msgEl.textContent = TX.sending;
       save();
       /* Let the status line paint before the PDF is built, which takes a moment. */
       setTimeout(function () {
         var payload;
         try {
           var buf = buildPdf().output("arraybuffer");
-          if (buf.byteLength > SEND_MAX) { done(SX.bigLocal); return; }
+          if (buf.byteLength > SEND_MAX) { done(TX.sendBig); return; }
           payload = { v: 1, lesson: L.id, name: nameEl.value.trim(), pdf: toBase64(buf) };
           if (wordEl) payload.word = wordEl.value.trim();
-        } catch (e) { done(SX.unknown); return; }
+        } catch (e) { done(TX.sendUnknown); return; }
 
         var ctl = window.AbortController ? new AbortController() : null;
         var timer = setTimeout(function () { if (ctl) ctl.abort(); }, 60000);
@@ -2324,15 +2328,15 @@
           body: JSON.stringify(payload), signal: ctl ? ctl.signal : undefined
         }).then(function (r) { return r.json(); }).then(function (r) {
           clearTimeout(timer);
-          if (r && r.ok === true) { done(SX.sent(clock())); return; }
+          if (r && r.ok === true) { done(TX.sent(clock())); return; }
           if (r && r.ok === false) {
-            if (r.error === "word") { done(SX.word); return; }
-            if (r.error === "too_big") { done(SX.bigLocal); return; }
-            done(SX.refused);
+            if (r.error === "word") { done(TX.sendWord); return; }
+            if (r.error === "too_big") { done(TX.sendBig); return; }
+            done(TX.sendRefused);
             return;
           }
-          done(SX.unknown);
-        }).catch(function () { clearTimeout(timer); done(SX.unknown); });
+          done(TX.sendUnknown);
+        }).catch(function () { clearTimeout(timer); done(TX.sendUnknown); });
       }, 30);
     });
   })();

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 8 User testing | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; Computer Science</div>
+    <h1>Year 8: Testing with a user</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Hand in (PDF)</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Hand in makes a PDF to upload to Google Classroom.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y8-user-testing", "order": 12, "version": 1, "year": "Year 8", "slug": "user-testing", "folder": "y8", "title": "Testing with a user", "short": "User testing", "objective": "Test an app with a user, record what happens, and choose the fault to fix first.", "keywords": ["user testing", "test task", "defect", "usability", "preference", "priority"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From earlier lessons", "intro": ["Answer all three. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "The polygon program allows 3 to 8 sides. Name both boundary values."}, {"id": "r2", "label": "R2", "prompt": "What is the smallest version of an app that works called?"}, {"id": "r3", "label": "R3", "prompt": "Where is a program kept while it is running?", "pick": [{"v": "memory"}, {"v": "storage"}]}]}, {"kind": "questions", "nav": "W", "label": "Words", "title": "Six words for today", "intro": ["Read each row. Say each word. Then answer W1 to W3."], "table": {"headers": ["Term", "What it means"], "rows": [["user testing", "Another person uses your app while you watch."], ["test task", "A test task says what the user must do, not how to do it."], ["defect", "A defect stops the app meeting a requirement."], ["usability", "Usability is how easy the app is for the user."], ["preference", "A preference is what one person likes. It is not linked to a requirement."], ["priority", "The priority says which fault to fix first."]]}, "drill": "A **defect** stops the app meeting a requirement. A **preference** does not.", "questions": [{"id": "w1", "label": "W1", "prompt": "\"The app accepts 0 tickets\" is a ...", "pick": [{"v": "defect"}, {"v": "preference"}]}, {"id": "w2", "label": "W2", "prompt": "\"I would like blue text\" is a ...", "pick": [{"v": "preference"}, {"v": "defect"}]}, {"id": "w3", "label": "W3", "prompt": "\"Find the cost of three tickets\" is a ...", "pick": [{"v": "test task"}, {"v": "requirement"}]}]}, {"kind": "drag", "mode": "sort", "nav": "1", "label": "Task or instruction", "title": "Say what to do, not how", "check": "once", "intro": ["A user test gives a task. The tester decides what to type.", "Put each card in a group."], "table": {"headers": ["Group", "What it means"], "rows": [["A test task", "says what the user must do"], ["A leading instruction", "says exactly what to type or press"]]}, "cards": [{"id": "c1", "text": "Find the cost of three tickets"}, {"id": "c2", "text": "Type 3 and press Enter"}, {"id": "c3", "text": "Buy the most tickets you are allowed"}, {"id": "c4", "text": "Type 10 in the box"}, {"id": "c5", "text": "Try to buy no tickets at all"}, {"id": "c6", "text": "Type 0, then type 2"}, {"id": "c7", "text": "Find the cost of one ticket"}, {"id": "c8", "text": "Press Run, then type 1"}], "targets": [{"id": "task", "text": "A test task"}, {"id": "lead", "text": "A leading instruction"}], "key_b64": "eyJjMSI6InRhc2siLCJjMiI6ImxlYWQiLCJjMyI6InRhc2siLCJjNCI6ImxlYWQiLCJjNSI6InRhc2siLCJjNiI6ImxlYWQiLCJjNyI6InRhc2siLCJjOCI6ImxlYWQifQ=="}, {"kind": "code", "nav": "2", "label": "Be the tester", "title": "Test the ticket app", "intro": ["Requirement: the app works out the cost of 1 to 10 tickets. Each ticket costs 5.", "You are the tester. Your task: try to buy no tickets. You will type 0.", "Predict first."], "predict_first": "s2a", "code": "def show_total(quantity, price):\n    total = quantity * price\n    print(\"Total cost:\", total)\n\nquantity = int(input(\"How many tickets? \"))\nshow_total(quantity, 5)\n", "inputs": ["0"], "questions": [{"id": "s2a", "label": "2a", "prompt": "Predict what the app prints."}, {"id": "s2b", "label": "2b", "prompt": "Which part of the requirement does the app fail?"}, {"id": "s2c", "label": "2c", "prompt": "Is this a defect or a preference?", "pick": [{"v": "defect"}, {"v": "preference"}]}], "expected_b64": "VG90YWwgY29zdDogMA=="}, {"kind": "drag", "mode": "sort", "nav": "3", "label": "Defect or preference", "title": "What the tester said", "check": "once", "intro": ["A tester used the ticket app and said eight things.", "The table says what each group means. Put each card in a group."], "table": {"headers": ["Group", "What it means"], "rows": [["Defect", "the app fails a requirement"], ["Usability defect", "the user cannot tell what to do"], ["Preference", "one person's taste, not linked to a requirement"], ["New feature", "something the app was never meant to do"]]}, "cards": [{"id": "d1", "text": "It accepts 0 tickets"}, {"id": "d2", "text": "The total is wrong for 5 tickets"}, {"id": "d3", "text": "I could not tell what to type"}, {"id": "d4", "text": "The prompt does not say 1 to 10"}, {"id": "d5", "text": "I would like blue text"}, {"id": "d6", "text": "I prefer a bigger font"}, {"id": "d7", "text": "Please add a game"}, {"id": "d8", "text": "Please add a seat map"}], "targets": [{"id": "defect", "text": "Defect"}, {"id": "usability", "text": "Usability defect"}, {"id": "pref", "text": "Preference"}, {"id": "feature", "text": "New feature"}], "key_b64": "eyJkMSI6ImRlZmVjdCIsImQyIjoiZGVmZWN0IiwiZDMiOiJ1c2FiaWxpdHkiLCJkNCI6InVzYWJpbGl0eSIsImQ1IjoicHJlZiIsImQ2IjoicHJlZiIsImQ3IjoiZmVhdHVyZSIsImQ4IjoiZmVhdHVyZSJ9"}, {"kind": "drag", "mode": "sort", "nav": "4", "label": "Which first", "title": "High, medium or low", "check": "once", "intro": ["Six defects were found in the ticket app.", "The table says what each priority means. Put each defect under its priority."], "table": {"headers": ["Priority", "What it means"], "rows": [["High", "the task cannot be done, the result is wrong, or the app stops"], ["Medium", "the user is confused, but the task can be done"], ["Low", "a small problem with how it looks"]]}, "cards": [{"id": "p1", "text": "The total is wrong for 5 tickets"}, {"id": "p2", "text": "It stops when \"three\" is typed"}, {"id": "p3", "text": "The prompt does not say a number"}, {"id": "p4", "text": "The prompt does not say 1 to 10"}, {"id": "p5", "text": "\"Total\" is spelt \"Totl\""}, {"id": "p6", "text": "There is an extra blank line"}], "targets": [{"id": "high", "text": "High"}, {"id": "medium", "text": "Medium"}, {"id": "low", "text": "Low"}], "key_b64": "eyJwMSI6ImhpZ2giLCJwMiI6ImhpZ2giLCJwMyI6Im1lZGl1bSIsInA0IjoibWVkaXVtIiwicDUiOiJsb3ciLCJwNiI6ImxvdyJ9"}, {"kind": "questions", "nav": "5", "label": "Plan the tests", "title": "Three tasks for your tester", "intro": ["The table shows three tasks for the polygon program.", "Write three tasks for your own app. Say what to do, not what to type."], "table": {"headers": ["Task", "Purpose", "The polygon program"], "rows": [["Normal", "the main route", "Draw a shape with five sides."], ["Different branch", "another choice in the if", "Draw a shape in purple."], ["Invalid", "the check refuses it", "Try to draw a shape with nine sides."]]}, "questions": [{"id": "t1", "label": "T1", "prompt": "Your normal task."}, {"id": "t2", "label": "T2", "prompt": "Your different-branch task."}, {"id": "t3", "label": "T3", "prompt": "Your invalid task."}]}, {"kind": "code", "nav": "Make", "label": "Make: the test", "title": "Your app, tested by a partner", "turtle": true, "remember": "A defect stops the app meeting a requirement. A preference does not.", "make": {"task": "Get your app ready, then swap seats with a partner and test each other's app.", "rules": ["Paste your app below and run it once.", "Give your tester your three tasks from Step 5.", "Stay silent while they test. Do not touch the keyboard.", "Swap roles after five minutes."], "checkpoint": "your app running, and three tasks tested by a partner.", "homework": "Steps 6 and Exit, if they are not finished.", "watch": "No app yet? Paste the polygon program. Test it with Ben, then 9, then 5."}, "table": {"headers": ["", "The tester writes down"], "rows": [["1", "what they typed"], ["2", "what the app showed"], ["3", "whether they finished the task without help"], ["4", "the requirement it affects"]]}, "code": "from turtle import *\npensize(3)\n\n# Paste your app from the Design and MVP Make here.\n# No app yet? Copy the polygon program from Lesson 11, Step 3.\n", "inputs": ["Ben", "9", "5"], "questions": [{"id": "k1", "label": "M1", "prompt": "Which of your requirements are you least sure works?"}]}, {"kind": "questions", "nav": "6", "label": "The record", "title": "What your tester found", "intro": ["Write what your tester found in your app."], "remember": "Fix a defect before a preference. Fix high before low.", "questions": [{"id": "u1", "label": "6a", "prompt": "The normal task: what did the tester type, and what happened?"}, {"id": "u2", "label": "6b", "prompt": "The different-branch task: what did the tester type, and what happened?"}, {"id": "u3", "label": "6c", "prompt": "The invalid task: what did the tester type, and what happened?"}, {"id": "u4", "label": "6d", "prompt": "Which defect will you fix first? Give its priority."}]}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything."], "questions": [{"id": "e1", "label": "E1", "prompt": "What is the difference between a defect and a preference?"}, {"id": "e2", "label": "E2", "prompt": "Why does the programmer stay silent during a user test?"}, {"id": "e3", "label": "E3", "prompt": "Name the three kinds of test task."}, {"id": "e4", "label": "E4", "prompt": "Why is a wrong total a high priority?"}]}]};</script>
+<script>window.HANDIN = {"url": "https://script.google.com/macros/s/AKfycbyP2LqOk-4DeaVfkEDzcYRsj1IouiyK8-ABjsfiKV0N5Q-bvcY4YrCqMQN4dsoWIBmc/exec", "word": true};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

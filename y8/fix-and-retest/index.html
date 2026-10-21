@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 8 Fix and retest | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; Computer Science</div>
+    <h1>Year 8: Fix it, test it again, explain it</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Hand in (PDF)</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Hand in makes a PDF to upload to Google Classroom.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y8-fix-and-retest", "order": 13, "version": 1, "year": "Year 8", "slug": "fix-and-retest", "folder": "y8", "title": "Fix it, test it again, explain it", "short": "Fix and retest", "objective": "Fix the most important defect in your app, run the old tests again, and explain one function.", "keywords": ["refinement", "reliability", "regression test", "evidence", "parameter"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From earlier lessons", "intro": ["Answer all three. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "An app allows 1 to 10 tickets. Give one boundary value and one invalid value."}, {"id": "r2", "label": "R2", "prompt": "Name the three steps the CPU repeats for every instruction."}, {"id": "r3", "label": "R3", "prompt": "You save your work. Where is it kept when the power goes off?", "pick": [{"v": "storage"}, {"v": "memory"}]}]}, {"kind": "questions", "nav": "W", "label": "Words", "title": "Six words for today", "intro": ["Read each row. Say each word. Then answer W1 to W3."], "table": {"headers": ["Term", "What it means"], "rows": [["refinement", "Refinement is improving the app you have, not adding a new one."], ["reliability", "A reliable app gives the right result every time."], ["usability", "Usability is how easy the app is for the user."], ["maintainability", "Maintainable code is easy to read and change later."], ["regression test", "A regression test runs the old tests again after a change."], ["evidence", "Evidence is a test result that shows what the app does."]]}, "drill": "After a fix, a **regression test** runs the old tests **again**.", "questions": [{"id": "w1", "label": "W1", "prompt": "Making the app refuse 0 tickets improves its ...", "pick": [{"v": "reliability"}, {"v": "maintainability"}]}, {"id": "w2", "label": "W2", "prompt": "Renaming x to quantity improves its ...", "pick": [{"v": "maintainability"}, {"v": "reliability"}]}, {"id": "w3", "label": "W3", "prompt": "Typing 1, 5 and 10 again after a fix is a ...", "pick": [{"v": "regression test"}, {"v": "new feature"}]}]}, {"kind": "code", "nav": "1", "label": "A worked fix", "title": "The ticket app, fixed", "intro": ["In Lesson 12 the ticket app accepted 0 tickets. This is the fix: a while loop checks the number first.", "You will type 0, then 11, then 3.", "Predict first."], "predict_first": "s1a", "code": "def show_total(quantity, price):\n    total = quantity * price\n    print(\"Total cost:\", total)\n\nquantity = int(input(\"Tickets, 1 to 10: \"))\nwhile quantity < 1 or quantity > 10:\n    print(\"Enter a quantity from 1 to 10.\")\n    quantity = int(input(\"Tickets, 1 to 10: \"))\nshow_total(quantity, 5)\n", "inputs": ["0", "11", "3"], "questions": [{"id": "s1a", "label": "1a", "prompt": "Predict the three lines it prints."}, {"id": "s1b", "label": "1b", "prompt": "Which test from Lesson 12 does this change fix?"}, {"id": "s1c", "label": "1c", "prompt": "Why does the check come before show_total is called?"}], "expected_b64": "RW50ZXIgYSBxdWFudGl0eSBmcm9tIDEgdG8gMTAuCkVudGVyIGEgcXVhbnRpdHkgZnJvbSAxIHRvIDEwLgpUb3RhbCBjb3N0OiAxNQ=="}, {"kind": "drag", "mode": "sort", "nav": "2", "label": "Refine or reject", "title": "Which changes belong in this lesson", "check": "once", "intro": ["Seven changes were suggested for the ticket app.", "The table says what each group means. Put each card in a group."], "table": {"headers": ["Group", "What it means"], "rows": [["Refine", "fixes a defect, or makes the app clearer to use or read"], ["Reject", "a new feature the user did not ask for"]]}, "cards": [{"id": "c1", "text": "Correct a wrong total"}, {"id": "c2", "text": "Make an unclear prompt clearer"}, {"id": "c3", "text": "Refuse 0 tickets"}, {"id": "c4", "text": "Rename x to quantity"}, {"id": "c5", "text": "Add a picture of a cinema"}, {"id": "c6", "text": "Add a quiz game"}, {"id": "c7", "text": "Add five new menu options"}], "targets": [{"id": "refine", "text": "Refine"}, {"id": "reject", "text": "Reject"}], "key_b64": "eyJjMSI6InJlZmluZSIsImMyIjoicmVmaW5lIiwiYzMiOiJyZWZpbmUiLCJjNCI6InJlZmluZSIsImM1IjoicmVqZWN0IiwiYzYiOiJyZWplY3QiLCJjNyI6InJlamVjdCJ9"}, {"kind": "code", "nav": "3", "label": "Test it again", "title": "A fix that broke an old test", "intro": ["Someone retyped the fix. Now 10 tickets is refused, and 10 passed before.", "Run it: type 10. If 10 is refused, type 4.", "Fix it so 10 is accepted. Keep the check and the call."], "code": "def show_total(quantity, price):\n    total = quantity * price\n    print(\"Total cost:\", total)\n\nquantity = int(input(\"Tickets, 1 to 10: \"))\nwhile quantity < 1 or quantity >= 10:\n    print(\"Enter a quantity from 1 to 10.\")\n    quantity = int(input(\"Tickets, 1 to 10: \"))\nshow_total(quantity, 5)\n", "inputs": ["10", "4"], "hint": "Read the while line. Which numbers make it true?", "questions": [{"id": "s3a", "label": "3a", "prompt": "Which old test failed after the change?"}, {"id": "s3b", "label": "3b", "prompt": "What did you change?"}, {"id": "s3c", "label": "3c", "prompt": "Name two more values to test again before you trust the fix."}], "expected_b64": "VG90YWwgY29zdDogNTA=", "req_b64": "WyJ3aGlsZSBxdWFudGl0eSA8IDEgb3IiLCJzaG93X3RvdGFsKHF1YW50aXR5LCA1KSJd"}, {"kind": "questions", "nav": "4", "label": "Explain a function", "title": "Say what a function does", "intro": ["The table explains show_total from the ticket app.", "Explain draw_polygon from the polygon program the same way."], "table": {"headers": ["Question", "show_total(quantity, price)"], "rows": [["What it does", "works out the total cost and prints it"], ["Its parameters", "quantity and price"], ["Where it is called", "the last line, after the check"], ["How it was tested", "1, 5 and 10 tickets: 5, 25 and 50, worked out by hand"]]}, "questions": [{"id": "f1", "label": "4a", "prompt": "What does draw_polygon do?"}, {"id": "f2", "label": "4b", "prompt": "Name its three parameters."}, {"id": "f3", "label": "4c", "prompt": "Which line calls it?"}, {"id": "f4", "label": "4d", "prompt": "How many times does its for loop run for a pentagon?"}]}, {"kind": "code", "nav": "Make", "label": "Make: fix your app", "title": "Fix one defect, then test again", "turtle": true, "remember": "After a fix, a regression test runs the old tests again.", "make": {"task": "Fix the highest-priority defect from Lesson 12, then run your old tests again.", "rules": ["Paste your app below.", "Change one thing at a time.", "Run the test that found the defect.", "Then run your normal, branch and invalid tests again.", "Do not add new features.", "No app yet? Paste the polygon program: Ben, then 9, then 5."], "checkpoint": "one defect fixed, and your old tests passing again.", "homework": "a second fix, then Step 5 and Exit.", "watch": "A fix can break a test that passed before, as in Step 3."}, "table": {"headers": ["", "Before you finish"], "rows": [["1", "The test that found the defect now passes."], ["2", "The normal test still passes."], ["3", "The different-branch test still passes."], ["4", "The invalid test is still refused."]]}, "code": "from turtle import *\npensize(3)\n\n# Paste your app from Lesson 12 here.\n# No app yet? Copy the polygon program from Lesson 11, Step 3.\n", "inputs": ["Ben", "9", "5"], "hint": "No defect found in Lesson 12? Test the polygon program with 2, 3, 8 and 9 first.", "questions": [{"id": "k1", "label": "M1", "prompt": "Copy the line you changed, as it is now."}]}, {"kind": "questions", "nav": "5", "label": "Before and after", "title": "What you changed, and the evidence", "intro": ["Write down your fix. This is the evidence for your app."], "questions": [{"id": "b1", "label": "5a", "prompt": "Which defect did you fix?"}, {"id": "b2", "label": "5b", "prompt": "What did you change in the code?"}, {"id": "b3", "label": "5c", "prompt": "List the old tests you ran again, with the result of each."}, {"id": "b4", "label": "5d", "prompt": "Explain one function in your app: what it does and its parameters."}]}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything."], "questions": [{"id": "e1", "label": "E1", "prompt": "What is a regression test?"}, {"id": "e2", "label": "E2", "prompt": "Why change only one thing at a time?"}, {"id": "e3", "label": "E3", "prompt": "Why is adding a game not a refinement of the ticket app?"}, {"id": "e4", "label": "E4", "prompt": "In Step 3, why did 10 fail when 4 passed?"}]}]};</script>
+<script>window.HANDIN = {"url": "https://script.google.com/macros/s/AKfycbyP2LqOk-4DeaVfkEDzcYRsj1IouiyK8-ABjsfiKV0N5Q-bvcY4YrCqMQN4dsoWIBmc/exec", "word": true};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

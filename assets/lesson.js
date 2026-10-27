@@ -8,8 +8,9 @@
      3. keeps every answer and every step's code in this browser (localStorage),
         so a refresh or a closed tab loses nothing
      4. HAND IN: builds one PDF of everything - answers, code, output, whether the
-        output matched, which hints were opened, the drawing - for the student to
-        upload to Google Classroom. Nothing is ever sent anywhere by the page.
+        output matched, which hints were opened, the drawing - and posts it to
+        the teacher (Send to my teacher). A page built with no hand-in address
+        downloads it instead, for the student to upload to Google Classroom.
 
    The editor, symbol bar, input() handling and Skulpt settings are carried over
    from epsom_turtle.html unchanged, because each of those is a BYOD decision
@@ -45,6 +46,12 @@
      the full wording. With "simple" absent, every string below is the one the
      page has always shown, so the Year 8 to 10 pages do not change. */
   var SIMPLE = !!L.simple;
+  /* The hand-in address. build_site.py writes window.HANDIN = {url, word} into a
+     page only when handin_receiver/handin_config.json holds an address. A page
+     with one has Send to my teacher and no download button. A page without one
+     keeps the download button, because it is then the only way to hand in. */
+  var HANDIN = (window.HANDIN && typeof window.HANDIN.url === "string"
+                && window.HANDIN.url) ? window.HANDIN : null;
   var TX = SIMPLE ? {
     remember: "Look: ", hint: "?", drawOnly: "", drill: "Say it: ",
     predictOff: function (label) { return "First: " + label; },
@@ -55,7 +62,7 @@
     noPdf: "\u2717", saved: function (f) { return "\u2713 " + f; },
     /* The send button, symbols only. The key stands for the class word and the
        envelope for sending. A tick with the time means it arrived. A cross means
-       it did not, and Hand in is still there. (No word may be quoted in this
+       it did not. (No word may be quoted in this
        comment: the Year 7 word check reads string literals out of this block.) */
     sendLabel: "\u2709 \u2192", sendWordPh: "\uD83D\uDD11", sending: "\u23F3",
     sent: function (t) { return "\u2713 " + t; },
@@ -99,6 +106,8 @@
     handinNote: "Your work is saved in this browser on this device. Make the "
       + "hand-in PDF before the end of the lesson: it holds your code, so you can "
       + "paste it back in on another device and carry on.",
+    sendNote: "Your work is saved in this browser on this device. Send it to your "
+      + "teacher before the end of the lesson.",
     /* The drag step's own wording lives here, not in the lesson files. It is the
        same sentence on every drag step, so a lesson that wrote its own would be
        repeating the interface at the student, which is what the reading-load work
@@ -125,10 +134,10 @@
     sendLabel: "Send to my teacher", sendWordPh: "Class word", sending: "Sending...",
     sent: function (t) { return "Sent to your teacher at " + t + "."; },
     sendNoName: "Type your name first.", sendNoWord: "Type the class word first.",
-    sendBig: "The file is too big to send. Use Hand in (PDF) and upload it to Google Classroom.",
+    sendBig: "The file is too big to send. Tell your teacher.",
     sendWord: "The class word is not right.",
-    sendRefused: "Your teacher's inbox did not accept the file. Use Hand in (PDF) and upload it to Google Classroom.",
-    sendUnknown: "Could not reach your teacher's inbox, so it is not known whether the file arrived. Use Hand in (PDF) and upload it to Google Classroom."
+    sendRefused: "Your teacher's inbox did not accept the file. Tell your teacher.",
+    sendUnknown: "Could not reach your teacher's inbox, so it is not known whether the file arrived. Tell your teacher."
   };
   var NAMEKEY = "epsom:name";
 
@@ -789,7 +798,7 @@
       if (m.watch) cardEl.appendChild(el("p", "watch", m.watch));
       /* The standing line is the page's own wording, not the lesson's. Year 7 (i)
          pages are held to a taught-word list, so they do not show it. */
-      if (!SIMPLE) cardEl.appendChild(el("p", "standing", TX.handinNote));
+      if (!SIMPLE) cardEl.appendChild(el("p", "standing", HANDIN ? TX.sendNote : TX.handinNote));
     }
     if (step.readonly) cardEl.appendChild(el("pre", "show", step.readonly));
     if (step.kind === "convert") cardEl.appendChild(convertEl(step, i));
@@ -2223,7 +2232,7 @@
     return L.year + " " + L.short + " - " + n + ".pdf";
   }
 
-  $("handin").addEventListener("click", function () {
+  if ($("handin")) $("handin").addEventListener("click", function () {
     if (!nameEl.value.trim()) {
       msgEl.textContent = "Type your name first.";
       nameEl.focus();
@@ -2239,15 +2248,17 @@
     msgEl.textContent = TX.saved(f);
   });
 
-  /* SEND TO MY TEACHER (13 Oct 2026, proof of concept). A second way to hand in:
-     the same PDF the button above downloads is posted to a Google Apps Script web
-     app (handin_receiver/receiver.js), which saves it into a Drive folder that
-     belongs to the teacher. The download stays, because it is the fallback when
-     this does not work and the only route on a page with no address configured.
+  /* SEND TO MY TEACHER (13 Oct 2026). The same PDF the download button makes is
+     posted to a Google Apps Script web app (handin_receiver/receiver.js), which
+     saves it into a Drive folder that belongs to the teacher. Since 28 Oct 2026
+     this is the only way to hand in on a page that has an address: build_site.py
+     leaves the download button out of such a page, so when sending fails the
+     pupil is told to tell the teacher.
 
      OFF UNLESS CONFIGURED. build_site.py writes window.HANDIN = {url, word} into
      a page only when handin_receiver/handin_config.json holds an address. Without
-     one nothing below runs and no button is added, so every page is as it was.
+     one nothing below runs, no send button is added, and the page keeps the
+     download button.
      The Year 7 (i) pages (SIMPLE) get it too, with symbols in place of words (see
      the send entries in TX): that course has taught no word for it.
 
@@ -2259,15 +2270,13 @@
      the reply did not say. A reply that cannot be read (no network, a Google
      error page) is reported as "not known whether it arrived", never as sent.
      The server keeps every hand-in with a time stamp, so sending twice is safe. */
-  var HANDIN = (window.HANDIN && typeof window.HANDIN.url === "string"
-                && window.HANDIN.url) ? window.HANDIN : null;
   if (HANDIN) (function () {
     var SEND_MAX = 4 * 1024 * 1024;           /* PDF bytes; the server's limit is 5 MB */
     var WORDKEY = "epsom:handin-word";
     var sendBtn = document.createElement("button");
-    sendBtn.className = "btn"; sendBtn.id = "send"; sendBtn.textContent = TX.sendLabel;
-    var after = $("handin");
-    after.parentNode.insertBefore(sendBtn, after.nextSibling);
+    sendBtn.className = "btn amber"; sendBtn.id = "send"; sendBtn.textContent = TX.sendLabel;
+    /* The word box (if any) and the button go in front of the status line. */
+    msgEl.parentNode.insertBefore(sendBtn, msgEl);
     var wordEl = null;
     if (HANDIN.word) {
       wordEl = document.createElement("input");
@@ -2277,7 +2286,7 @@
       wordEl.addEventListener("input", function () {
         try { localStorage.setItem(WORDKEY, wordEl.value); } catch (e) {}
       });
-      after.parentNode.insertBefore(wordEl, sendBtn);
+      msgEl.parentNode.insertBefore(wordEl, sendBtn);
     }
     msgEl.setAttribute("role", "status");
 
@@ -2343,6 +2352,7 @@
 
   /* Hooks for the automated browser test only. */
   window.__lesson = { state: function () { return state; }, go: go, run: run, buildPdf: buildPdf,
+    fileName: fileName,
     applySplit: applySplit,
     applyRSplit: applyRSplit, sizeStage: sizeStage,
     fitView: fitView, plainView: plainView, view: function () { return view; },

@@ -608,6 +608,27 @@
     if (text != null) e.textContent = text;
     return e;
   }
+  /* MARKUP (27 Oct 2026). In the intro, remember, task and question prompt text of
+     a step, words between ** and ** are shown bold and words between single
+     backticks are shown in the code font on a light background. Text with neither
+     is shown exactly as it was. The pieces are built as DOM nodes and never
+     parsed as HTML, so a lesson cannot put a tag on the page this way. The two
+     kinds do not nest. unmark() gives the same text without the marks, for the
+     PDF, where bold inside a line is not worth the trouble. */
+  function rich(node, text) {
+    var s = String(text == null ? "" : text), re = /\*\*([^*]+)\*\*|`([^`]+)`/g, last = 0, m;
+    while ((m = re.exec(s))) {
+      if (m.index > last) node.appendChild(document.createTextNode(s.slice(last, m.index)));
+      if (m[1] != null) node.appendChild(el("strong", "", m[1]));
+      else node.appendChild(el("code", "inl", m[2]));
+      last = re.lastIndex;
+    }
+    if (last < s.length) node.appendChild(document.createTextNode(s.slice(last)));
+    return node;
+  }
+  function unmark(s) {
+    return String(s == null ? "" : s).replace(/\*\*([^*]+)\*\*/g, "$1").replace(/`([^`]+)`/g, "$1");
+  }
   function norm(s) {
     return String(s || "").replace(/\r/g, "").split("\n")
       .map(function (l) { return l.replace(/\s+$/, ""); }).join("\n")
@@ -706,7 +727,7 @@
     if (step.remember) {
       var r = el("div", "remember");
       r.appendChild(el("b", "", TX.remember));
-      r.appendChild(document.createTextNode(step.remember));
+      rich(r, step.remember);
       cardEl.appendChild(r);
     }
     /* WORD LIST: "wordlist": [["loop", "do it again and again."], ...]. Larger
@@ -721,7 +742,7 @@
       });
       cardEl.appendChild(wl);
     }
-    (step.intro || []).forEach(function (t) { cardEl.appendChild(el("p", "", t)); });
+    (step.intro || []).forEach(function (t) { cardEl.appendChild(rich(el("p"), t)); });
     /* MAKE STEP (28 Sep 2026). The Make card used to be a free paragraph field and
        grew to 200 words, most of it repeating what the page itself says. It now
        has fixed places: one sentence saying what to make, an optional short list
@@ -804,10 +825,15 @@
     if (step.kind === "convert") cardEl.appendChild(convertEl(step, i));
     if (step.kind === "drag") cardEl.appendChild(dragEl(step, i));
 
+    /* TASK (27 Oct 2026): "task": "..." on any step. A highlighted panel, just
+       above the questions, for the one thing the student has to do. It takes the
+       same ** and ` marks as the intro. */
+    if (step.task) cardEl.appendChild(rich(el("div", "task"), step.task));
+
     (step.questions || []).forEach(function (q) {
       var box = el("div", "q");
       box.appendChild(el("span", "qlabel", q.label));
-      box.appendChild(el("span", "qprompt", q.prompt));
+      box.appendChild(rich(el("span", "qprompt"), q.prompt));
       if (q.code) box.appendChild(el("pre", "show", q.code));
       if (q.image) box.appendChild(pics([{ src: q.image }]));
       if (q.images) box.appendChild(pics(q.images));
@@ -2097,7 +2123,7 @@
       }
       (step.questions || []).forEach(function (q) {
         gap(1);
-        text(q.label + "  " + q.prompt, 10, "bold");
+        text(q.label + "  " + unmark(q.prompt), 10, "bold");
         if (q.code) text(q.code, 9, "normal", "courier", 4);
         var a = (state.answers[q.id] || "").trim();
         var tagged = state.locked[q.id] ? "  (prediction, locked before the code was run)" : "";

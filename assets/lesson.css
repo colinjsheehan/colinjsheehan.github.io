@@ -110,9 +110,17 @@ table.idx td.codecell pre { margin:0; font-size:13.5px; line-height:1.35;
 pre.show { background:#F7F8F8; border:1px solid var(--grey); border-radius:5px;
            padding:7px 10px; margin:6px 0; font-size:14.5px; line-height:1.45;
            font-family:ui-monospace,Menlo,Consolas,monospace; white-space:pre; overflow-x:auto; }
-.q { margin:10px 0 4px; }
-.q .qlabel { font-weight:700; color:var(--teal); margin-right:4px; }
+.q { margin:16px 0 4px; }
+.q .qlabel { font-weight:800; font-size:19px; color:var(--teal); margin-right:6px; }
 .q .qprompt { font-size:15px; }
+/* ** and ` marks in the card text (27 Oct 2026). Plain text is untouched. */
+#card strong { font-weight:700; }
+code.inl { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:0.92em;
+           background:#EEF1F1; padding:1px 5px; border-radius:3px; }
+/* The task panel: the one thing the student has to do, above the questions. */
+#card div.task { background:var(--lamber); border:2px solid var(--amber);
+     border-left-width:6px; border-radius:5px; padding:8px 12px; margin:12px 0 6px;
+     max-width:34em; font-size:16px; line-height:1.45; }
 .q textarea { display:block; width:100%; margin-top:4px; font-size:16px; padding:6px 8px;
               border:1px solid #AEB8BA; border-radius:5px; resize:vertical; min-height:44px;
               font-family:inherit; }

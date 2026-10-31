@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 10 Lesson 8 | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; Computer Science</div>
+    <h1>Year 10: Operators and library routines</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Send to my teacher sends it to your teacher.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y10-operators", "order": 8, "version": 1, "year": "Year 10", "slug": "operators", "folder": "y10", "title": "Operators and library routines", "short": "Lesson 8", "objective": "Use arithmetic, relational and logical operators, and the library routines MOD, DIV, ROUND and RANDOM.", "keywords": ["operator", "MOD", "DIV", "ROUND", "RANDOM", "quotient", "remainder"], "steps": [{"kind": "questions", "nav": "R", "label": "Step R: retrieval", "title": "Earlier lessons", "intro": ["These are Cambridge questions on earlier lessons.", "Answer them without your notes."], "questions": [{"id": "r_val1", "label": "R1", "prompt": "A range check is used to check that a value input is above 10 and below 20. Which value would be accepted?", "pick": [{"v": "10"}, {"v": "15"}, {"v": "20"}, {"v": "30"}]}, {"id": "r_sel1", "label": "R2", "prompt": "A pseudocode example of a selection statement is:", "pick": [{"v": "CALL Sorting(Value1, Value2)"}, {"v": "DECLARE Count : INTEGER"}, {"v": "IF X = 7 THEN Y \u2190 21 ENDIF"}, {"v": "WHILE X <> -1 DO"}]}, {"id": "r_pdlc1", "label": "R3", "prompt": "Identify the first stage of the program development life cycle.", "pick": [{"v": "Analysis"}, {"v": "Coding"}, {"v": "Design"}, {"v": "Testing"}]}, {"id": "r_dec1", "label": "R4", "prompt": "Abstraction is part of the analysis stage of the development life cycle. Abstraction means:", "pick": [{"v": "testing the solution to the problem."}, {"v": "writing a program using program code."}, {"v": "defining the sub-systems that make up the problem."}, {"v": "removing details from the problem that are not relevant."}]}]}, {"kind": "drag", "mode": "sort", "nav": "1", "label": "Step 1: sort", "title": "Three types of operator", "check": "once", "remember": "**Arithmetic** operators calculate. **Relational** operators compare two values. **Logical** operators join conditions.", "task": "Put each operator under its type.", "cards": [{"id": "o_plus", "text": "+"}, {"id": "o_pow", "text": "^"}, {"id": "o_mod", "text": "MOD"}, {"id": "o_div", "text": "DIV"}, {"id": "o_ne", "text": "<>"}, {"id": "o_ge", "text": ">="}, {"id": "o_eq", "text": "="}, {"id": "o_and", "text": "AND"}, {"id": "o_or", "text": "OR"}, {"id": "o_not", "text": "NOT"}], "targets": [{"id": "arith", "text": "Arithmetic"}, {"id": "rel", "text": "Relational"}, {"id": "logic", "text": "Logical"}], "key_b64": "eyJvX2FuZCI6ImxvZ2ljIiwib19kaXYiOiJhcml0aCIsIm9fZXEiOiJyZWwiLCJvX2dlIjoicmVsIiwib19tb2QiOiJhcml0aCIsIm9fbmUiOiJyZWwiLCJvX25vdCI6ImxvZ2ljIiwib19vciI6ImxvZ2ljIiwib19wbHVzIjoiYXJpdGgiLCJvX3BvdyI6ImFyaXRoIn0="}, {"kind": "drag", "mode": "match", "nav": "2", "label": "Step 2: match", "title": "DIV, divide and MOD", "check": "once", "remember": "`DIV` gives the whole number part. `MOD` gives the remainder. `/` gives the full answer.", "intro": ["This is a Cambridge question."], "task": "Put the correct result in each box. **One result** is not needed.", "cards": [{"id": "r5", "text": "5"}, {"id": "r355", "text": "355"}, {"id": "r35", "text": "35"}, {"id": "r355p", "text": "35.5"}], "targets": [{"id": "t_div", "text": "355 DIV 10"}, {"id": "t_slash", "text": "355 / 10"}, {"id": "t_mod", "text": "355 MOD 10"}], "key_b64": "eyJyMzUiOiJ0X2RpdiIsInIzNTVwIjoidF9zbGFzaCIsInI1IjoidF9tb2QifQ=="}, {"kind": "questions", "nav": "3", "label": "Step 3: choose", "title": "Remainder or quotient", "intro": ["These are two Cambridge questions.", "The **quotient** is the whole number part of a division."], "questions": [{"id": "s3a", "label": "3a", "prompt": "Which library routine returns the **remainder** of a division?", "pick": [{"v": "DIV"}, {"v": "MOD"}, {"v": "RANDOM"}, {"v": "ROUND"}]}, {"id": "s3b", "label": "3b", "prompt": "Which operator returns the **quotient** of a calculation with the fractional part discarded?", "pick": [{"v": "/"}, {"v": "DIV"}, {"v": "^"}, {"v": "MOD"}]}]}, {"kind": "code", "nav": "4", "label": "Step 4: fix and run", "title": "Hours and minutes in Python", "remember": "In Python, `//` is DIV and `%` is MOD.", "intro": ["This program should turn 135 minutes into hours and minutes.", "Run it. Then change **line 2** so that it outputs `2 hours 15 minutes`."], "code": "total = 135\nhours = total / 60\nminutes = total % 60\nprint(hours, \"hours\", minutes, \"minutes\")\n", "hint": "Line 2 needs the whole number part only. Which Python operator is DIV?", "questions": [{"id": "s4a", "label": "4a", "prompt": "Write lines 2 and 3 in pseudocode, using `DIV` and `MOD`."}], "expected_b64": "MiBob3VycyAxNSBtaW51dGVz", "req_b64": "WyJ0b3RhbCAvLyA2MCJd"}, {"kind": "questions", "nav": "5", "label": "Step 5: MOD and DIV", "title": "State the purpose", "intro": ["This is a Cambridge question. Two library routines used in programming are `MOD` and `DIV`."], "task": "State the **purpose** of each library routine. Give **one example** pseudocode statement for each.", "questions": [{"id": "s5a", "label": "5a", "prompt": "`MOD` purpose"}, {"id": "s5b", "label": "5b", "prompt": "`MOD` example pseudocode"}, {"id": "s5c", "label": "5c", "prompt": "`DIV` purpose"}, {"id": "s5d", "label": "5d", "prompt": "`DIV` example pseudocode"}]}, {"kind": "questions", "nav": "6", "label": "Step 6: ROUND and RANDOM", "title": "Explain the purpose", "remember": "`ROUND(<value>, <places>)` rounds to a number of decimal places. `RANDOM()` returns a random number from 0 to 1.", "intro": ["These are parts of two Cambridge questions."], "questions": [{"id": "s6a", "label": "6a", "prompt": "Explain the purpose of the library routine `ROUND`. Give an example."}, {"id": "s6b", "label": "6b", "prompt": "Explain the purpose of the library routine `RANDOM`. Give an example."}]}, {"kind": "questions", "nav": "7", "label": "Step 7: find the errors", "title": "Four errors", "intro": ["This is a Cambridge question. The algorithm should allow, at random, between 1 and 20 values to be entered and totalled.", "The total and the average are output at the end."], "readonly": "01 DECLARE Loop : STRING\n02 DECLARE Limit : INTEGER\n03 DECLARE Value : REAL\n04 DECLARE Total : REAL\n05 Total \u2190 0\n06 Limit \u2190 ROUND(RANDOM() * 19, 0) + 1\n07 IF Loop \u2190 1 TO Limit\n08     OUTPUT \"Enter a number\"\n09     INPUT Loop\n10     Total \u2190 Total * Value\n11 NEXT Loop\n12 OUTPUT \"The total of the numbers entered is \", Total\n13 OUTPUT \"The average of the numbers entered is \", Total / Limit", "task": "Give the **line number** of each error and write the corrected line.", "questions": [{"id": "s7a", "label": "7a", "prompt": "Error 1: line number and correction"}, {"id": "s7b", "label": "7b", "prompt": "Error 2: line number and correction"}, {"id": "s7c", "label": "7c", "prompt": "Error 3: line number and correction"}, {"id": "s7d", "label": "7d", "prompt": "Error 4: line number and correction"}, {"id": "s7e", "label": "7e", "prompt": "Write the statement that outputs the average from line 13, **rounded to one decimal place**."}]}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without looking back at the steps.", "Then press **Send to my teacher** before you leave."], "questions": [{"id": "e1", "label": "E1", "prompt": "What does `MOD(10, 3)` return?"}, {"id": "e2", "label": "E2", "prompt": "What does `DIV(10, 3)` return?"}, {"id": "e3", "label": "E3", "prompt": "Write the relational operator for **not equal to**."}]}]};</script>
+<script>window.HANDIN = {"url": "https://script.google.com/macros/s/AKfycbyP2LqOk-4DeaVfkEDzcYRsj1IouiyK8-ABjsfiKV0N5Q-bvcY4YrCqMQN4dsoWIBmc/exec", "word": true};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

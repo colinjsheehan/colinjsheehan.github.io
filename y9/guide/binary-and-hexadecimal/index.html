@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Binary and hexadecimal · Year 9 Guide</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="description" content="Bits, nibbles and bytes; binary to denary and back; hex digits and how a byte becomes two of them.">
+<meta name="guide-order" content="1">
+<meta name="guide-unit" content="data-representation">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1d2327; --muted:#55616a; --paper:#fffdf8; --rule:#e4ded2;
+  --topic:#e07a1f; --topic-deep:#a8520d; --topic-soft:#fdf0e3;
+  --teal:#1f7a7a; --teal-soft:#e3f3f2; --plum:#6b3fa0; --plum-soft:#f1eaf9;
+  --red:#c0392b; --red-soft:#fbe9e7; --green:#2e7d52; --green-soft:#e6f4ec;
+  --blue:#1f6fb2; --blue-soft:#e6f0fa; --code-bg:#fbf7f0;
+  --kw:#1f6fb2; --str:#2e7d52;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 18px/1.6 "Source Sans 3",system-ui,sans-serif}
+a{color:var(--topic-deep)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* ---------- masthead */
+.mast{background:linear-gradient(120deg,var(--topic) 0%,#f0a050 100%);color:#fff;position:relative;overflow:hidden}
+.mast .wrap{padding-top:28px;padding-bottom:44px}
+.kicker{font:700 13px/1 "Source Sans 3",system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;opacity:.92}
+.mast h1{font:800 clamp(40px,7vw,76px)/1.0 "Fraunces",Georgia,serif;margin:14px 0 12px;letter-spacing:-.01em;max-width:14ch}
+.dek{font-size:21px;max-width:52ch;margin:0;opacity:.96}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.chip{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:600}
+.home{display:inline-block;margin-bottom:14px;color:#fff;font:600 15px/1 "Source Sans 3",system-ui,sans-serif;text-decoration:none;opacity:.92}.home:hover{text-decoration:underline}
+.mast svg.deco{position:absolute;right:-30px;top:10px;width:360px;opacity:.20}
+@media (max-width:700px){.mast svg.deco{display:none}}
+
+/* ---------- contents */
+.toc{display:flex;flex-wrap:wrap;gap:6px 18px;padding:14px 0;border-bottom:1px solid var(--rule);font-size:15px;font-weight:600}
+.toc a{text-decoration:none;color:var(--muted)} .toc a:hover{color:var(--topic-deep)}
+.toc b{color:var(--topic-deep)}
+
+/* ---------- layout */
+.sec{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;padding:44px 0;border-bottom:1px solid var(--rule)}
+.sec.full{grid-template-columns:minmax(0,1fr)}
+@media (max-width:900px){.sec{grid-template-columns:minmax(0,1fr)}}
+.num{font:800 15px/1 "Fraunces",serif;color:var(--topic);letter-spacing:.06em}
+h2{font:800 clamp(28px,4vw,40px)/1.1 "Fraunces",Georgia,serif;margin:6px 0 16px;color:var(--ink)}
+h3{font:700 21px/1.25 "Source Sans 3",system-ui,sans-serif;margin:26px 0 8px}
+p{margin:0 0 14px;max-width:68ch}
+.lead{font-size:20px;color:#2c353b}
+
+/* ---------- code */
+code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.9em}
+code{background:var(--code-bg);border:1px solid var(--rule);border-radius:5px;padding:1px 5px}
+pre{background:var(--code-bg);border:1px solid var(--rule);border-left:5px solid var(--topic);border-radius:8px;padding:14px 18px;overflow-x:auto;font:500 16px/1.55 "JetBrains Mono",monospace;margin:10px 0 16px}
+pre .k{color:var(--kw);font-weight:700} pre .s{color:var(--str)} pre .c{color:#8a8f94;font-style:italic}
+
+/* ---------- boxes */
+.box{border-radius:12px;padding:16px 18px;margin:18px 0;border:1px solid transparent}
+.box h4{margin:0 0 6px;font:800 13px/1.2 "Source Sans 3",system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.box p:last-child,.box ul:last-child{margin-bottom:0}
+.box ul{margin:6px 0 0;padding-left:20px}
+.exam{background:var(--blue-soft);border-color:#c5dbef} .exam h4{color:var(--blue)}
+.mistake{background:var(--red-soft);border-color:#f2c6c0} .mistake h4{color:var(--red)}
+.tryit{background:var(--green-soft);border-color:#c3e3cf} .tryit h4{color:var(--green)}
+.words{background:var(--topic-soft);border-color:#f3d5b5} .words h4{color:var(--topic-deep)}
+.fact{background:var(--plum-soft);border-color:#ddcdf0} .fact h4{color:var(--plum)}
+.ic{width:18px;height:18px;flex:none}
+dl{margin:8px 0 0} dt{font-weight:700} dd{margin:0 0 10px;color:#3a454c}
+aside{align-self:start;position:sticky;top:16px}
+@media (max-width:900px){aside{position:static}}
+
+/* ---------- tables */
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:17px}
+th{background:#2f3b42;color:#fff;text-align:left;padding:10px 12px;font-weight:700}
+td{padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+tbody tr:nth-child(even) td{background:#f6f9fc}
+.tbl{overflow-x:auto}
+
+/* ---------- operator cards */
+.ops{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}
+@media (max-width:700px){.ops{grid-template-columns:minmax(0,1fr)}}
+.op{border-radius:14px;padding:16px;color:#fff}
+.op h3{margin:0 0 4px;font:800 22px/1.1 "Fraunces",serif}
+.op .res{font-size:14px;opacity:.95;margin-bottom:10px}
+.op .syms{display:flex;flex-wrap:wrap;gap:6px}
+.op .syms span{background:rgba(255,255,255,.95);color:var(--ink);border-radius:7px;padding:3px 9px;font:700 17px "JetBrains Mono",monospace}
+.op.a{background:var(--topic)} .op.r{background:var(--teal)} .op.l{background:var(--plum)}
+
+/* ---------- versus */
+.vs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;border:1px solid var(--rule);border-radius:12px;overflow:hidden;margin:16px 0}
+.vs > div{padding:12px 16px} .vs .h{font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase}
+.vs .pc{background:var(--blue-soft)} .vs .py{background:#fff6e0}
+.vs .row{display:contents}
+.vs .cell{padding:9px 16px;border-top:1px solid var(--rule);font:500 16px "JetBrains Mono",monospace}
+.vs .cell.pc{background:#f3f8fd} .vs .cell.py{background:#fffaf0}
+.vs .note{grid-column:1/-1;padding:6px 16px 10px;border-top:none;font:400 15px "Source Sans 3",system-ui,sans-serif;color:var(--muted);background:#fff}
+
+/* ---------- misconception cards */
+.mc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0}
+@media (max-width:760px){.mc{grid-template-columns:minmax(0,1fr)}}
+.mc .card{background:#fff;border:1px solid var(--rule);border-top:6px solid var(--red);border-radius:12px;padding:14px 16px}
+.mc .wrong{color:var(--red);font-weight:700} .mc .right{color:var(--green);font-weight:700}
+.mc .card p{margin:6px 0}
+
+figure{margin:18px 0 22px} figcaption{font-size:14px;color:var(--muted);margin-top:6px}
+footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
+
+@media print{
+  html{filter:grayscale(100%)}
+  body{font-size:12pt;background:#fff}
+  .mast{background:#fff;color:var(--ink);border-bottom:4px solid #333} .mast svg.deco,.toc,.home{display:none}
+  .chip{border-color:#999} .sec{grid-template-columns:minmax(0,1fr) 240px;padding:18px 0;break-inside:avoid-page}
+  aside{position:static} a{color:var(--ink);text-decoration:none}
+}
+</style>
+</head>
+
+<body>
+
+<header class="mast">
+  <svg class="deco" viewBox="0 0 200 200" aria-hidden="true"><g fill="#fff" font-family="JetBrains Mono, monospace" font-weight="700" font-size="44"><text x="14" y="70">0111</text><text x="14" y="125">1010</text><text x="50" y="185">7A</text></g></svg>
+  <div class="wrap">
+    <a class="home" href="../../data-representation/">&larr; Year 9 Unit 2: Data representation</a>
+    <div class="kicker">Year 9 Guide · Data representation</div>
+    <h1>Binary and hexadecimal</h1>
+    <p class="dek">Bits, nibbles and bytes. Binary to denary and back. Hexadecimal digits, and how a byte becomes two of them.</p>
+    <div class="chips"><span class="chip">Binary</span><span class="chip">Binary practice</span><span class="chip">Hexadecimal</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="toc"><b>Contents</b>
+  <a href="#sizes">1 Bits, nibbles and bytes</a><a href="#todenary">2 Binary to denary</a><a href="#tobinary">3 Denary to binary</a>
+  <a href="#hex">4 Hexadecimal</a><a href="#mistakes">5 Common mistakes</a><a href="#exam">6 In the exam</a>
+</nav>
+
+<!-- 1 ------------------------------------------------------------ -->
+<section class="sec" id="sizes">
+  <div>
+    <div class="num">1</div>
+    <h2>Bits, nibbles and bytes</h2>
+    <p class="lead">A computer stores everything in binary. Binary uses only two digits, 0 and 1. One binary digit is called a bit.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Name</th><th>Bits</th><th>Holds</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>bit</td><td>1</td><td>0 or 1</td><td><code>1</code></td></tr>
+        <tr><td>nibble</td><td>4</td><td>0 to 15</td><td><code>1010</code></td></tr>
+        <tr><td>byte</td><td>8</td><td>0 to 255</td><td><code>10100011</code></td></tr>
+        <tr><td>two bytes</td><td>16</td><td>0 to 65535</td><td><code>0000011111101010</code></td></tr>
+      </tbody></table></div>
+    <h3>The columns</h3>
+    <p>Each column has a place value. The column on the right is worth 1. Each column is worth double the column on its right.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Byte</th><th>128</th><th>64</th><th>32</th><th>16</th><th>8</th><th>4</th><th>2</th><th>1</th></tr></thead>
+      <tbody><tr><td><b>Nibble</b></td><td></td><td></td><td></td><td></td><td>8</td><td>4</td><td>2</td><td>1</td></tr></tbody></table></div>
+    <h3>The largest value</h3>
+    <p>The largest value has every bit set to 1. In a nibble, 1111 is 8 + 4 + 2 + 1 = 15. In a byte, 11111111 is 255. The number 256 needs 9 bits, so it does not fit in a byte.</p>
+  </div>
+  <aside>
+    <div class="box words"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h11a4 4 0 0 1 4 4v10H8a4 4 0 0 1-4-4z"/><path d="M8 9h7M8 13h5"/></svg>Key words</h4>
+      <dl>
+        <dt>binary</dt><dd>A number system that uses only 0 and 1.</dd>
+        <dt>denary</dt><dd>Our normal number system, with the digits 0 to 9.</dd>
+        <dt>bit</dt><dd>One binary digit, 0 or 1.</dd>
+        <dt>nibble</dt><dd>4 bits. Half a byte.</dd>
+        <dt>byte</dt><dd>8 bits. Two nibbles.</dd>
+        <dt>place value</dt><dd>What a column is worth: 128, 64, 32, 16, 8, 4, 2 or 1.</dd>
+      </dl></div>
+  </aside>
+</section>
+
+<!-- 2 ------------------------------------------------------------ -->
+<section class="sec" id="todenary">
+  <div>
+    <div class="num">2</div>
+    <h2>Binary to denary</h2>
+    <p class="lead">Add the columns that have a 1. Ignore the columns that have a 0.</p>
+    <h3>Worked example: 01011010</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Column</th><th>128</th><th>64</th><th>32</th><th>16</th><th>8</th><th>4</th><th>2</th><th>1</th></tr></thead>
+      <tbody><tr><td><b>Bit</b></td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td></tr></tbody></table></div>
+    <p>1. Write the bits under the columns.</p>
+    <p>2. The 1s are under 64, 16, 8 and 2.</p>
+    <p>3. Add them: 64 + 16 + 8 + 2 = <b>90</b>.</p>
+    <h3>Worked example: the nibble 1101</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Column</th><th>8</th><th>4</th><th>2</th><th>1</th></tr></thead>
+      <tbody><tr><td><b>Bit</b></td><td>1</td><td>1</td><td>0</td><td>1</td></tr></tbody></table></div>
+    <p>The 1s are under 8, 4 and 1. 8 + 4 + 1 = <b>13</b>.</p>
+  </div>
+  <aside>
+    <div class="box fact"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.5"/></svg>Odd or even</h4>
+      <p>The 1 column decides. A binary number that ends in 1 is odd. A binary number that ends in 0 is even.</p>
+      <p>01011010 ends in 0, and 90 is even.</p></div>
+  </aside>
+</section>
+
+<!-- 3 ------------------------------------------------------------ -->
+<section class="sec" id="tobinary">
+  <div>
+    <div class="num">3</div>
+    <h2>Denary to binary</h2>
+    <p class="lead">Go from left to right. For each column, ask: does it fit into what is left? Yes: write 1 and take it away. No: write 0.</p>
+    <h3>Worked example: 37 in 8-bit binary</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Column</th><th>What is left</th><th>Does it fit?</th><th>Write</th></tr></thead>
+      <tbody>
+        <tr><td>128</td><td>37</td><td>No</td><td>0</td></tr>
+        <tr><td>64</td><td>37</td><td>No</td><td>0</td></tr>
+        <tr><td>32</td><td>37</td><td>Yes. 37 − 32 = 5</td><td>1</td></tr>
+        <tr><td>16</td><td>5</td><td>No</td><td>0</td></tr>
+        <tr><td>8</td><td>5</td><td>No</td><td>0</td></tr>
+        <tr><td>4</td><td>5</td><td>Yes. 5 − 4 = 1</td><td>1</td></tr>
+        <tr><td>2</td><td>1</td><td>No</td><td>0</td></tr>
+        <tr><td>1</td><td>1</td><td>Yes. 1 − 1 = 0</td><td>1</td></tr>
+      </tbody></table></div>
+    <p>Read the Write column from top to bottom: <b>00100101</b>.</p>
+    <p>Check: 32 + 4 + 1 = 37. Nothing is left over after the 1 column.</p>
+    <h3>All eight bits</h3>
+    <p>An 8-bit answer has eight digits. Write the 0s at the front. 100101 is not an 8-bit answer. 00100101 is.</p>
+    <h3>A nibble</h3>
+    <p>A nibble uses the columns 8, 4, 2 and 1. For 6: 8 does not fit, so 0. 4 fits, so 1, and 2 is left. 2 fits, so 1, and 0 is left. 1 does not fit, so 0. The answer is <b>0110</b>.</p>
+  </div>
+  <aside>
+    <div class="box fact"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.5"/></svg>Something left over</h4>
+      <p>When the answer is right, 0 is left after the 1 column.</p>
+      <p>If something is left over, there is a mistake. Find the row where a column was written as 1 but did not fit.</p></div>
+  </aside>
+</section>
+
+<!-- 4 ------------------------------------------------------------ -->
+<section class="sec" id="hex">
+  <div>
+    <div class="num">4</div>
+    <h2>Hexadecimal</h2>
+    <p class="lead">Hexadecimal, or hex, has sixteen digits: 0 to 9, then A to F. One hex digit stands for one nibble.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Hex</th><th>Denary</th><th>Nibble</th><th>Hex</th><th>Denary</th><th>Nibble</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td><code>0000</code></td><td>8</td><td>8</td><td><code>1000</code></td></tr>
+        <tr><td>1</td><td>1</td><td><code>0001</code></td><td>9</td><td>9</td><td><code>1001</code></td></tr>
+        <tr><td>2</td><td>2</td><td><code>0010</code></td><td>A</td><td>10</td><td><code>1010</code></td></tr>
+        <tr><td>3</td><td>3</td><td><code>0011</code></td><td>B</td><td>11</td><td><code>1011</code></td></tr>
+        <tr><td>4</td><td>4</td><td><code>0100</code></td><td>C</td><td>12</td><td><code>1100</code></td></tr>
+        <tr><td>5</td><td>5</td><td><code>0101</code></td><td>D</td><td>13</td><td><code>1101</code></td></tr>
+        <tr><td>6</td><td>6</td><td><code>0110</code></td><td>E</td><td>14</td><td><code>1110</code></td></tr>
+        <tr><td>7</td><td>7</td><td><code>0111</code></td><td>F</td><td>15</td><td><code>1111</code></td></tr>
+      </tbody></table></div>
+    <h3>Binary to hex: cut the byte in half</h3>
+    <figure>
+      <svg viewBox="0 0 560 200" role="img" aria-label="The byte 11001000 cut into two nibbles. 1100 is 8 plus 4, which is 12, which is C. 1000 is 8. The byte is C8 in hex.">
+        <g font-family="Source Sans 3, sans-serif" font-size="18" fill="#1d2327" text-anchor="middle">
+          <rect x="60" y="10" width="190" height="56" rx="10" fill="#fdf0e3" stroke="#e07a1f" stroke-width="2"/>
+          <rect x="310" y="10" width="190" height="56" rx="10" fill="#e3f3f2" stroke="#1f7a7a" stroke-width="2"/>
+          <text x="155" y="47" font-family="JetBrains Mono, monospace" font-size="28" font-weight="700">1100</text>
+          <text x="405" y="47" font-family="JetBrains Mono, monospace" font-size="28" font-weight="700">1000</text>
+          <line x1="280" y1="2" x2="280" y2="76" stroke="#55616a" stroke-width="2.5" stroke-dasharray="6 5"/>
+          <text x="155" y="100">8 + 4 = 12</text>
+          <text x="405" y="100">8</text>
+          <text x="155" y="132" font-weight="700" fill="#a8520d" font-size="24">C</text>
+          <text x="405" y="132" font-weight="700" fill="#1f7a7a" font-size="24">8</text>
+          <text x="280" y="182" font-family="JetBrains Mono, monospace" font-size="26" font-weight="700">11001000 = C8</text>
+        </g>
+      </svg>
+      <figcaption>Each nibble becomes one hex digit. The left nibble gives the left digit.</figcaption>
+    </figure>
+    <p>1. Cut the byte into two nibbles.</p>
+    <p>2. Work out each nibble with 8, 4, 2 and 1.</p>
+    <p>3. Change 10 to 15 into A to F.</p>
+    <p>4. Write the two hex digits side by side.</p>
+    <h3>Worked example: 01111010</h3>
+    <p>Left nibble 0111: 4 + 2 + 1 = 7. Right nibble 1010: 8 + 2 = 10, which is A. The byte is <b>7A</b>.</p>
+    <h3>Hex to binary: the same cut, backwards</h3>
+    <p>Each hex digit becomes four bits. Write all four, including the 0s.</p>
+    <p>Worked example: 3A. 3 is <code>0011</code>. A is 10, which is <code>1010</code>. Side by side: <b>00111010</b>.</p>
+    <h3>Hex to denary</h3>
+    <p>Change the hex to binary. Then add the columns that have a 1.</p>
+    <p>Worked example: 3A is 00111010. The 1s are under 32, 16, 8 and 2. 32 + 16 + 8 + 2 = <b>58</b>.</p>
+  </div>
+  <aside>
+    <div class="box words"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h11a4 4 0 0 1 4 4v10H8a4 4 0 0 1-4-4z"/><path d="M8 9h7M8 13h5"/></svg>Key words</h4>
+      <dl>
+        <dt>hexadecimal</dt><dd>A number system with sixteen digits: 0 to 9, then A to F. Also called hex.</dd>
+        <dt>hex digit</dt><dd>One digit of hex. It stands for one nibble, 0 to 15.</dd>
+        <dt>A to F</dt><dd>The letters for 10 to 15. A is 10 and F is 15.</dd>
+      </dl></div>
+    <div class="box fact"><h4>One byte, two hex digits</h4>
+      <p>A byte is two nibbles, so a byte is always two hex digits.</p></div>
+    <div class="box fact"><h4>Colour codes</h4>
+      <p>A colour code is three bytes in hex: red, green, then blue. FF means all of it. 00 means none of it.</p>
+      <p><code>#FF8000</code>: all of the red, half of the green, no blue. The colour is orange.</p></div>
+  </aside>
+</section>
+
+<!-- 5 ------------------------------------------------------------ -->
+<section class="sec full" id="mistakes">
+  <div>
+    <div class="num">5</div>
+    <h2>Common mistakes</h2>
+    <div class="mc">
+      <div class="card"><p class="wrong">✗ Leaving out the 0s at the front</p>
+        <p>37 written as 100101 has six bits, not eight.</p>
+        <p class="right">✓ 00100101</p></div>
+      <div class="card"><p class="wrong">✗ The 1 column on the left</p>
+        <p>The column values start from the right, not the left.</p>
+        <p class="right">✓ 128 64 32 16 8 4 2 1, with 1 on the right</p></div>
+      <div class="card"><p class="wrong">✗ Something left over after the 1 column</p>
+        <p>A column was written as 1 when it did not fit.</p>
+        <p class="right">✓ Write 1 only when the column fits into what is left</p></div>
+      <div class="card"><p class="wrong">✗ Two digits for one nibble</p>
+        <p>1100 is 12, but 12 is not a hex digit. 11001000 is not 128.</p>
+        <p class="right">✓ 12 is C, so 11001000 is C8</p></div>
+      <div class="card"><p class="wrong">✗ A hex digit with fewer than four bits</p>
+        <p>3A written as 11 and 1010 gives 111010, which has six bits.</p>
+        <p class="right">✓ 3 is 0011, so 3A is 00111010</p></div>
+      <div class="card"><p class="wrong">✗ The nibbles the wrong way round</p>
+        <p>01111010 is not A7.</p>
+        <p class="right">✓ The left nibble gives the left digit: 7A</p></div>
+      <div class="card"><p class="wrong">✗ The largest byte is 256</p>
+        <p>There are 256 patterns, but the first one is 0.</p>
+        <p class="right">✓ The largest byte is 255. 256 needs 9 bits</p></div>
+      <div class="card"><p class="wrong">✗ A to F stand for 1 to 6</p>
+        <p>Hex uses 0 to 9 first. The letters come after 9.</p>
+        <p class="right">✓ A is 10, B is 11, C is 12, D is 13, E is 14, F is 15</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 ------------------------------------------------------------ -->
+<section class="sec" id="exam">
+  <div>
+    <div class="num">6</div>
+    <h2>In the exam</h2>
+    <div class="box exam"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h3"/></svg>The paper</h4>
+      <p>The exam is on paper. It is 40 minutes long. It has questions on binary and hexadecimal. It also has questions on programming: see the <a href="../programming/">Sequence, variables, input and strings guide</a>.</p></div>
+    <div class="box exam"><h4>What the questions ask for</h4>
+      <ul>
+        <li>an 8-bit binary number in denary</li>
+        <li>a denary number in 8-bit binary</li>
+        <li>a nibble in denary</li>
+        <li>a byte in hex</li>
+        <li>a hex number in 8-bit binary</li>
+        <li>a hex number in denary</li>
+      </ul></div>
+    <div class="box exam"><h4>Working on paper</h4>
+      <p>Write the column values across the top: 128 64 32 16 8 4 2 1. Write the bits under them. Check every denary to binary answer by adding the columns back up.</p></div>
+  </div>
+  <aside>
+    <div class="box tryit"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4 10-10"/></svg>Practise</h4>
+      <ul>
+        <li><a href="../../binary/">Binary</a>: Steps 1 to 7 and the exit check</li>
+        <li><a href="../../binary-practice/">Binary practice</a>: Nibbles 1 and 2, Bytes 1 and 2</li>
+        <li><a href="../../hexadecimal/">Hexadecimal</a>: Steps 3 and 4 and the exit check</li>
+      </ul></div>
+    <div class="box words"><h4>Also</h4><p><a href="../programming/">Sequence, variables, input and strings</a> covers the rest of the exam.</p></div>
+  </aside>
+</section>
+
+<footer>Year 9 Computer Science · Guide to Unit 2: Binary, Binary practice and Hexadecimal. Source: the Year 9 lesson pages.</footer>
+</div>
+</body>
+</html>

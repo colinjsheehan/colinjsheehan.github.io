@@ -983,9 +983,37 @@
     var t = step.targets.filter(function (x) { return x.id === id; })[0];
     return (t && t.text) || id;
   }
+  /* SHUFFLED CARDS (31 Oct 2026). The cards are shown in a shuffled order, not
+     the order the lesson file lists them, because a step written in answer order
+     would otherwise hand over the answer. The shuffle is fixed: it is seeded from
+     the lesson id, the step's nav and the step's optional "shuffle" number, so a
+     reload, another device and the next pupil all see the same order. It never
+     comes out in the written order. verify_site.py runs the same shuffle (same
+     hash, same generator, same swaps) and refuses a step whose shown order is the
+     answer order; a step that is unlucky takes "shuffle": 1 (or 2, 3...).
+     The PDF and the teacher sheets keep the written order. */
+  function dragCards(step) {
+    if (step._shown) return step._shown;
+    var seed = L.id + "|" + step.nav + "|" + (step.shuffle || 0), h = 2166136261, k;
+    for (k = 0; k < seed.length; k++) { h ^= seed.charCodeAt(k); h = Math.imul(h, 16777619) >>> 0; }
+    var a = h >>> 0;
+    function rnd() {
+      a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    }
+    var out = step.cards.slice(), i, j, x;
+    for (i = out.length - 1; i > 0; i--) {
+      j = Math.floor(rnd() * (i + 1)); x = out[i]; out[i] = out[j]; out[j] = x;
+    }
+    if (out.length > 1 && out.every(function (c, n) { return c === step.cards[n]; })) out.push(out.shift());
+    step._shown = out;
+    return out;
+  }
   function dragHeld(step, i, tid) {
     var put = dragState(i).put;
-    return step.cards.filter(function (c) { return put[c.id] === tid; }).map(function (c) { return c.id; });
+    return dragCards(step).filter(function (c) { return put[c.id] === tid; }).map(function (c) { return c.id; });
   }
   function dragProgress(step, i) {
     var s = dragState(i);
@@ -1332,7 +1360,7 @@
     var bank = el("div", "dbank");
     bank.appendChild(el("p", "dbankname", TX.dragBank));
     var loose = 0;
-    step.cards.forEach(function (c) {
+    dragCards(step).forEach(function (c) {
       if (s.put[c.id]) return;
       loose++;
       bank.appendChild(dragCardEl(step, i, c));
@@ -2379,6 +2407,7 @@
   /* Hooks for the automated browser test only. */
   window.__lesson = { state: function () { return state; }, go: go, run: run, buildPdf: buildPdf,
     fileName: fileName,
+    dragShown: function (i) { return dragCards(L.steps[i]).map(function (c) { return c.id; }); },
     applySplit: applySplit,
     applyRSplit: applyRSplit, sizeStage: sizeStage,
     fitView: fitView, plainView: plainView, view: function () { return view; },

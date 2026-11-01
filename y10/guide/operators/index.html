@@ -9,6 +9,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="description" content="DIV, MOD, ROUND and RANDOM; arithmetic, relational and logical operators; pseudocode and Python.">
 <meta name="guide-order" content="8">
+<meta name="guide-unit" content="programming">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -110,8 +111,9 @@ figure{margin:18px 0 22px} figcaption{font-size:14px;color:var(--muted);margin-t
 footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
 
 @media print{
+  html{filter:grayscale(100%)}
   body{font-size:12pt;background:#fff}
-  .mast{background:#fff;color:var(--ink);border-bottom:4px solid var(--topic)} .mast svg.deco,.toc,.home{display:none}
+  .mast{background:#fff;color:var(--ink);border-bottom:4px solid #333} .mast svg.deco,.toc,.home{display:none}
   .chip{border-color:#999} .sec{grid-template-columns:minmax(0,1fr) 240px;padding:18px 0;break-inside:avoid-page}
   aside{position:static} a{color:var(--ink);text-decoration:none}
 }
@@ -122,7 +124,7 @@ footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
 <header class="mast">
   <svg class="deco" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"><path d="M40 60h40M60 40v40"/><path d="M120 60h40"/><path d="M40 140l40-30M40 110l40 30"/><circle cx="140" cy="125" r="4" fill="#fff"/><path d="M120 140h40"/><circle cx="140" cy="155" r="4" fill="#fff"/></g></svg>
   <div class="wrap">
-    <a class="home" href="../../">&larr; Year 10</a>
+    <a class="home" href="../../programming/">&larr; Year 10 Unit 1: Programming</a>
     <div class="kicker">Year 10 Guide · Paper 2 · Programming</div>
     <h1>Operators and library routines</h1>
     <p class="dek">The symbols that calculate, compare and combine, and the four ready-made routines every Paper 2 expects: DIV, MOD, ROUND and RANDOM.</p>

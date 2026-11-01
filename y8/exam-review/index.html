@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 8 Exam review | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/guide-look.css">
+</head>
+<body class="look-guide">
+<header>
+  <div>
+    <div class="brand">Year 8 &middot; Computer Science</div>
+    <h1>Exam review</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Send to my teacher sends it to your teacher.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y8-exam-review", "order": 13.5, "reviews": "Reviews lessons 2, 4 and 5, and R1.", "label": "R2", "review": true, "look": "guide", "version": 1, "year": "Year 8", "slug": "exam-review", "folder": "y8", "title": "Exam review", "short": "Exam review", "objective": "Revise every topic on the exam: variables, asking the user, making decisions and tracing decisions.", "keywords": ["variable", "input", "int()", "if", "elif", "else", "and", "or"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "Before you start", "intro": ["Answer all three. Do not run anything.", "The table shows each exam section and the steps on this page for it."], "table": {"headers": ["Exam section", "Topic", "Steps"], "rows": [["A", "Variables and assignment", "A, A1 to A4"], ["B", "Asking the user", "B, B1 to B3"], ["C", "Making decisions", "C, C1 to C3"], ["D", "Tracing decisions", "D, D1, D2"]]}, "questions": [{"id": "r1", "label": "R1", "prompt": "What is in wall after this line runs?", "code": "wall = 140"}, {"id": "r2", "label": "R2", "prompt": "Why does the colour code need quote marks in this line?", "code": "fillcolor(\"#E8D3A9\")"}, {"id": "r3", "label": "R3", "prompt": "Is 8 >= 8 True or False?"}]}, {"kind": "questions", "nav": "A", "explain": true, "label": "A. Variables: explained", "title": "Variables", "intro": ["A variable stores a value. Every variable has a name.", "`lives = 3` stores the value 3 in the variable `lives`.", "A variable stores one value at a time. A new value replaces the old value.", "Use the same name every time. `score` and `Score` are two different names."], "table": {"headers": ["Code", "What happens"], "code_cols": [0], "rows": [["lives = 3\nlives = 5\nprint(lives)", "Prints 5. The value 5 replaces the value 3."], ["score = 10\nprint(Score)", "NameError. There is no variable called Score."], ["fillcolor(door_colour)", "Uses the value in the variable door_colour."], ["fillcolor(\"door_colour\")", "Quotation marks make door_colour text. It is not the variable."]]}, "remember": "`=` stores a value in a variable."}, {"kind": "code", "nav": "A1", "label": "A1: predict, then run", "title": "One value at a time", "turtle": true, "intro": ["The variable colour is given a value twice.", "Write your prediction in A1a. Then press Run."], "code": "from turtle import *\npensize(3)\n\ncolour = \"red\"\ncolour = \"blue\"\n\nfillcolor(colour)\nbegin_fill()\nforward(100)\nright(90)\nforward(100)\nright(90)\nforward(100)\nright(90)\nforward(100)\nend_fill()\n\nprint(\"Colour:\", colour)\n", "predict_first": "a1a", "questions": [{"id": "a1a", "label": "A1a", "prompt": "What colour is the square?"}, {"id": "a1b", "label": "A1b", "prompt": "Why is it that colour and not the other one?"}], "expected_b64": "Q29sb3VyOiBibHVl"}, {"kind": "code", "nav": "A2", "label": "A2: find and fix", "title": "A name spelt two ways", "turtle": true, "intro": ["This program stops with an error before it finishes.", "Press Run. Read the error. Answer A2a.", "Then fix the line so the name matches the variable exactly."], "code": "from turtle import *\npensize(3)\n\nwall_colour = \"green\"\n\nfillcolor(wall_color)\nbegin_fill()\nforward(120)\nright(90)\nforward(120)\nright(90)\nforward(120)\nright(90)\nforward(120)\nend_fill()\n\nprint(\"Walls:\", wall_colour)\n", "hint": "Compare the name on the fillcolor line with the name on line 4, letter by letter.", "questions": [{"id": "a2a", "label": "A2a", "prompt": "What type of error does the program give?"}], "expected_b64": "V2FsbHM6IGdyZWVu"}, {"kind": "code", "nav": "A3", "label": "A3: fill the gap", "title": "The roof colour", "turtle": true, "remember": "Use the variable's name, with no quotation marks.", "intro": ["The palette at the top stores two colours.", "The roof line is missing its colour. Replace ____ with the right variable name. Then press Run."], "code": "from turtle import *\npensize(3)\n\n# the palette\nwall_colour = \"orange\"\nroof_colour = \"brown\"\n\n# the walls\nfillcolor(wall_colour)\nbegin_fill()\nforward(120)\nright(90)\nforward(120)\nright(90)\nforward(120)\nright(90)\nforward(120)\nend_fill()\n\n# the roof\nfillcolor(____)\nbegin_fill()\nright(30)\nforward(120)\nright(120)\nforward(120)\nend_fill()\n\nprint(\"Roof:\", roof_colour)\n", "hint": "There are two names in the palette. One of them is for the roof.", "questions": [], "expected_b64": "Um9vZjogYnJvd24="}, {"kind": "questions", "nav": "A4", "label": "A4: on paper", "title": "The value at the end", "intro": ["Answer without running anything."], "questions": [{"id": "a4a", "label": "A4a", "prompt": "What is the value of size at the end?", "code": "size = 80\nsize = 120"}]}, {"kind": "questions", "nav": "B", "explain": true, "label": "B. Asking the user: explained", "title": "input() and int()", "intro": ["`input()` waits for the user to type. It gives back what they typed, as text.", "`+` joins two pieces of text. `+` adds two numbers.", "`int()` turns text such as \"6\" into the whole number 6.", "One `=` stores a value. Two `==` compare two values."], "table": {"headers": ["Python", "Result", "Why"], "code_cols": [0], "rows": [["\"6\" + \"6\"", "66", "Two pieces of text: + joins them."], ["6 + 6", "12", "Two numbers: + adds them."], ["\"6\" + 6", "TypeError", "Text and a number cannot be added."], ["int(\"6\") + 6", "12", "int() turns \"6\" into 6 first."], ["size = 6", "6 is stored", "One = stores a value in size."], ["size == 6", "True or False", "Two == compare size with 6."]]}, "readonly": "number = input(\"Type a number: \")          # text\nnumber = int(input(\"Type a number: \"))     # a whole number", "remember": "input() always gives text, even when the user types digits."}, {"kind": "code", "nav": "B1", "label": "B1: predict, then run", "title": "Text, not a number", "intro": ["When the program asks, you will type 13.", "Write your prediction in B1a. Then press Run."], "code": "age = input(\"How old are you? \")\n\nprint(age + age)\n", "inputs": ["13"], "predict_first": "b1a", "questions": [{"id": "b1a", "label": "B1a", "prompt": "Predict what this prints."}, {"id": "b1b", "label": "B1b", "prompt": "Compare your prediction with the output. Write what was different, or write: the same."}], "expected_b64": "MTMxMw=="}, {"kind": "code", "nav": "B2", "label": "B2: fill the gap", "title": "Turning text into a number", "remember": "int() turns text such as \"13\" into the whole number 13.", "intro": ["Replace ____ so the typed text becomes a whole number.", "Press Run. When the program asks, type 13."], "code": "age = ____(input(\"How old are you? \"))\n\nprint(age + age)\n", "inputs": ["13"], "hint": "The word is three letters long. It is short for integer.", "questions": [{"id": "b2a", "label": "B2a", "prompt": "Why did B1 print 1313?"}], "expected_b64": "MjY="}, {"kind": "questions", "nav": "B3", "label": "B3: on paper", "title": "Where values come from", "intro": ["Answer without running anything."], "questions": [{"id": "b3a", "label": "B3a", "prompt": "Where does the value in name come from?", "code": "name = input(\"What is your name? \")"}, {"id": "b3b", "label": "B3b", "prompt": "Which symbol compares two values to see if they are equal?"}]}, {"kind": "questions", "nav": "C", "explain": true, "label": "C. Making decisions: explained", "title": "if and else", "intro": ["An `if` line asks a question. The answer is True or False.", "If it is True, the indented lines under the `if` run. If it is False, the lines under `else` run.", "Every `if`, `elif` and `else` line ends with a colon.", "`and` needs both parts to be True. `or` needs one part to be True."], "table": {"headers": ["Symbol", "Means", "Example"], "rows": [[">", "greater than", "7 > 7 is False"], [">=", "greater than or equal to", "7 >= 7 is True"], ["<", "less than", "3 < 5 is True"], ["<=", "less than or equal to", "5 <= 5 is True"], ["==", "equal to", "4 == 4 is True"]]}, "readonly": "mark = 65\n\nif mark >= 50:\n    print(\"Pass\")      # 65 >= 50 is True, so this line runs\nelse:\n    print(\"Fail\")", "remember": "The indent shows which lines are inside the if."}, {"kind": "code", "nav": "C1", "label": "C1: run", "title": "One of two paths", "remember": ">= means greater than or equal to.", "intro": ["Press Run. Then answer C1a."], "code": "score = 7\n\nif score >= 5:\n    print(\"Pass\")\nelse:\n    print(\"Try again\")\n", "questions": [{"id": "c1a", "label": "C1a", "prompt": "Which line would print if score were 3?"}], "expected_b64": "UGFzcw=="}, {"kind": "code", "nav": "C2", "label": "C2: find and fix", "title": "Wrong at the edge", "intro": ["The pass mark is 50 or more. A mark of 50 should pass, but this program says Fail.", "Press Run. Answer C2a.", "Then change one symbol in the if line."], "code": "mark = 50\n\nif mark > 50:\n    print(\"Pass\")\nelse:\n    print(\"Fail\")\n", "hint": "Look at the symbols in the table on step C.", "questions": [{"id": "c2a", "label": "C2a", "prompt": "Is 50 > 50 True or False?"}], "expected_b64": "UGFzcw=="}, {"kind": "questions", "nav": "C3", "label": "C3: on paper", "title": "True or False?", "intro": ["Answer without running anything."], "questions": [{"id": "c3a", "label": "C3a", "prompt": "What does this print?", "code": "age = 12\nif age > 12:\n    print(\"Older\")\nelse:\n    print(\"Not older\")"}, {"id": "c3b", "label": "C3b", "prompt": "What does this print?", "code": "sides = 5\nif sides <= 4:\n    print(\"blue\")\nelse:\n    print(\"green\")"}, {"id": "c3c", "label": "C3c", "prompt": "Can a number be less than 1 and more than 5 at the same time?"}]}, {"kind": "questions", "nav": "D", "explain": true, "label": "D. Tracing decisions: explained", "title": "if, elif and else", "intro": ["Python checks the tests from the top, one at a time.", "The first test that is True runs. Python skips every test after it.", "If no test is True, the `else` runs.", "Test the values on each edge, such as 4 and 5, and 6 and 7."], "readonly": "if sides <= 4:\n    colour = \"blue\"\nelif sides <= 6:\n    colour = \"green\"\nelse:\n    colour = \"purple\"", "table": {"headers": ["sides", "sides <= 4", "sides <= 6", "colour"], "rows": [["4", "True", "not checked", "blue"], ["5", "False", "True", "green"], ["6", "False", "True", "green"], ["7", "False", "False", "purple"]]}, "remember": "Only one path runs: the first one that is True."}, {"kind": "code", "nav": "D1", "label": "D1: fill the gap", "title": "The house that decides", "turtle": true, "intro": ["size 1 is small (60), size 2 is medium (120), size 3 is large (180).", "Replace ____ with the wall length for medium. Then press Run."], "code": "from turtle import *\npensize(3)\n\nsize = 2\n\nif size == 1:\n    wall = 60\nelif size == 2:\n    wall = ____\nelse:\n    wall = 180\n\nfor side in range(4):\n    forward(wall)\n    right(90)\n\nprint(\"Wall:\", wall)\n", "hint": "Read the first line of the step card.", "questions": [], "expected_b64": "V2FsbDogMTIw"}, {"kind": "questions", "nav": "D2", "label": "D2: on paper", "title": "The edges", "intro": ["Answer without running anything. D2a uses the program on step D."], "questions": [{"id": "d2a", "label": "D2a", "prompt": "Why is 7 a better test value than 5 for this program?"}, {"id": "d2b", "label": "D2b", "prompt": "A program allows 3 to 8 sides. Which two values test the edges?"}]}]};</script>
+<script>window.HANDIN = {"url": "https://script.google.com/macros/s/AKfycbyP2LqOk-4DeaVfkEDzcYRsj1IouiyK8-ABjsfiKV0N5Q-bvcY4YrCqMQN4dsoWIBmc/exec", "word": true};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

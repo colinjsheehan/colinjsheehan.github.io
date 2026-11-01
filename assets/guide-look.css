@@ -1,0 +1,93 @@
+/* Study-guide look for lesson pages (1 Nov 2026).
+
+   Loaded only by a lesson that sets "look": "guide" (build_site.page()). Every rule
+   starts with body.look-guide, and the page carries that class only for such a
+   lesson, so no other lesson page can be touched by this file. The palette and the
+   shapes follow guides/y10/operators.html. The class "explain" is added by
+   lesson.js to the step-bar pill and to the card of a step marked "explain". */
+body.look-guide {
+  --g-ink:#1d2327; --g-muted:#55616a; --g-paper:#fffdf8; --g-rule:#e4ded2;
+  --g-topic:#e07a1f; --g-deep:#a8520d; --g-soft:#fdf0e3;
+  --g-plum:#6b3fa0; --g-plum-soft:#f1eaf9; --g-blue:#1f6fb2; --g-blue-soft:#e6f0fa;
+  --g-code:#fbf7f0;
+  font-family:"Source Sans 3",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--g-ink);
+}
+
+/* ---------------------------------------------------------------- masthead */
+body.look-guide header { background:linear-gradient(120deg,#e07a1f 0%,#f0a050 100%);
+                         color:#fff; padding:14px 18px; gap:12px; }
+body.look-guide header .brand { font:700 12px/1 "Source Sans 3",system-ui,sans-serif;
+                                letter-spacing:.18em; text-transform:uppercase; opacity:.95; }
+body.look-guide header h1 { font:800 28px/1.08 "Fraunces",Georgia,serif; margin:8px 0 0;
+                            letter-spacing:-.01em; }
+body.look-guide header label { opacity:1; font-weight:600; }
+body.look-guide header .btn.amber { background:#2f3b42; }
+body.look-guide #handin-msg { color:#fff; font-weight:700; }
+
+/* ---------------------------------------------------------------- step bar */
+body.look-guide nav { background:#fbf7f0; border-bottom:1px solid var(--g-rule); }
+body.look-guide nav button { border-color:var(--g-rule); }
+body.look-guide nav button.current { background:var(--g-deep); border-color:var(--g-deep); color:#fff; }
+/* Explainer steps are purple, so the I do / you do pattern shows along the bar. */
+body.look-guide nav button.explain { background:var(--g-plum-soft); border-color:#ddcdf0;
+                                     color:var(--g-plum); }
+body.look-guide nav button.explain.current { background:var(--g-plum); border-color:var(--g-plum);
+                                             color:#fff; }
+
+/* ---------------------------------------------------------------- the card */
+body.look-guide #card { background:var(--g-paper); padding:16px 22px 18px; }
+body.look-guide #card .steplabel { font:700 13px/1 "Source Sans 3",system-ui,sans-serif;
+                                   letter-spacing:.18em; color:var(--g-deep); }
+body.look-guide #card h2 { font:800 27px/1.12 "Fraunces",Georgia,serif; margin:8px 0 12px;
+                           color:var(--g-ink); }
+body.look-guide #card p { font-size:16px; line-height:1.55; }
+body.look-guide #card p.lead { font-size:18px; line-height:1.55; color:#2c353b; }
+body.look-guide #card li { font-size:16px; }
+body.look-guide #card strong { font-weight:700; }
+
+/* An explainer card reads as a guide page: a purple edge, a wider line, the same
+   type. It is a step with no question, so it has nothing to answer. */
+body.look-guide #card.explain { border-top:6px solid var(--g-plum); }
+body.look-guide #card.explain .steplabel { color:var(--g-plum); }
+body.look-guide #card.explain p, body.look-guide #card.explain li { max-width:68ch; }
+
+/* REMEMBER: the guide's fact box. */
+body.look-guide .remember { background:var(--g-plum-soft); border:1px solid #ddcdf0;
+                            border-radius:12px; padding:14px 16px; margin:14px 0;
+                            font-size:16px; line-height:1.5; max-width:68ch; }
+body.look-guide .remember b { display:block; font:800 13px/1.2 "Source Sans 3",system-ui,sans-serif;
+                              letter-spacing:.14em; text-transform:uppercase; color:var(--g-plum);
+                              margin-bottom:4px; }
+
+/* TASK: the guide's exam box. */
+body.look-guide #card div.task { background:var(--g-blue-soft); border:1px solid #c5dbef;
+                                 border-radius:12px; padding:14px 16px; margin:14px 0 8px;
+                                 font-size:16px; line-height:1.5; max-width:68ch; }
+body.look-guide #card div.task::before { content:"Task"; display:block;
+                                         font:800 13px/1.2 "Source Sans 3",system-ui,sans-serif;
+                                         letter-spacing:.14em; text-transform:uppercase;
+                                         color:var(--g-blue); margin-bottom:4px; }
+
+/* Tables: dark slate head, light alternate rows. The column alignment lesson.js
+   adds (.lft) is left alone, so a column of digits stays centred. */
+body.look-guide table.idx { font-size:15.5px; margin:12px 0 16px; }
+body.look-guide table.idx th, body.look-guide table.idx td { border:0;
+                                       border-bottom:1px solid var(--g-rule); padding:8px 12px; }
+body.look-guide table.idx th { background:#2f3b42; color:#fff; font-weight:700; }
+body.look-guide table.idx tr:nth-child(odd) td,
+body.look-guide table.idx tr:nth-child(odd) td:first-child { background:#fff; }
+body.look-guide table.idx tr:nth-child(even) td,
+body.look-guide table.idx tr:nth-child(even) td:first-child { background:#f6f9fc; }
+body.look-guide table.idx td:first-child { font-weight:700; }
+
+/* Code: the guide's code box, a warm ground with an orange left edge. */
+body.look-guide pre.show { background:var(--g-code); border:1px solid var(--g-rule);
+                           border-left:5px solid var(--g-topic); border-radius:8px;
+                           padding:12px 16px; font:500 15px/1.55 "JetBrains Mono",ui-monospace,Menlo,Consolas,monospace; }
+body.look-guide code.inl { font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+                           background:var(--g-code); border:1px solid var(--g-rule);
+                           border-radius:5px; padding:1px 5px; }
+
+/* Question labels take the guide's deep orange. */
+body.look-guide .q .qlabel { color:var(--g-deep); }

@@ -143,6 +143,10 @@
 
   var $ = function (id) { return document.getElementById(id); };
   var mainEl = $("main"), cardEl = $("card"), codeEl = $("code"), consoleEl = $("console");
+  /* STUDY-GUIDE LOOK (1 Nov 2026). A lesson with "look": "guide" is styled by
+     guide-look.css, which only that page loads. The three hooks below add a class
+     and nothing else, and only for that lesson or for a step marked "explain". */
+  var GUIDE = L.look === "guide";
   var navEl = $("steps"), nameEl = $("student-name"), statusEl = $("status");
   var runBtn = $("run"), matchEl = $("match"), msgEl = $("handin-msg");
   var askRow = $("askrow"), askInput = $("askinput");
@@ -697,6 +701,7 @@
     L.steps.forEach(function (step, i) {
       var b = el("button", "", step.nav);
       b.title = step.label + ": " + step.title;
+      if (step.explain) b.classList.add("explain");   // an explainer step, not practice
       if (i === state.current) b.classList.add("current");
       if (isDone(i)) b.classList.add("done");
       if (isShut(i)) {
@@ -721,6 +726,7 @@
     var step = L.steps[i];
     var keep = (!fresh && i === lastRendered) ? cardEl.scrollTop : 0;
     cardEl.innerHTML = "";
+    cardEl.classList.toggle("explain", !!step.explain);
     cardEl.appendChild(el("div", "steplabel", step.label));
     cardEl.appendChild(el("h2", "", step.title));
 
@@ -742,7 +748,9 @@
       });
       cardEl.appendChild(wl);
     }
-    (step.intro || []).forEach(function (t) { cardEl.appendChild(rich(el("p"), t)); });
+    (step.intro || []).forEach(function (t, n) {
+      cardEl.appendChild(rich(el("p", GUIDE && n === 0 ? "lead" : ""), t));
+    });
     /* MAKE STEP (28 Sep 2026). The Make card used to be a free paragraph field and
        grew to 200 words, most of it repeating what the page itself says. It now
        has fixed places: one sentence saying what to make, an optional short list

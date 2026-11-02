@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 8 Starting point | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/guide-look.css">
+</head>
+<body class="look-guide">
+<header>
+  <div>
+    <div class="brand">Year 8 &middot; Computer Science</div>
+    <h1>Starting point</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Send to my teacher sends it to your teacher.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y8-starting-point", "order": 0.5, "reviews": "Reviews lessons 1 to 5.", "label": "Test", "review": true, "look": "guide", "version": 1, "year": "Year 8", "slug": "starting-point", "folder": "y8", "title": "Starting point", "short": "Starting point", "objective": "Show what you can do from Lessons 1 to 5: the turtle, variables, loops, conditions and input.", "keywords": ["sequence", "variable", "loop", "condition", "input"], "steps": [{"kind": "questions", "nav": "W", "label": "Words", "title": "Five words for today", "wordlist": [["sequence", "the lines run in order, from the top."], ["variable", "stores a value. It has a name."], ["loop", "runs the same lines again and again."], ["condition", "a question. The answer is True or False."], ["input", "what the user types."]], "intro": ["Say each word. Then choose the right word for each sentence."], "drill": "Python runs the lines **in order**, from the **top**.", "questions": [{"id": "w1", "label": "W1", "prompt": "The lines of a program run in order. This is ...", "pick": [{"v": "a loop"}, {"v": "sequence"}, {"v": "input"}]}, {"id": "w2", "label": "W2", "prompt": "It stores a value. It has a name. It is a ...", "pick": [{"v": "variable"}, {"v": "loop"}, {"v": "condition"}]}, {"id": "w3", "label": "W3", "prompt": "It runs the same lines again. It is a ...", "pick": [{"v": "condition"}, {"v": "variable"}, {"v": "loop"}]}, {"id": "w4", "label": "W4", "prompt": "The answer is True or False. It is a ...", "pick": [{"v": "loop"}, {"v": "condition"}, {"v": "variable"}]}, {"id": "w5", "label": "W5", "prompt": "What the user types is the ...", "pick": [{"v": "input"}, {"v": "sequence"}, {"v": "loop"}]}]}, {"kind": "code", "nav": "1", "label": "Lesson 1: fill the gap", "title": "Finish the square", "turtle": true, "remember": "A square turns the same amount at every corner.", "intro": ["Replace ____ with the number of degrees. Then press Run.", "The drawing is a square when the last line meets the first."], "code": "from turtle import *\npensize(3)\n\nforward(100)\nright(90)\nforward(100)\nright(90)\nforward(100)\nright(____)\nforward(100)\n", "hint": "Look at the other two turns.", "questions": []}, {"kind": "questions", "nav": "2", "label": "Lesson 1: on paper", "title": "Heading and pen", "intro": ["Answer without running anything."], "questions": [{"id": "q2a", "label": "2a", "prompt": "The turtle faces right. It runs left(90). Which way does it face now?"}, {"id": "q2b", "label": "2b", "prompt": "Which command moves the turtle without drawing a line?"}]}, {"kind": "code", "nav": "3", "label": "Lesson 2: change one line", "title": "A bigger square", "turtle": true, "intro": ["Change one line so the square has sides of 150. Then press Run."], "code": "from turtle import *\npensize(3)\n\nsize = 100\n\nforward(size)\nright(90)\nforward(size)\nright(90)\nforward(size)\nright(90)\nforward(size)\nright(90)\n\nprint(\"Size:\", size)\n", "hint": "Only the line that stores the value needs to change.", "questions": [], "expected_b64": "U2l6ZTogMTUw"}, {"kind": "questions", "nav": "4", "label": "Lesson 2: on paper", "title": "Values and names", "intro": ["Answer without running anything."], "questions": [{"id": "q4a", "label": "4a", "prompt": "What is the value of x at the end?", "code": "x = 5\nx = 8"}, {"id": "q4b", "label": "4b", "prompt": "What error do you get when a variable name is spelt wrongly?"}]}, {"kind": "code", "nav": "5", "label": "Lesson 3: predict, then run", "title": "A loop", "turtle": true, "intro": ["Read the loop. Work out how many sides it draws.", "Write your prediction in 5a. Then press Run."], "code": "from turtle import *\npensize(3)\n\nfor side in range(5):\n    forward(100)\n    right(72)\n", "predict_first": "q5a", "questions": [{"id": "q5a", "label": "5a", "prompt": "How many sides will it draw?"}, {"id": "q5b", "label": "5b", "prompt": "What is the name of the shape?"}]}, {"kind": "questions", "nav": "6", "label": "Lesson 3: on paper", "title": "Loops", "intro": ["Answer without running anything."], "questions": [{"id": "q6a", "label": "6a", "prompt": "How many times does this loop run?", "code": "for i in range(7):"}, {"id": "q6b", "label": "6b", "prompt": "What turn does an octagon (8 sides) need at each corner?"}, {"id": "q6c", "label": "6c", "prompt": "How does Python know which lines are inside the loop?"}]}, {"kind": "code", "nav": "7", "label": "Lesson 4: fill the gap", "title": "Three paths", "remember": "Python checks from the top and runs only the first path that is True.", "intro": ["The rule: 3 or 4 sides is blue, 5 or 6 sides is green, 7 or 8 sides is purple.", "Replace ____ with a number. Then press Run. With 7 sides it should say purple."], "code": "sides = 7\n\nif sides <= 4:\n    colour = \"blue\"\nelif sides <= ____:\n    colour = \"green\"\nelse:\n    colour = \"purple\"\n\nprint(\"Colour:\", colour)\n", "hint": "Green is for 5 and 6. What is the largest number that is green?", "questions": [], "expected_b64": "Q29sb3VyOiBwdXJwbGU="}, {"kind": "questions", "nav": "8", "label": "Lesson 4: on paper", "title": "True or False", "intro": ["Answer without running anything."], "questions": [{"id": "q8a", "label": "8a", "prompt": "Is 8 >= 8 True or False?"}, {"id": "q8b", "label": "8b", "prompt": "What does this print?", "code": "age = 12\nif age > 12:\n    print(\"Older\")\nelse:\n    print(\"Not older\")"}]}, {"kind": "code", "nav": "9", "label": "Lesson 5: predict, then run", "title": "Text, not a number", "intro": ["When the program asks, you will type 13.", "Write your prediction in 9a. Then press Run."], "code": "age = input(\"How old are you? \")\n\nprint(age + age)\n", "inputs": ["13"], "predict_first": "q9a", "questions": [{"id": "q9a", "label": "9a", "prompt": "Predict what this prints."}], "expected_b64": "MTMxMw=="}, {"kind": "questions", "nav": "10", "label": "Lesson 5: on paper", "title": "Asking the user", "intro": ["Answer without running anything."], "questions": [{"id": "q10a", "label": "10a", "prompt": "Where does the value in name come from?", "code": "name = input(\"What is your name? \")"}, {"id": "q10b", "label": "10b", "prompt": "Which symbol compares two values to see if they are equal?"}]}]};</script>
+<script>window.HANDIN = {"url": "https://script.google.com/macros/s/AKfycbyP2LqOk-4DeaVfkEDzcYRsj1IouiyK8-ABjsfiKV0N5Q-bvcY4YrCqMQN4dsoWIBmc/exec", "word": true};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

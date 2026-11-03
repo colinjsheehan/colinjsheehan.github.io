@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variables, input and decisions · Year 8 Guide</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="description" content="Variables and assignment, input() and int(), if, elif and else, and tracing a program with decisions, in Python.">
+<meta name="guide-order" content="1">
+<meta name="guide-unit" content="programming">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1d2327; --muted:#55616a; --paper:#fffdf8; --rule:#e4ded2;
+  --topic:#e07a1f; --topic-deep:#a8520d; --topic-soft:#fdf0e3;
+  --teal:#1f7a7a; --teal-soft:#e3f3f2; --plum:#6b3fa0; --plum-soft:#f1eaf9;
+  --red:#c0392b; --red-soft:#fbe9e7; --green:#2e7d52; --green-soft:#e6f4ec;
+  --blue:#1f6fb2; --blue-soft:#e6f0fa; --code-bg:#fbf7f0;
+  --kw:#1f6fb2; --str:#2e7d52;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 18px/1.6 "Source Sans 3",system-ui,sans-serif}
+a{color:var(--topic-deep)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* ---------- masthead */
+.mast{background:linear-gradient(120deg,var(--topic) 0%,#f0a050 100%);color:#fff;position:relative;overflow:hidden}
+.mast .wrap{padding-top:28px;padding-bottom:44px}
+.kicker{font:700 13px/1 "Source Sans 3",system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;opacity:.92}
+.mast h1{font:800 clamp(40px,7vw,76px)/1.0 "Fraunces",Georgia,serif;margin:14px 0 12px;letter-spacing:-.01em;max-width:14ch}
+.dek{font-size:21px;max-width:52ch;margin:0;opacity:.96}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.chip{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:600}
+.home{display:inline-block;margin-bottom:14px;color:#fff;font:600 15px/1 "Source Sans 3",system-ui,sans-serif;text-decoration:none;opacity:.92}.home:hover{text-decoration:underline}
+.mast svg.deco{position:absolute;right:-30px;top:10px;width:360px;opacity:.20}
+@media (max-width:700px){.mast svg.deco{display:none}}
+
+/* ---------- contents */
+.toc{display:flex;flex-wrap:wrap;gap:6px 18px;padding:14px 0;border-bottom:1px solid var(--rule);font-size:15px;font-weight:600}
+.toc a{text-decoration:none;color:var(--muted)} .toc a:hover{color:var(--topic-deep)}
+.toc b{color:var(--topic-deep)}
+
+/* ---------- layout */
+.sec{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;padding:44px 0;border-bottom:1px solid var(--rule)}
+.sec.full{grid-template-columns:minmax(0,1fr)}
+@media (max-width:900px){.sec{grid-template-columns:minmax(0,1fr)}}
+.num{font:800 15px/1 "Fraunces",serif;color:var(--topic);letter-spacing:.06em}
+h2{font:800 clamp(28px,4vw,40px)/1.1 "Fraunces",Georgia,serif;margin:6px 0 16px;color:var(--ink)}
+h3{font:700 21px/1.25 "Source Sans 3",system-ui,sans-serif;margin:26px 0 8px}
+p{margin:0 0 14px;max-width:68ch}
+.lead{font-size:20px;color:#2c353b}
+
+/* ---------- code */
+code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.9em}
+code{background:var(--code-bg);border:1px solid var(--rule);border-radius:5px;padding:1px 5px}
+pre{background:var(--code-bg);border:1px solid var(--rule);border-left:5px solid var(--topic);border-radius:8px;padding:14px 18px;overflow-x:auto;font:500 16px/1.55 "JetBrains Mono",monospace;margin:10px 0 16px}
+pre .k{color:var(--kw);font-weight:700} pre .s{color:var(--str)} pre .c{color:#8a8f94;font-style:italic}
+
+/* ---------- boxes */
+.box{border-radius:12px;padding:16px 18px;margin:18px 0;border:1px solid transparent}
+.box h4{margin:0 0 6px;font:800 13px/1.2 "Source Sans 3",system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.box p:last-child,.box ul:last-child{margin-bottom:0}
+.box ul{margin:6px 0 0;padding-left:20px}
+.exam{background:var(--blue-soft);border-color:#c5dbef} .exam h4{color:var(--blue)}
+.mistake{background:var(--red-soft);border-color:#f2c6c0} .mistake h4{color:var(--red)}
+.tryit{background:var(--green-soft);border-color:#c3e3cf} .tryit h4{color:var(--green)}
+.words{background:var(--topic-soft);border-color:#f3d5b5} .words h4{color:var(--topic-deep)}
+.fact{background:var(--plum-soft);border-color:#ddcdf0} .fact h4{color:var(--plum)}
+.ic{width:18px;height:18px;flex:none}
+dl{margin:8px 0 0} dt{font-weight:700} dd{margin:0 0 10px;color:#3a454c}
+aside{align-self:start;position:sticky;top:16px}
+@media (max-width:900px){aside{position:static}}
+
+/* ---------- tables */
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:17px}
+th{background:#2f3b42;color:#fff;text-align:left;padding:10px 12px;font-weight:700}
+td{padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+tbody tr:nth-child(even) td{background:#f6f9fc}
+.tbl{overflow-x:auto}
+
+/* ---------- operator cards */
+.ops{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}
+@media (max-width:700px){.ops{grid-template-columns:minmax(0,1fr)}}
+.op{border-radius:14px;padding:16px;color:#fff}
+.op h3{margin:0 0 4px;font:800 22px/1.1 "Fraunces",serif}
+.op .res{font-size:14px;opacity:.95;margin-bottom:10px}
+.op .syms{display:flex;flex-wrap:wrap;gap:6px}
+.op .syms span{background:rgba(255,255,255,.95);color:var(--ink);border-radius:7px;padding:3px 9px;font:700 17px "JetBrains Mono",monospace}
+.op.a{background:var(--topic)} .op.r{background:var(--teal)} .op.l{background:var(--plum)}
+
+/* ---------- versus */
+.vs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;border:1px solid var(--rule);border-radius:12px;overflow:hidden;margin:16px 0}
+.vs > div{padding:12px 16px} .vs .h{font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase}
+.vs .pc{background:var(--blue-soft)} .vs .py{background:#fff6e0}
+.vs .row{display:contents}
+.vs .cell{padding:9px 16px;border-top:1px solid var(--rule);font:500 16px "JetBrains Mono",monospace}
+.vs .cell.pc{background:#f3f8fd} .vs .cell.py{background:#fffaf0}
+.vs .note{grid-column:1/-1;padding:6px 16px 10px;border-top:none;font:400 15px "Source Sans 3",system-ui,sans-serif;color:var(--muted);background:#fff}
+
+/* ---------- misconception cards */
+.mc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0}
+@media (max-width:760px){.mc{grid-template-columns:minmax(0,1fr)}}
+.mc .card{background:#fff;border:1px solid var(--rule);border-top:6px solid var(--red);border-radius:12px;padding:14px 16px}
+.mc .wrong{color:var(--red);font-weight:700} .mc .right{color:var(--green);font-weight:700}
+.mc .card p{margin:6px 0}
+
+figure{margin:18px 0 22px} figcaption{font-size:14px;color:var(--muted);margin-top:6px}
+footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
+
+@media print{
+  html{filter:grayscale(100%)}
+  body{font-size:12pt;background:#fff}
+  .mast{background:#fff;color:var(--ink);border-bottom:4px solid #333} .mast svg.deco,.toc,.home{display:none}
+  .chip{border-color:#999} .sec{grid-template-columns:minmax(0,1fr) 240px;padding:18px 0;break-inside:avoid-page}
+  aside{position:static} a{color:var(--ink);text-decoration:none}
+}
+</style>
+</head>
+
+<body>
+
+<header class="mast">
+  <svg class="deco" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M100 20l50 50-50 50-50-50z"/><path d="M50 70H20v100M150 70h30v100"/></g></svg>
+  <div class="wrap">
+    <a class="home" href="../../programming/">&larr; Year 8 Unit 1: Programming</a>
+    <div class="kicker">Year 8 Guide · Programming · Python</div>
+    <h1>Variables, input and decisions</h1>
+    <p class="dek">How a variable stores a value, what input() gives back, how an if chooses a path, and how to trace a program with if, elif and else.</p>
+    <div class="chips"><span class="chip">Lesson 2 · Variables</span><span class="chip">Lesson 4 · Conditions</span><span class="chip">Lesson 5 · Ask the user</span><span class="chip">R1 · Text or number</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="toc"><b>Contents</b>
+  <a href="#variables">1 Variables</a><a href="#input">2 Asking the user</a><a href="#decisions">3 Making decisions</a>
+  <a href="#tracing">4 Tracing decisions</a><a href="#mistakes">5 Common mistakes</a><a href="#exam">6 In the exam</a>
+</nav>
+
+<!-- 1 ------------------------------------------------------------ -->
+<section class="sec" id="variables">
+  <div>
+    <div class="num">1</div>
+    <h2>Variables and assignment</h2>
+    <p class="lead">A variable stores a value. Every variable has a name. The = sign stores a value in a variable. This is called assignment.</p>
+<pre>speed = 30
+hat_colour = <span class="s">"purple"</span></pre>
+    <p>The first line stores the number 30 in <code>speed</code>. The second line stores the text purple in <code>hat_colour</code>. Text goes in quotation marks. A number does not.</p>
+    <h3>One value at a time</h3>
+<pre>speed = 30
+speed = 50
+<span class="k">print</span>(speed)</pre>
+    <p>The program prints 50. A variable holds one value at a time. The second line replaces 30 with 50. The last value stored is the one that is used.</p>
+    <h3>Why use a variable</h3>
+<pre><span class="k">from</span> turtle <span class="k">import</span> *
+
+step = 40
+
+forward(step)
+right(90)
+forward(step)
+right(90)
+forward(step)
+right(90)
+forward(step)</pre>
+    <p>The number 40 is stored once, in <code>step</code>. To change the size, one line changes: <code>step = 40</code>. Without the variable, the number is typed four times, so four lines must change. If one is missed, the four sides no longer match.</p>
+    <h3>What = does</h3>
+<pre>age = <span class="k">int</span>(<span class="k">input</span>(<span class="s">"How old are you? "</span>))</pre>
+    <p>Python works out the right side first. Then = stores the result in the variable on the left. Here, = stores the number the user typed in <code>age</code>.</p>
+    <h3>The name must match exactly</h3>
+<pre>level = 2
+<span class="k">print</span>(Level)</pre>
+    <p>The program stops with a NameError. The variable is <code>level</code>, with a small l. <code>Level</code> is a different name, and Python has no variable called <code>Level</code>.</p>
+  </div>
+  <aside>
+    <div class="box words"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h11a4 4 0 0 1 4 4v10H8a4 4 0 0 1-4-4z"/><path d="M8 9h7M8 13h5"/></svg>Key words</h4>
+      <dl>
+        <dt>variable</dt><dd>Stores a value. It has a name, such as speed.</dd>
+        <dt>value</dt><dd>What is stored, such as 50 or "purple".</dd>
+        <dt>assignment</dt><dd>Storing a value in a variable with =.</dd>
+        <dt>NameError</dt><dd>The error when Python does not know a name.</dd>
+      </dl></div>
+    <div class="box fact"><h4>Say it</h4>
+      <p>= stores a value in a variable. A new value replaces the old value.</p></div>
+  </aside>
+</section>
+
+<!-- 2 ------------------------------------------------------------ -->
+<section class="sec" id="input">
+  <div>
+    <div class="num">2</div>
+    <h2>Asking the user</h2>
+    <p class="lead">input() shows a question and waits. The user types an answer and presses Enter. input() gives back what the user typed, as text.</p>
+    <h3>input() always gives text</h3>
+    <p>Text is also called a string. A number that the user types is still text.</p>
+<pre>reply = <span class="k">input</span>(<span class="s">"Type a number: "</span>)
+<span class="k">print</span>(reply + reply)</pre>
+    <p>The user types 8. The program prints 88. The value in <code>reply</code> is the text "8". The + sign joins two pieces of text, so "8" and "8" make "88".</p>
+    <h3>int() turns text into a whole number</h3>
+<pre>reply = <span class="k">int</span>(<span class="k">input</span>(<span class="s">"Type a number: "</span>))
+<span class="k">print</span>(reply + reply)</pre>
+    <p>The user types 8. The program prints 16. int() turns the text "8" into the whole number 8, so the + sign adds. int() is needed before a sum, and before comparing the answer with a number.</p>
+    <h3>Text and a number</h3>
+<pre>reply = <span class="k">input</span>(<span class="s">"Type a number: "</span>)
+<span class="k">print</span>(reply + 2)</pre>
+    <p>The program stops with a TypeError. <code>reply</code> holds text, and 2 is a number. Python cannot add text and a number.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Python</th><th>Result</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><code>"7" + "3"</code></td><td><code>73</code></td><td>Two pieces of text: + joins them.</td></tr>
+        <tr><td><code>7 + 3</code></td><td><code>10</code></td><td>Two numbers: + adds them.</td></tr>
+        <tr><td><code>"7" + 3</code></td><td>TypeError</td><td>Text and a number cannot be added.</td></tr>
+        <tr><td><code>int("7") + 3</code></td><td><code>10</code></td><td>int() turns "7" into 7 first.</td></tr>
+      </tbody></table></div>
+    <h3>Asking for a number: the whole line</h3>
+<pre>age = <span class="k">int</span>(<span class="k">input</span>(<span class="s">"How old are you? "</span>))</pre>
+    <p>The line needs input() and int(), with input() inside int(). The question goes in quotation marks.</p>
+  </div>
+  <aside>
+    <div class="box words"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h11a4 4 0 0 1 4 4v10H8a4 4 0 0 1-4-4z"/><path d="M8 9h7M8 13h5"/></svg>Key words</h4>
+      <dl>
+        <dt>input()</dt><dd>Waits for the user to type. Gives back what they typed.</dd>
+        <dt>string</dt><dd>Text, in quotation marks, such as "8".</dd>
+        <dt>integer</dt><dd>A whole number, such as 8.</dd>
+        <dt>int()</dt><dd>Turns text such as "8" into the whole number 8.</dd>
+        <dt>TypeError</dt><dd>The error when Python cannot use two types together.</dd>
+      </dl></div>
+    <div class="box fact"><h4>Say it</h4>
+      <p>input() always gives text. int() turns it into a number.</p></div>
+    <div class="box fact"><h4>Read it inside out</h4>
+      <p><code>int(input("How old are you? "))</code> runs input() first. Then int() turns the answer into a whole number.</p></div>
+  </aside>
+</section>
+
+<!-- 3 ------------------------------------------------------------ -->
+<section class="sec" id="decisions">
+  <div>
+    <div class="num">3</div>
+    <h2>Making decisions</h2>
+    <p class="lead">An if line asks a question. The answer is True or False. If it is True, the indented lines under the if run. If it is False, the lines under else run.</p>
+<pre><span class="k">if</span> temp > 30:
+    <span class="k">print</span>(<span class="s">"hot"</span>)
+<span class="k">else</span>:
+    <span class="k">print</span>(<span class="s">"not hot"</span>)</pre>
+    <div class="tbl"><table>
+      <thead><tr><th>temp</th><th>temp > 30</th><th>Prints</th></tr></thead>
+      <tbody>
+        <tr><td>31</td><td>True</td><td>hot</td></tr>
+        <tr><td>30</td><td>False</td><td>not hot</td></tr>
+        <tr><td>29</td><td>False</td><td>not hot</td></tr>
+      </tbody></table></div>
+    <p>30 is not greater than 30, so the else runs.</p>
+    <h3>Comparison symbols</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Symbol</th><th>Means</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><code>></code></td><td>greater than</td><td><code>30 > 30</code> is False</td></tr>
+        <tr><td><code>>=</code></td><td>greater than or equal to</td><td><code>30 >= 30</code> is True</td></tr>
+        <tr><td><code>&lt;</code></td><td>less than</td><td><code>3 &lt; 5</code> is True</td></tr>
+        <tr><td><code>&lt;=</code></td><td>less than or equal to</td><td><code>5 &lt;= 5</code> is True</td></tr>
+        <tr><td><code>==</code></td><td>equal to</td><td><code>4 == 4</code> is True</td></tr>
+      </tbody></table></div>
+    <p>"18 or more" is written <code>age >= 18</code>. The = in >= includes 18 itself.</p>
+    <h3>One = or two</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Python</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>age = 18</code></td><td>One = stores 18 in age.</td></tr>
+        <tr><td><code>age == 18</code></td><td>Two == compare age with 18. The answer is True or False.</td></tr>
+      </tbody></table></div>
+    <p>An if line compares, so it needs two: <code>if age == 18:</code>. The line <code>if age = 18:</code> is an error.</p>
+    <h3>The colon and the indent</h3>
+<pre><span class="k">if</span> age >= 18:
+    <span class="k">print</span>(<span class="s">"adult"</span>)
+<span class="k">print</span>(<span class="s">"done"</span>)</pre>
+    <p>Every if, elif and else line ends with a colon <code>:</code>. The indent decides which lines are inside the if. <code>print("adult")</code> is indented, so it is inside. <code>print("done")</code> is not indented, so it always runs.</p>
+    <h3>and, or</h3>
+<pre>age = 13
+height = 130
+
+<span class="k">if</span> age >= 12 <span class="k">and</span> height >= 140:
+    <span class="k">print</span>(<span class="s">"Ride"</span>)</pre>
+    <p><code>and</code> needs both parts to be True. <code>age >= 12</code> is True, but <code>height >= 140</code> is False. The print line does not run.</p>
+    <p>With <code>or</code> in place of <code>and</code>, the print line runs. <code>or</code> needs only one part to be True.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>First part</th><th>Second part</th><th>and</th><th>or</th></tr></thead>
+      <tbody>
+        <tr><td>True</td><td>True</td><td>True</td><td>True</td></tr>
+        <tr><td>True</td><td>False</td><td>False</td><td>True</td></tr>
+        <tr><td>False</td><td>True</td><td>False</td><td>True</td></tr>
+        <tr><td>False</td><td>False</td><td>False</td><td>False</td></tr>
+      </tbody></table></div>
+  </div>
+  <aside>
+    <div class="box words"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h11a4 4 0 0 1 4 4v10H8a4 4 0 0 1-4-4z"/><path d="M8 9h7M8 13h5"/></svg>Key words</h4>
+      <dl>
+        <dt>condition</dt><dd>A question with the answer True or False, such as temp > 30.</dd>
+        <dt>if</dt><dd>Runs its indented lines when the condition is True.</dd>
+        <dt>else</dt><dd>Runs its indented lines when the condition is False.</dd>
+        <dt>indent</dt><dd>The spaces at the start of a line. They put the line inside the if.</dd>
+        <dt>colon</dt><dd>The : at the end of every if, elif and else line.</dd>
+      </dl></div>
+    <div class="box fact"><h4>Say it</h4>
+      <p>The if line asks a question. If the answer is True, the indented lines run.</p></div>
+  </aside>
+</section>
+
+<!-- 4 ------------------------------------------------------------ -->
+<section class="sec" id="tracing">
+  <div>
+    <div class="num">4</div>
+    <h2>Tracing decisions</h2>
+    <p class="lead">With if, elif and else, Python checks the tests from the top, one at a time. The first test that is True runs. Python skips every test after it. If no test is True, the else runs.</p>
+<pre><span class="k">if</span> temp >= 30:
+    weather = <span class="s">"hot"</span>
+<span class="k">elif</span> temp >= 20:
+    weather = <span class="s">"warm"</span>
+<span class="k">else</span>:
+    weather = <span class="s">"cold"</span></pre>
+    <figure>
+      <svg viewBox="0 0 560 300" role="img" aria-label="Flowchart. temp >= 30? Yes: hot. No: temp >= 20? Yes: warm. No: cold.">
+        <defs><marker id="fa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1d2327"/></marker></defs>
+        <g font-family="Source Sans 3, sans-serif" font-size="17" fill="#1d2327">
+          <path d="M120 20l90 40-90 40-90-40z" fill="#fdf0e3" stroke="#e07a1f" stroke-width="2.5"/>
+          <text x="120" y="66" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="15">temp &gt;= 30</text>
+          <path d="M120 150l90 40-90 40-90-40z" fill="#fdf0e3" stroke="#e07a1f" stroke-width="2.5"/>
+          <text x="120" y="196" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="15">temp &gt;= 20</text>
+          <rect x="330" y="38" width="170" height="44" rx="8" fill="#e6f4ec" stroke="#2e7d52" stroke-width="2"/>
+          <text x="415" y="66" text-anchor="middle">weather = "hot"</text>
+          <rect x="330" y="168" width="170" height="44" rx="8" fill="#e6f4ec" stroke="#2e7d52" stroke-width="2"/>
+          <text x="415" y="196" text-anchor="middle">weather = "warm"</text>
+          <rect x="35" y="252" width="170" height="44" rx="8" fill="#e6f0fa" stroke="#1f6fb2" stroke-width="2"/>
+          <text x="120" y="280" text-anchor="middle">weather = "cold"</text>
+          <line x1="210" y1="60" x2="326" y2="60" stroke="#1d2327" stroke-width="2.5" marker-end="url(#fa)"/>
+          <text x="262" y="50" text-anchor="middle" font-weight="700">True</text>
+          <line x1="120" y1="100" x2="120" y2="146" stroke="#1d2327" stroke-width="2.5" marker-end="url(#fa)"/>
+          <text x="132" y="130" font-weight="700">False</text>
+          <line x1="210" y1="190" x2="326" y2="190" stroke="#1d2327" stroke-width="2.5" marker-end="url(#fa)"/>
+          <text x="262" y="180" text-anchor="middle" font-weight="700">True</text>
+          <line x1="120" y1="230" x2="120" y2="248" stroke="#1d2327" stroke-width="2.5" marker-end="url(#fa)"/>
+          <text x="132" y="244" font-weight="700">False</text>
+        </g>
+      </svg>
+      <figcaption>Each test is checked only if every test above it was False.</figcaption>
+    </figure>
+    <h3>A trace table</h3>
+    <p>A trace table shows each test for each value. "Not checked" means Python skipped the test, because a test above it was True.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>temp</th><th>temp >= 30</th><th>temp >= 20</th><th>weather</th></tr></thead>
+      <tbody>
+        <tr><td>35</td><td>True</td><td>not checked</td><td>hot</td></tr>
+        <tr><td>30</td><td>True</td><td>not checked</td><td>hot</td></tr>
+        <tr><td>29</td><td>False</td><td>True</td><td>warm</td></tr>
+        <tr><td>20</td><td>False</td><td>True</td><td>warm</td></tr>
+        <tr><td>19</td><td>False</td><td>False</td><td>cold</td></tr>
+      </tbody></table></div>
+    <h3>The edges</h3>
+    <p>A program goes wrong most often on the edge between two paths. Here the edges are 29 and 30, and 19 and 20. Test the values on each side of every edge.</p>
+    <h3>The order of the tests</h3>
+<pre><span class="k">if</span> temp >= 20:
+    weather = <span class="s">"warm"</span>
+<span class="k">elif</span> temp >= 30:
+    weather = <span class="s">"hot"</span>
+<span class="k">else</span>:
+    weather = <span class="s">"cold"</span></pre>
+    <p>This program never stores "hot". Every temp of 30 or more is also 20 or more, so the first test catches it. Python skips the elif. Put the biggest test first.</p>
+    <h3>A menu</h3>
+<pre>choice = <span class="k">int</span>(<span class="k">input</span>(<span class="s">"Choose 1, 2, 3 or 4: "</span>))
+price = 0
+<span class="k">if</span> choice == 1:
+    price = 3
+<span class="k">elif</span> choice == 2:
+    price = 4
+<span class="k">elif</span> choice == 3:
+    price = 5
+<span class="k">elif</span> choice == 4:
+    price = 2
+<span class="k">else</span>:
+    <span class="k">print</span>(<span class="s">"Choose a number from 1 to 4."</span>)</pre>
+    <div class="tbl"><table>
+      <thead><tr><th>The user types</th><th>Prints</th><th>price afterwards</th></tr></thead>
+      <tbody>
+        <tr><td>3</td><td>nothing</td><td>5</td></tr>
+        <tr><td>0</td><td>Choose a number from 1 to 4.</td><td>0</td></tr>
+        <tr><td>5</td><td>Choose a number from 1 to 4.</td><td>0</td></tr>
+      </tbody></table></div>
+    <p>A number that is not on the menu, such as 0 or 5, goes to the else. The else prints a message and stores nothing, so <code>price</code> keeps the value it had before the if: 0.</p>
+    <p>The menu allows 1 to 4. The edge tests for this menu are the lowest and the highest it allows: 1 and 4.</p>
+  </div>
+  <aside>
+    <div class="box words"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h11a4 4 0 0 1 4 4v10H8a4 4 0 0 1-4-4z"/><path d="M8 9h7M8 13h5"/></svg>Key words</h4>
+      <dl>
+        <dt>elif</dt><dd>Short for else if. A second test, checked only when the tests above it are False.</dd>
+        <dt>trace</dt><dd>Follow a program one line at a time and write down each value.</dd>
+        <dt>edge (boundary)</dt><dd>The value where the program changes from one path to another.</dd>
+        <dt>menu</dt><dd>A list of numbered choices for the user.</dd>
+      </dl></div>
+    <div class="box fact"><h4>Only one path runs</h4>
+      <p>In an if, elif and else, only one path runs. After it, Python goes to the first line after the whole if.</p></div>
+  </aside>
+</section>
+
+<!-- 5 ------------------------------------------------------------ -->
+<section class="sec full" id="mistakes">
+  <div>
+    <div class="num">5</div>
+    <h2>Common mistakes</h2>
+    <div class="mc">
+      <div class="card"><p class="wrong">✗ The first value stays in the variable</p>
+        <p><code>speed = 30</code> then <code>speed = 50</code>. The 30 is replaced.</p>
+        <p class="right">✓ The last value stored is used: 50</p></div>
+      <div class="card"><p class="wrong">✗ input() gives a number</p>
+        <p>The user types 8. <code>reply + reply</code> does not give 16.</p>
+        <p class="right">✓ input() gives text: "8" + "8" is 88. Use int() to get 16</p></div>
+      <div class="card"><p class="wrong">✗ int() is left out of the input line</p>
+        <p><code>age = input("How old are you? ")</code> stores text.</p>
+        <p class="right">✓ <code>age = int(input("How old are you? "))</code></p></div>
+      <div class="card"><p class="wrong">✗ One = in an if line</p>
+        <p><code>if age = 18:</code> is an error. One = stores a value.</p>
+        <p class="right">✓ Two == compare: <code>if age == 18:</code></p></div>
+      <div class="card"><p class="wrong">✗ > includes the number itself</p>
+        <p>temp is 30. <code>temp > 30</code> is not True.</p>
+        <p class="right">✓ <code>30 > 30</code> is False. <code>30 >= 30</code> is True</p></div>
+      <div class="card"><p class="wrong">✗ The colon is missing</p>
+        <p><code>if age >= 18</code> is an error.</p>
+        <p class="right">✓ Every if, elif and else line ends with a colon: <code>if age >= 18:</code></p></div>
+      <div class="card"><p class="wrong">✗ and means either part</p>
+        <p>age is 13 and height is 130. <code>age >= 12 and height >= 140</code> is not True.</p>
+        <p class="right">✓ and needs both parts to be True. or needs one</p></div>
+      <div class="card"><p class="wrong">✗ Python checks every test</p>
+        <p>temp is 35. The elif <code>temp >= 20</code> is not checked.</p>
+        <p class="right">✓ The first True test runs. Python skips the rest</p></div>
+      <div class="card"><p class="wrong">✗ The smaller test comes first</p>
+        <p><code>if temp >= 20:</code> before <code>elif temp >= 30:</code> means "hot" is never stored.</p>
+        <p class="right">✓ Put the biggest test first</p></div>
+      <div class="card"><p class="wrong">✗ The else changes the variable</p>
+        <p>The user types 5. The else prints a message only.</p>
+        <p class="right">✓ price keeps the value it had before the if: 0</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 ------------------------------------------------------------ -->
+<section class="sec" id="exam">
+  <div>
+    <div class="num">6</div>
+    <h2>In the exam</h2>
+    <div class="box exam"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h3"/></svg>The paper</h4>
+      <p>The exam is on paper, with no computer. It is 40 minutes long and has 36 marks. Every program on it is in Python. Most answers are a word, a number or one line of code.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Section</th><th>Topic</th><th>Marks</th><th>In this guide</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>Variables and assignment</td><td>5</td><td><a href="#variables">1</a></td></tr>
+          <tr><td>B</td><td>Asking the user</td><td>9</td><td><a href="#input">2</a></td></tr>
+          <tr><td>C</td><td>Making decisions</td><td>10</td><td><a href="#decisions">3</a></td></tr>
+          <tr><td>D</td><td>Tracing decisions</td><td>12</td><td><a href="#tracing">4</a></td></tr>
+        </tbody></table></div></div>
+    <div class="box exam"><h4>What the questions ask for</h4>
+      <ul>
+        <li>what a program prints</li>
+        <li>what is stored in a variable after a program runs</li>
+        <li>one line of code: storing a value, asking for a number, an if line, a print line</li>
+        <li>what a symbol does: =, ==, >, >=</li>
+        <li>what is wrong with a line</li>
+        <li>whether an if with and or or is True</li>
+        <li>which values test the edges</li>
+        <li>why a program gives its result</li>
+      </ul></div>
+    <div class="box exam"><h4>Working on paper</h4>
+      <p>Read a program one line at a time, from the top. Write down the value of a variable each time it changes. For an if, elif and else, write True or False next to each test, and stop at the first True.</p></div>
+  </div>
+  <aside>
+    <div class="box tryit"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4 10-10"/></svg>Practise</h4>
+      <ul>
+        <li><a href="../../variables/">Variables</a>: Steps 1 to 5 and the exit check</li>
+        <li><a href="../../conditions/">Conditions</a>: Steps 1 to 5 and the exit check</li>
+        <li><a href="../../ask-the-user/">Ask the user</a>: Steps 1 to 5 and the exit check</li>
+        <li><a href="../../r1-text-or-number/">R1 Text or number</a></li>
+        <li><a href="../../exam-review/">R2 Exam review</a></li>
+      </ul></div>
+  </aside>
+</section>
+
+<footer>Year 8 Computer Science · Guide to Unit 1: Lessons 2, 4 and 5, and R1. Source: the Year 8 lesson pages.</footer>
+</div>
+</body>
+</html>

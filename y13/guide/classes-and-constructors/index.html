@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Classes, attributes and constructors · Year 13 Guide</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="description" content="Declaring a class in Python for Paper 4: private attributes, the comment block that stands in for a declaration, constructors, and get and set methods.">
+<meta name="guide-order" content="7">
+<meta name="guide-unit" content="oop">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1d2327; --muted:#55616a; --paper:#fffdf8; --rule:#e4ded2;
+  --topic:#6b3fa0; --topic-deep:#4a2a72; --topic-soft:#f1eaf9;
+  --teal:#1f7a7a; --teal-soft:#e3f3f2; --amber:#c47d16; --amber-soft:#fdf2df;
+  --red:#c0392b; --red-soft:#fbe9e7; --green:#2e7d52; --green-soft:#e6f4ec;
+  --blue:#1f6fb2; --blue-soft:#e6f0fa; --code-bg:#fbf7f0;
+  --kw:#1f6fb2; --str:#2e7d52;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 18px/1.6 "Source Sans 3",system-ui,sans-serif}
+a{color:var(--topic-deep)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* ---------- masthead */
+.mast{background:linear-gradient(120deg,var(--topic) 0%,#9a6ec9 100%);color:#fff;position:relative;overflow:hidden}
+.mast .wrap{padding-top:28px;padding-bottom:44px}
+.kicker{font:700 13px/1 "Source Sans 3",system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;opacity:.92}
+.mast h1{font:800 clamp(40px,7vw,76px)/1.0 "Fraunces",Georgia,serif;margin:14px 0 12px;letter-spacing:-.01em;max-width:15ch}
+.dek{font-size:21px;max-width:52ch;margin:0;opacity:.96}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.chip{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:600}
+.home{display:inline-block;margin-bottom:14px;color:#fff;font:600 15px/1 "Source Sans 3",system-ui,sans-serif;text-decoration:none;opacity:.92}.home:hover{text-decoration:underline}
+.mast svg.deco{position:absolute;right:-30px;top:10px;width:360px;opacity:.20}
+@media (max-width:700px){.mast svg.deco{display:none}}
+
+/* ---------- contents */
+.toc{display:flex;flex-wrap:wrap;gap:6px 18px;padding:14px 0;border-bottom:1px solid var(--rule);font-size:15px;font-weight:600}
+.toc a{text-decoration:none;color:var(--muted)} .toc a:hover{color:var(--topic-deep)}
+.toc b{color:var(--topic-deep)}
+
+/* ---------- layout */
+.sec{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;padding:44px 0;border-bottom:1px solid var(--rule)}
+.sec.full{grid-template-columns:minmax(0,1fr)}
+@media (max-width:900px){.sec{grid-template-columns:minmax(0,1fr)}}
+.num{font:800 15px/1 "Fraunces",serif;color:var(--topic);letter-spacing:.06em}
+h2{font:800 clamp(28px,4vw,40px)/1.1 "Fraunces",Georgia,serif;margin:6px 0 16px;color:var(--ink)}
+h3{font:700 21px/1.25 "Source Sans 3",system-ui,sans-serif;margin:26px 0 8px}
+p{margin:0 0 14px;max-width:68ch}
+.lead{font-size:20px;color:#2c353b}
+
+/* ---------- code */
+code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.9em}
+code{background:var(--code-bg);border:1px solid var(--rule);border-radius:5px;padding:1px 5px}
+pre{background:var(--code-bg);border:1px solid var(--rule);border-left:5px solid var(--topic);border-radius:8px;padding:14px 18px;overflow-x:auto;font:500 16px/1.55 "JetBrains Mono",monospace;margin:10px 0 16px}
+pre .k{color:var(--kw);font-weight:700} pre .s{color:var(--str)} pre .c{color:#8a8f94;font-style:italic}
+pre.out{border-left-color:var(--amber);background:#fffdf5}
+
+/* ---------- boxes */
+.box{border-radius:12px;padding:16px 18px;margin:18px 0;border:1px solid transparent}
+.box h4{margin:0 0 6px;font:800 13px/1.2 "Source Sans 3",system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.box p:last-child,.box ul:last-child{margin-bottom:0}
+.box ul{margin:6px 0 0;padding-left:20px}
+.exam{background:var(--blue-soft);border-color:#c5dbef} .exam h4{color:var(--blue)}
+.mistake{background:var(--red-soft);border-color:#f2c6c0} .mistake h4{color:var(--red)}
+.tryit{background:var(--green-soft);border-color:#c3e3cf} .tryit h4{color:var(--green)}
+.words{background:var(--topic-soft);border-color:#ddcdf0} .words h4{color:var(--topic-deep)}
+.fact{background:var(--amber-soft);border-color:#f0ddb6} .fact h4{color:var(--amber)}
+.ic{width:18px;height:18px;flex:none}
+dl{margin:8px 0 0} dt{font-weight:700} dd{margin:0 0 10px;color:#3a454c}
+aside{align-self:start;position:sticky;top:16px}
+@media (max-width:900px){aside{position:static}}
+
+/* ---------- tables */
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:17px}
+th{background:#2f3b42;color:#fff;text-align:left;padding:10px 12px;font-weight:700}
+td{padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+tbody tr:nth-child(even) td{background:#f6f9fc}
+.tbl{overflow-x:auto}
+
+/* ---------- part cards */
+.ops{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0}
+@media (max-width:760px){.ops{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:460px){.ops{grid-template-columns:minmax(0,1fr)}}
+.op{border-radius:14px;padding:16px;color:#fff}
+.op h3{margin:0 0 4px;font:800 20px/1.1 "Fraunces",serif;color:#fff}
+.op .res{font-size:14px;opacity:.95}
+.op.a{background:var(--topic)} .op.b{background:var(--teal)}
+.op.c{background:var(--blue)} .op.d{background:var(--green)}
+
+/* ---------- versus */
+.vs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;border:1px solid var(--rule);border-radius:12px;overflow:hidden;margin:16px 0}
+.vs > div{padding:12px 16px} .vs .h{font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase}
+.vs .pc{background:var(--blue-soft)} .vs .py{background:#fff6e0}
+.vs .cell{padding:9px 16px;border-top:1px solid var(--rule);font:500 15px/1.5 "JetBrains Mono",monospace;white-space:pre-wrap}
+.vs .cell.pc{background:#f3f8fd} .vs .cell.py{background:#fffaf0}
+.vs .note{grid-column:1/-1;padding:6px 16px 10px;border-top:none;font:400 15px "Source Sans 3",system-ui,sans-serif;color:var(--muted);background:#fff}
+
+/* ---------- misconception cards */
+.mc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0}
+@media (max-width:760px){.mc{grid-template-columns:minmax(0,1fr)}}
+.mc .card{background:#fff;border:1px solid var(--rule);border-top:6px solid var(--red);border-radius:12px;padding:14px 16px}
+.mc .wrong{color:var(--red);font-weight:700} .mc .right{color:var(--green);font-weight:700}
+.mc .card p{margin:6px 0}
+.mc .src{font-size:14px;color:var(--muted)}
+
+figure{margin:18px 0 22px} figcaption{font-size:14px;color:var(--muted);margin-top:6px}
+footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
+
+@media print{
+  html{filter:grayscale(100%)}
+  body{font-size:12pt;background:#fff}
+  .mast{background:#fff;color:var(--ink);border-bottom:4px solid #333} .mast svg.deco,.toc,.home{display:none}
+  .chip{border-color:#999} .sec{grid-template-columns:minmax(0,1fr) 240px;padding:18px 0;break-inside:avoid-page}
+  aside{position:static} a{color:var(--ink);text-decoration:none}
+}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <svg class="deco" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><rect x="28" y="24" width="88" height="56" rx="8"/><path d="M28 44h88"/><rect x="92" y="108" width="80" height="52" rx="8"/><path d="M92 126h80"/><path d="M72 80v14h60v14"/><circle cx="52" cy="126" r="16"/></g></svg>
+  <div class="wrap">
+    <a class="home" href="../../oop/">&larr; Year 13 Unit 3: Object-oriented programming</a>
+    <div class="kicker">Year 13 Guide · Paper 4 · Object-oriented programming</div>
+    <h1>Classes, attributes and constructors</h1>
+    <p class="dek">Every Paper 4 since 2021 has asked for a class. This is the shape of the answer in Python, and the one line of it that has no equivalent in the language.</p>
+    <div class="chips"><span class="chip">Syllabus 20.1</span><span class="chip">Pseudocode guide 10.1 and 10.2</span><span class="chip">Paper 4 Practical</span><span class="chip">Python console mode</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="toc"><b>Contents</b>
+  <a href="#what">1 What a class is</a><a href="#parts">2 The four parts</a><a href="#private">3 Private, and the comment block</a>
+  <a href="#worked">4 Worked example</a><a href="#getset">5 Get and set</a><a href="#python">6 Pseudocode and Python</a>
+  <a href="#mistakes">7 Common mistakes</a><a href="#exam">8 In the exam</a>
+</nav>
+
+<!-- 1 ------------------------------------------------------------ -->
+<section class="sec" id="what">
+  <div>
+    <div class="num">1</div>
+    <h2>What a class is</h2>
+    <p class="lead">A class is a definition. An object is one thing made from that definition. The class is written once and says what every object of that kind holds and what it can do. Each object then keeps its own copy of the values.</p>
+    <figure>
+      <svg viewBox="0 0 760 290" role="img" aria-label="One class definition with four attributes, and two objects made from it holding different values">
+        <g font-family="Source Sans 3, sans-serif">
+          <rect x="8" y="16" width="250" height="150" rx="14" fill="#f1eaf9" stroke="#6b3fa0" stroke-width="2.5"/>
+          <text x="24" y="44" font-size="19" font-weight="700" fill="#4a2a72">class Picture</text>
+          <text x="24" y="70" font-size="15" font-family="JetBrains Mono, monospace" fill="#1d2327">__Description</text>
+          <text x="24" y="92" font-size="15" font-family="JetBrains Mono, monospace" fill="#1d2327">__Width</text>
+          <text x="24" y="114" font-size="15" font-family="JetBrains Mono, monospace" fill="#1d2327">__Height</text>
+          <text x="24" y="136" font-size="15" font-family="JetBrains Mono, monospace" fill="#1d2327">__FrameColour</text>
+          <text x="24" y="158" font-size="14" fill="#55616a">the definition, written once</text>
+
+          <path d="M262 76h58M262 118h58" stroke="#55616a" stroke-width="2.5" marker-end="url(#a2)"/>
+          <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#55616a"/></marker></defs>
+          <text x="291" y="66" font-size="13" text-anchor="middle" fill="#55616a">new</text>
+
+          <rect x="330" y="16" width="200" height="118" rx="12" fill="#e3f3f2" stroke="#1f7a7a" stroke-width="2"/>
+          <text x="346" y="42" font-size="17" font-weight="700" fill="#1f7a7a">MyPicture</text>
+          <text x="346" y="66" font-size="14" font-family="JetBrains Mono, monospace">"Flowers"</text>
+          <text x="346" y="86" font-size="14" font-family="JetBrains Mono, monospace">30, 40</text>
+          <text x="346" y="106" font-size="14" font-family="JetBrains Mono, monospace">"black"</text>
+
+          <rect x="552" y="16" width="200" height="118" rx="12" fill="#e6f4ec" stroke="#2e7d52" stroke-width="2"/>
+          <text x="568" y="42" font-size="17" font-weight="700" fill="#2e7d52">Second</text>
+          <text x="568" y="66" font-size="14" font-family="JetBrains Mono, monospace">"Boats"</text>
+          <text x="568" y="86" font-size="14" font-family="JetBrains Mono, monospace">10, 20</text>
+          <text x="568" y="106" font-size="14" font-family="JetBrains Mono, monospace">"pine"</text>
+
+          <text x="541" y="160" text-anchor="middle" font-size="15" fill="#55616a">two objects, each with its own values</text>
+
+          <rect x="8" y="196" width="744" height="70" rx="12" fill="#fff" stroke="#e4ded2"/>
+          <text x="28" y="224" font-size="16" font-family="JetBrains Mono, monospace" fill="#1d2327">MyPicture = Picture("Flowers", 30, 40, "black")</text>
+          <text x="28" y="250" font-size="16" font-family="JetBrains Mono, monospace" fill="#1d2327">Second    = Picture("Boats", 10, 20, "pine")</text>
+        </g>
+      </svg>
+      <figcaption>The constructor runs once for each object and fills that object's own attributes.</figcaption>
+    </figure>
+    <p>Changing one object does not touch the other. That separation is the reason a class is used instead of four loose variables for every picture.</p>
+  </div>
+  <aside>
+    <div class="box words"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h11a4 4 0 0 1 4 4v10H8a4 4 0 0 1-4-4z"/><path d="M8 9h7M8 13h5"/></svg>Key words</h4>
+      <dl>
+        <dt>class</dt><dd>The definition of a kind of object.</dd>
+        <dt>object</dt><dd>One instance made from a class.</dd>
+        <dt>instantiate</dt><dd>To create an object from a class.</dd>
+        <dt>attribute</dt><dd>A value an object holds.</dd>
+        <dt>method</dt><dd>A subroutine that belongs to a class.</dd>
+        <dt>constructor</dt><dd>The method that runs when an object is created.</dd>
+        <dt>encapsulation</dt><dd>Keeping attributes private and reaching them only through methods.</dd>
+      </dl></div>
+  </aside>
+</section>
+
+<!-- 2 ------------------------------------------------------------ -->
+<section class="sec" id="parts">
+  <div>
+    <div class="num">2</div>
+    <h2>The four parts of a class</h2>
+    <p class="lead">A Paper 4 class question is built from the same four parts every time, and the question says which of them to write.</p>
+    <div class="ops">
+      <div class="op a"><h3>Header</h3><div class="res">names the class</div></div>
+      <div class="op b"><h3>Attributes</h3><div class="res">what each object holds, with data types</div></div>
+      <div class="op c"><h3>Constructor</h3><div class="res">sets the starting values</div></div>
+      <div class="op d"><h3>Get and set</h3><div class="res">read and change an attribute</div></div>
+    </div>
+    <p>Cambridge pseudocode writes a class like this. The constructor is a procedure named <code>NEW</code>.</p>
+<pre><span class="k">CLASS</span> Pet
+    <span class="k">PRIVATE</span> Name : <span class="k">STRING</span>
+    <span class="k">PUBLIC PROCEDURE</span> NEW(GivenName : <span class="k">STRING</span>)
+        Name <span class="k">&larr;</span> GivenName
+    <span class="k">ENDPROCEDURE</span>
+<span class="k">ENDCLASS</span></pre>
+    <p>Paper 4 is answered in a programming language rather than in pseudocode, so this shape has to be written again in Python. Three of the four parts translate directly. The attribute declarations do not, and section 3 is about why.</p>
+  </div>
+  <aside>
+    <div class="box fact"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.5"/></svg>Read the question</h4>
+      <p>The question names the parts it wants. Where it says to write the class and its constructor and no other methods, writing the get and set methods as well earns nothing and costs time the rest of the paper needs.</p></div>
+  </aside>
+</section>
+
+<!-- 3 ------------------------------------------------------------ -->
+<section class="sec" id="private">
+  <div>
+    <div class="num">3</div>
+    <h2>Private, and the comment block</h2>
+    <p class="lead">Python has no way to declare an attribute. An attribute comes into existence when the constructor assigns to it, there is no data type to state, and privacy is a naming convention rather than a keyword. Cambridge works round all three at once.</p>
+    <h3>Two leading underscores</h3>
+    <p>An attribute named with two leading underscores cannot be reached from outside the class by that name. One underscore, or none, leaves it reachable and does not count as private.</p>
+<pre>self.__Description   <span class="c"># private</span>
+self._Description    <span class="c"># not private</span>
+self.Description     <span class="c"># not private</span></pre>
+    <h3>The comment block is the declaration</h3>
+    <p>Because there is nowhere to write the data types, the question tells Python candidates to write the attribute declarations as comments. That block is worth a mark of its own, and the data type has to appear in it.</p>
+<pre><span class="k">class</span> Picture:
+    <span class="c">#self.__Description string</span>
+    <span class="c">#self.__Width integer</span>
+    <span class="c">#self.__Height integer</span>
+    <span class="c">#self.__FrameColour string</span></pre>
+    <p>Some mark schemes show the data type as a comment on each assignment line inside the constructor instead of as a block above it. Either form earns the mark. What loses it is writing the names with no types, or leaving the comments out altogether.</p>
+  </div>
+  <aside>
+    <div class="box fact"><h4>Check it is private</h4>
+      <p>Create an object and try to read the attribute by name from outside the class.</p>
+<pre class="out">AttributeError: 'Picture' object
+has no attribute '__Description'</pre>
+      <p>That error is the proof. If the value prints instead, the attribute is not private.</p></div>
+    <div class="box words"><h4>Not every question asks</h4>
+      <p>Some class questions ask for private attributes and some do not. Where the question does not say private, attributes without underscores are correct and can be read directly.</p></div>
+  </aside>
+</section>
+
+<!-- 4 ------------------------------------------------------------ -->
+<section class="sec" id="worked">
+  <div>
+    <div class="num">4</div>
+    <h2>Worked example</h2>
+    <p class="lead">November 2021 Paper 41 Question 2 defines a class <code>Picture</code> holding a description, a width, a height and a frame colour. The constructor takes all four as parameters and sets them to the private attributes.</p>
+    <h3>In pseudocode</h3>
+<pre><span class="k">CLASS</span> Picture
+    <span class="k">PRIVATE</span> Description : <span class="k">STRING</span>
+    <span class="k">PRIVATE</span> Width : <span class="k">INTEGER</span>
+    <span class="k">PRIVATE</span> Height : <span class="k">INTEGER</span>
+    <span class="k">PRIVATE</span> FrameColour : <span class="k">STRING</span>
+    <span class="k">PUBLIC PROCEDURE</span> NEW(DescriptionP : <span class="k">STRING</span>, WidthP : <span class="k">INTEGER</span>,
+                         HeightP : <span class="k">INTEGER</span>, FrameColourP : <span class="k">STRING</span>)
+        Description <span class="k">&larr;</span> DescriptionP
+        Width <span class="k">&larr;</span> WidthP
+        Height <span class="k">&larr;</span> HeightP
+        FrameColour <span class="k">&larr;</span> FrameColourP
+    <span class="k">ENDPROCEDURE</span>
+<span class="k">ENDCLASS</span></pre>
+    <h3>In Python</h3>
+<pre><span class="k">class</span> Picture:
+    <span class="c">#self.__Description string</span>
+    <span class="c">#self.__Width integer</span>
+    <span class="c">#self.__Height integer</span>
+    <span class="c">#self.__FrameColour string</span>
+
+    <span class="k">def</span> __init__(self, DescriptionP, WidthP,
+                 HeightP, FrameColourP):
+        self.__Description = DescriptionP
+        self.__Width = <span class="k">int</span>(WidthP)
+        self.__Height = <span class="k">int</span>(HeightP)
+        self.__FrameColour = FrameColourP</pre>
+    <p>The P on the end of each parameter name keeps the parameter apart from the attribute it is assigned to. It is a convention rather than a rule, and any clear naming works.</p>
+    <h3>Creating an object and reading it back</h3>
+<pre>MyPicture = Picture(<span class="s">"Flowers"</span>, 30, 40, <span class="s">"black"</span>)
+<span class="k">print</span>(MyPicture.GetDescription())
+MyPicture.SetDescription(<span class="s">"Trees"</span>)
+<span class="k">print</span>(MyPicture.GetDescription())</pre>
+<pre class="out">Flowers
+Trees</pre>
+    <p>The dot says the method belongs to that object. Calling <code>GetDescription()</code> on its own, without an object in front of it, is not a method call and will not run.</p>
+  </div>
+  <aside>
+    <div class="box fact"><h4>Where the five marks go</h4>
+      <ul>
+        <li>The class header, named correctly.</li>
+        <li>The four attribute declarations, with data types.</li>
+        <li>Those attributes being private.</li>
+        <li>The constructor header, taking four parameters.</li>
+        <li>The four parameters assigned to the four attributes.</li>
+      </ul>
+      <p>The last of these is one mark for all four assignments together, so one parameter sent to the wrong attribute loses it.</p></div>
+  </aside>
+</section>
+
+<!-- 5 ------------------------------------------------------------ -->
+<section class="sec" id="getset">
+  <div>
+    <div class="num">5</div>
+    <h2>Get and set methods</h2>
+    <p class="lead">A private attribute cannot be reached from outside the class, so every class that hides its attributes needs methods to read them and to change them. A get returns a value. A set changes one and returns nothing.</p>
+<pre>    <span class="k">def</span> GetDescription(self):
+        <span class="k">return</span> self.__Description
+
+    <span class="k">def</span> SetDescription(self, DescriptionP):
+        self.__Description = DescriptionP</pre>
+    <p>A get method takes no parameter beyond <code>self</code>. A set method takes exactly one. A get that prints rather than returns earns nothing, because the value never reaches the code that asked for it.</p>
+    <h3>Set methods that validate</h3>
+    <p>A set method often has work to do beyond assigning. Where a question states a limit, the checks belong inside the set method, so every route into the attribute is protected by them.</p>
+<pre>    <span class="k">def</span> SetYPosition(self, Value):
+        self.YPosition = self.YPosition + Value
+        <span class="k">if</span> self.YPosition &gt; 10000:
+            self.YPosition = 10000
+        <span class="k">elif</span> self.YPosition &lt; 0:
+            self.YPosition = 0</pre>
+    <p>Note that the value is added to the attribute rather than written over it. The question states which of the two is wanted, and the two are not interchangeable.</p>
+  </div>
+  <aside>
+    <div class="box tryit"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4 10-10"/></svg>Test the boundary</h4>
+      <p>Set the position to 9995 and add 20. Set it to 5 and subtract 20.</p>
+<pre class="out">10000 0</pre>
+      <p>Testing at the limit is the only way to know the two checks work. A test in the middle of the range passes whether they are there or not.</p></div>
+  </aside>
+</section>
+
+<!-- 6 ------------------------------------------------------------ -->
+<section class="sec full" id="python">
+  <div>
+    <div class="num">6</div>
+    <h2>Pseudocode and Python</h2>
+    <p class="lead">Questions state the design in pseudocode and the answer is written in Python. These are the parts that change on the way across.</p>
+    <div class="vs" role="table" aria-label="Class pseudocode and Python compared">
+      <div class="h pc">Cambridge pseudocode</div><div class="h py">Python</div>
+      <div class="cell pc">CLASS Picture</div><div class="cell py">class Picture:</div><div class="note">The class header.</div>
+      <div class="cell pc">PRIVATE Width : INTEGER</div><div class="cell py">#self.__Width integer</div><div class="note">Python has no declaration, so the comment stands in for it and the data type is written there.</div>
+      <div class="cell pc">PUBLIC PROCEDURE NEW(…)</div><div class="cell py">def __init__(self, …):</div><div class="note">The constructor. In Python it is always named __init__ and always takes self first.</div>
+      <div class="cell pc">Width ← WidthP</div><div class="cell py">self.__Width = WidthP</div><div class="note">Assigning to an attribute. Python needs self in front of the name.</div>
+      <div class="cell pc">PUBLIC FUNCTION GetWidth() RETURNS INTEGER</div><div class="cell py">def GetWidth(self):</div><div class="note">A get method. The return type is not written in Python.</div>
+      <div class="cell pc">MyPicture ← NEW Picture("Flowers", 30, 40, "black")</div><div class="cell py">MyPicture = Picture("Flowers", 30, 40, "black")</div><div class="note">Creating an object. Python has no NEW keyword.</div>
+      <div class="cell pc">MyPicture.SetDescription("Trees")</div><div class="cell py">MyPicture.SetDescription("Trees")</div><div class="note">Calling a method on an object. The same in both.</div>
+      <div class="cell pc">CLASS Cat INHERITS Pet</div><div class="cell py">class Cat(Pet):</div><div class="note">Inheritance. The parent goes in brackets in Python.</div>
+      <div class="cell pc">SUPER.NEW(GivenName)</div><div class="cell py">super().__init__(GivenName)</div><div class="note">Calling the parent constructor.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 ------------------------------------------------------------ -->
+<section class="sec full" id="mistakes">
+  <div>
+    <div class="num">7</div>
+    <h2>Common mistakes</h2>
+    <div class="mc">
+      <div class="card"><p class="wrong">&#10007; No comment block</p>
+        <p>The class header and the constructor are written, and the attributes appear only inside the constructor.</p>
+        <p class="right">&#10003; Write the declarations as comments, with a data type on each.</p>
+        <p class="src">June 2023 Paper 41 Question 2(a), where the block is one of five marks.</p></div>
+      <div class="card"><p class="wrong">&#10007; Names with no data types</p>
+        <p>A block listing the attribute names only does not meet what the mark point asks for.</p>
+        <p class="right">&#10003; <code>#self.__MaxSpeed integer</code></p>
+        <p class="src">The same question. The words "including data types" are in the mark point.</p></div>
+      <div class="card"><p class="wrong">&#10007; One underscore, or none</p>
+        <p><code>self.ID</code> and <code>self._ID</code> are reachable from outside the class.</p>
+        <p class="right">&#10003; <code>self.__ID</code></p>
+        <p class="src">Any question that states all attributes must be private.</p></div>
+      <div class="card"><p class="wrong">&#10007; A parameter sent to the wrong attribute</p>
+        <p>The program still runs, and the values are in the wrong places. The single mark for the assignments is lost.</p>
+        <p class="right">&#10003; Create an object and print every attribute back through its get method.</p>
+        <p class="src">November 2021 Paper 41 Question 2(a).</p></div>
+      <div class="card"><p class="wrong">&#10007; Writing methods the question excluded</p>
+        <p>Where a question asks for the class and its constructor and no other methods, extra methods earn nothing.</p>
+        <p class="right">&#10003; Write what is asked for, then move to the next part.</p>
+        <p class="src">June 2023 Paper 41 Question 2(a) and November 2021 Paper 41 Question 2(a).</p></div>
+      <div class="card"><p class="wrong">&#10007; A get method that prints</p>
+        <p>Printing inside the method sends the value to the screen instead of back to the caller.</p>
+        <p class="right">&#10003; <code>return self.__Width</code></p>
+        <p class="src">November 2021 Paper 41 Question 2(b).</p></div>
+      <div class="card"><p class="wrong">&#10007; A set method that replaces when it should add</p>
+        <p>Where the question says the value is added to the current position, assigning the parameter over the attribute is a different operation.</p>
+        <p class="right">&#10003; <code>self.YPosition = self.YPosition + Value</code></p>
+        <p class="src">November 2023 Paper 41 Question 3(a)(iii).</p></div>
+      <div class="card"><p class="wrong">&#10007; A class that is never instantiated</p>
+        <p>A class on its own produces no output, so a fault in it is invisible until an object is made.</p>
+        <p class="right">&#10003; Create an object and call a method on it before moving on.</p>
+        <p class="src">Any question whose later parts ask for a screenshot of output.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 ------------------------------------------------------------ -->
+<section class="sec" id="exam">
+  <div>
+    <div class="num">8</div>
+    <h2>In the exam</h2>
+    <div class="box exam"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h3"/></svg>Declare the class and its constructor</h4>
+      <p>November 2021 Paper 41 Question 2(a) and June 2023 Paper 41 Question 2(a) both give five marks for this and no more. The marks are spread across the header, the declarations, privacy, the constructor header and the assignments, so a class with a perfect constructor and no comment block takes four of the five.</p></div>
+    <div class="box exam"><h4>The get and set methods follow</h4>
+      <p>November 2021 Paper 41 Question 2(b) gives three marks for four get methods, and Question 2(c) two marks for one set method. November 2023 Paper 41 Question 3(a)(iii) gives four for two set methods, because those two have to limit the value as well as change it.</p></div>
+    <div class="box exam"><h4>Then an array of objects</h4>
+      <p>November 2021 Paper 41 Question 2(d) gives one mark for declaring an array of 100 objects of that class. Later parts of the same question read the data for those objects out of a text file, so a class question and a file question are often the same question.</p></div>
+    <div class="box exam"><h4>Evidence</h4>
+      <p>Program code is copied into the numbered part of the evidence document, and where a part says to test the program, a screenshot of the output goes in beside it. A class that has never been instantiated produces no output to screenshot, so those marks cannot be earned from code alone.</p></div>
+  </div>
+  <aside>
+    <div class="box tryit"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4 10-10"/></svg>Check your own class</h4>
+      <ul>
+        <li>Does the comment block name every attribute with a data type?</li>
+        <li>Two leading underscores on each one?</li>
+        <li>Does the constructor take the right number of parameters?</li>
+        <li>Does each parameter reach the attribute of the same name?</li>
+        <li>Have you created an object and called a method on it?</li>
+      </ul></div>
+    <div class="box words"><h4>Next</h4>
+      <p>Inheritance builds one class on another and lets a method be replaced. It is covered in the <a href="../../oop/">unit page</a> lessons.</p></div>
+  </aside>
+</section>
+
+<footer>Year 13 Computer Science · Cambridge International AS &amp; A Level 9618 · Guide for Paper 4 Practical, syllabus section 20.1. Sources: the 9618 syllabus, the Cambridge pseudocode guide sections 10.1 and 10.2, and the published question papers named on this page. Every Python example on this page was run before publication.</footer>
+</div>
+</body>
+</html>

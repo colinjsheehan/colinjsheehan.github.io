@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inheritance and polymorphism · Year 13 Guide</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="description" content="Building one class on another in Python for Paper 4: the parent in brackets, super(), overriding a method, polymorphism, and containment against inheritance.">
+<meta name="guide-order" content="8">
+<meta name="guide-unit" content="oop">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1d2327; --muted:#55616a; --paper:#fffdf8; --rule:#e4ded2;
+  --topic:#6b3fa0; --topic-deep:#4a2a72; --topic-soft:#f1eaf9;
+  --teal:#1f7a7a; --teal-soft:#e3f3f2; --amber:#c47d16; --amber-soft:#fdf2df;
+  --red:#c0392b; --red-soft:#fbe9e7; --green:#2e7d52; --green-soft:#e6f4ec;
+  --blue:#1f6fb2; --blue-soft:#e6f0fa; --code-bg:#fbf7f0;
+  --kw:#1f6fb2; --str:#2e7d52;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 18px/1.6 "Source Sans 3",system-ui,sans-serif}
+a{color:var(--topic-deep)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+.mast{background:linear-gradient(120deg,var(--topic) 0%,#9a6ec9 100%);color:#fff;position:relative;overflow:hidden}
+.mast .wrap{padding-top:28px;padding-bottom:44px}
+.kicker{font:700 13px/1 "Source Sans 3",system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;opacity:.92}
+.mast h1{font:800 clamp(40px,7vw,76px)/1.0 "Fraunces",Georgia,serif;margin:14px 0 12px;letter-spacing:-.01em;max-width:15ch}
+.dek{font-size:21px;max-width:52ch;margin:0;opacity:.96}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.chip{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:600}
+.home{display:inline-block;margin-bottom:14px;color:#fff;font:600 15px/1 "Source Sans 3",system-ui,sans-serif;text-decoration:none;opacity:.92}.home:hover{text-decoration:underline}
+.mast svg.deco{position:absolute;right:-30px;top:10px;width:360px;opacity:.20}
+@media (max-width:700px){.mast svg.deco{display:none}}
+
+.toc{display:flex;flex-wrap:wrap;gap:6px 18px;padding:14px 0;border-bottom:1px solid var(--rule);font-size:15px;font-weight:600}
+.toc a{text-decoration:none;color:var(--muted)} .toc a:hover{color:var(--topic-deep)}
+.toc b{color:var(--topic-deep)}
+
+.sec{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;padding:44px 0;border-bottom:1px solid var(--rule)}
+.sec.full{grid-template-columns:minmax(0,1fr)}
+@media (max-width:900px){.sec{grid-template-columns:minmax(0,1fr)}}
+.num{font:800 15px/1 "Fraunces",serif;color:var(--topic);letter-spacing:.06em}
+h2{font:800 clamp(28px,4vw,40px)/1.1 "Fraunces",Georgia,serif;margin:6px 0 16px;color:var(--ink)}
+h3{font:700 21px/1.25 "Source Sans 3",system-ui,sans-serif;margin:26px 0 8px}
+p{margin:0 0 14px;max-width:68ch}
+.lead{font-size:20px;color:#2c353b}
+
+code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.9em}
+code{background:var(--code-bg);border:1px solid var(--rule);border-radius:5px;padding:1px 5px}
+pre{background:var(--code-bg);border:1px solid var(--rule);border-left:5px solid var(--topic);border-radius:8px;padding:14px 18px;overflow-x:auto;font:500 16px/1.55 "JetBrains Mono",monospace;margin:10px 0 16px}
+pre .k{color:var(--kw);font-weight:700} pre .s{color:var(--str)} pre .c{color:#8a8f94;font-style:italic}
+pre.out{border-left-color:var(--amber);background:#fffdf5}
+
+.box{border-radius:12px;padding:16px 18px;margin:18px 0;border:1px solid transparent}
+.box h4{margin:0 0 6px;font:800 13px/1.2 "Source Sans 3",system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.box p:last-child,.box ul:last-child{margin-bottom:0}
+.box ul{margin:6px 0 0;padding-left:20px}
+.exam{background:var(--blue-soft);border-color:#c5dbef} .exam h4{color:var(--blue)}
+.tryit{background:var(--green-soft);border-color:#c3e3cf} .tryit h4{color:var(--green)}
+.words{background:var(--topic-soft);border-color:#ddcdf0} .words h4{color:var(--topic-deep)}
+.fact{background:var(--amber-soft);border-color:#f0ddb6} .fact h4{color:var(--amber)}
+.ic{width:18px;height:18px;flex:none}
+dl{margin:8px 0 0} dt{font-weight:700} dd{margin:0 0 10px;color:#3a454c}
+aside{align-self:start;position:sticky;top:16px}
+@media (max-width:900px){aside{position:static}}
+
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:17px}
+th{background:#2f3b42;color:#fff;text-align:left;padding:10px 12px;font-weight:700}
+td{padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+tbody tr:nth-child(even) td{background:#f6f9fc}
+.tbl{overflow-x:auto}
+
+.vs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;border:1px solid var(--rule);border-radius:12px;overflow:hidden;margin:16px 0}
+.vs > div{padding:12px 16px} .vs .h{font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase}
+.vs .pc{background:var(--blue-soft)} .vs .py{background:#fff6e0}
+.vs .cell{padding:9px 16px;border-top:1px solid var(--rule);font:500 15px/1.5 "JetBrains Mono",monospace;white-space:pre-wrap}
+.vs .cell.pc{background:#f3f8fd} .vs .cell.py{background:#fffaf0}
+.vs .note{grid-column:1/-1;padding:6px 16px 10px;border-top:none;font:400 15px "Source Sans 3",system-ui,sans-serif;color:var(--muted);background:#fff}
+
+.mc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0}
+@media (max-width:760px){.mc{grid-template-columns:minmax(0,1fr)}}
+.mc .card{background:#fff;border:1px solid var(--rule);border-top:6px solid var(--red);border-radius:12px;padding:14px 16px}
+.mc .wrong{color:var(--red);font-weight:700} .mc .right{color:var(--green);font-weight:700}
+.mc .card p{margin:6px 0}
+.mc .src{font-size:14px;color:var(--muted)}
+
+figure{margin:18px 0 22px} figcaption{font-size:14px;color:var(--muted);margin-top:6px}
+footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
+
+@media print{
+  html{filter:grayscale(100%)}
+  body{font-size:12pt;background:#fff}
+  .mast{background:#fff;color:var(--ink);border-bottom:4px solid #333} .mast svg.deco,.toc,.home{display:none}
+  .chip{border-color:#999} .sec{grid-template-columns:minmax(0,1fr) 240px;padding:18px 0;break-inside:avoid-page}
+  aside{position:static} a{color:var(--ink);text-decoration:none}
+}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <svg class="deco" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><rect x="56" y="18" width="88" height="46" rx="8"/><path d="M100 64v30"/><path d="M40 94h120"/><path d="M40 94v26M160 94v26"/><rect x="8" y="120" width="64" height="44" rx="8"/><rect x="128" y="120" width="64" height="44" rx="8"/></g></svg>
+  <div class="wrap">
+    <a class="home" href="../../oop/">&larr; Year 13 Unit 3: Object-oriented programming</a>
+    <div class="kicker">Year 13 Guide · Paper 4 · Object-oriented programming</div>
+    <h1>Inheritance and polymorphism</h1>
+    <p class="dek">A child class takes everything its parent has, then changes the one thing that differs. Two lines of Python do it, and the second question of a Paper 4 class scenario usually asks for them.</p>
+    <div class="chips"><span class="chip">Syllabus 20.1</span><span class="chip">Pseudocode guide 10.2</span><span class="chip">Paper 4 Practical</span><span class="chip">Python console mode</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="toc"><b>Contents</b>
+  <a href="#what">1 One class built on another</a><a href="#how">2 The two lines</a><a href="#override">3 Overriding</a>
+  <a href="#poly">4 Polymorphism</a><a href="#contain">5 Containment</a><a href="#python">6 Pseudocode and Python</a>
+  <a href="#mistakes">7 Common mistakes</a><a href="#exam">8 In the exam</a>
+</nav>
+
+<!-- 1 ------------------------------------------------------------ -->
+<section class="sec" id="what">
+  <div>
+    <div class="num">1</div>
+    <h2>One class built on another</h2>
+    <p class="lead">A bike character in a game is a character. It has a name and a position like every other character, and it moves in the same four directions. The only difference is that it travels further in one step. Writing a second class from nothing would repeat everything the first already says.</p>
+    <p>Inheritance says that the new class is a kind of the old one. The child gets every attribute and every method of the parent without them being written again, and then changes or adds only what differs.</p>
+    <figure>
+      <svg viewBox="0 0 760 320" role="img" aria-label="The class Character with its attributes and methods, and below it BikeCharacter which inherits them all and replaces Move">
+        <g font-family="Source Sans 3, sans-serif">
+          <rect x="230" y="12" width="300" height="140" rx="14" fill="#f1eaf9" stroke="#6b3fa0" stroke-width="2.5"/>
+          <text x="250" y="40" font-size="19" font-weight="700" fill="#4a2a72">class Character</text>
+          <line x1="250" y1="50" x2="510" y2="50" stroke="#c6b2de"/>
+          <text x="250" y="72" font-size="14" font-family="JetBrains Mono, monospace">Name, XPosition, YPosition</text>
+          <line x1="250" y1="84" x2="510" y2="84" stroke="#c6b2de"/>
+          <text x="250" y="106" font-size="14" font-family="JetBrains Mono, monospace">GetXPosition()  GetYPosition()</text>
+          <text x="250" y="126" font-size="14" font-family="JetBrains Mono, monospace">SetXPosition()  SetYPosition()</text>
+          <text x="250" y="146" font-size="14" font-family="JetBrains Mono, monospace">Move()  moves 10</text>
+
+          <path d="M380 152v40" stroke="#6b3fa0" stroke-width="3"/>
+          <path d="M368 176l12 16 12-16" fill="none" stroke="#6b3fa0" stroke-width="3"/>
+          <text x="396" y="180" font-size="15" font-weight="700" fill="#4a2a72">inherits</text>
+
+          <rect x="230" y="196" width="300" height="112" rx="14" fill="#e3f3f2" stroke="#1f7a7a" stroke-width="2.5"/>
+          <text x="250" y="224" font-size="19" font-weight="700" fill="#1f7a7a">class BikeCharacter</text>
+          <line x1="250" y1="234" x2="510" y2="234" stroke="#a9d2d0"/>
+          <text x="250" y="256" font-size="14" fill="#55616a">everything above, without rewriting it</text>
+          <line x1="250" y1="268" x2="510" y2="268" stroke="#a9d2d0"/>
+          <text x="250" y="290" font-size="14" font-family="JetBrains Mono, monospace" fill="#1f7a7a">Move()  moves 20</text>
+
+          <rect x="556" y="240" width="196" height="54" rx="10" fill="#fdf2df" stroke="#c47d16"/>
+          <text x="572" y="263" font-size="14" font-weight="700" fill="#c47d16">replaces the parent's</text>
+          <text x="572" y="283" font-size="14" fill="#55616a">this is overriding</text>
+          <path d="M534 262h18" stroke="#c47d16" stroke-width="2.5"/>
+        </g>
+      </svg>
+      <figcaption>The child writes one method. Everything else comes from the parent.</figcaption>
+    </figure>
+  </div>
+  <aside>
+    <div class="box words"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h11a4 4 0 0 1 4 4v10H8a4 4 0 0 1-4-4z"/><path d="M8 9h7M8 13h5"/></svg>Key words</h4>
+      <dl>
+        <dt>inheritance</dt><dd>One class taking the attributes and methods of another.</dd>
+        <dt>parent, superclass</dt><dd>The class being inherited from.</dd>
+        <dt>child, subclass</dt><dd>The class doing the inheriting.</dd>
+        <dt>override</dt><dd>To replace an inherited method with a different one of the same name.</dd>
+        <dt>polymorphism</dt><dd>The same method name behaving differently depending on the class of the object.</dd>
+        <dt>containment</dt><dd>One object holding another as an attribute. The syllabus also calls this aggregation.</dd>
+      </dl></div>
+  </aside>
+</section>
+
+<!-- 2 ------------------------------------------------------------ -->
+<section class="sec" id="how">
+  <div>
+    <div class="num">2</div>
+    <h2>The two lines that do it</h2>
+    <p class="lead">Inheritance in Python is the parent's name in brackets after the child's name, and a call to the parent's constructor from inside the child's.</p>
+<pre><span class="k">class</span> BikeCharacter(Character):
+    <span class="k">def</span> __init__(self, NameP, XPositionP, YPositionP):
+        <span class="k">super</span>().__init__(NameP, XPositionP, YPositionP)</pre>
+    <p>The brackets name the parent. <code>super()</code> means the parent class, so <code>super().__init__(...)</code> runs the parent's constructor and lets it set the attributes it already knows how to set. The child's constructor does not repeat those assignments.</p>
+    <p>That is the whole of it. The object that comes out has every method of the parent:</p>
+<pre>Karla = BikeCharacter(<span class="s">"Karla"</span>, 50, 50)
+<span class="k">print</span>(Karla.GetXPosition(), Karla.GetYPosition())</pre>
+<pre class="out">50 50</pre>
+    <p><code>GetXPosition</code> is written once, in the parent, and works on an object of the child class without appearing in it.</p>
+    <h3>When the child has attributes of its own</h3>
+    <p>A child that adds an attribute calls the parent constructor for the shared ones and then assigns its own.</p>
+<pre><span class="k">class</span> Cat(Pet):
+    <span class="k">def</span> __init__(self, GivenName, GivenBreed):
+        <span class="k">super</span>().__init__(GivenName)
+        self.Breed = GivenBreed</pre>
+  </div>
+  <aside>
+    <div class="box fact"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.5"/></svg>Count the parameters</h4>
+      <p>The child constructor takes every parameter the object needs, including the ones it passes straight on. A question that gives the parent five attributes and the child two will ask for a child constructor with seven parameters.</p></div>
+  </aside>
+</section>
+
+<!-- 3 ------------------------------------------------------------ -->
+<section class="sec" id="override">
+  <div>
+    <div class="num">3</div>
+    <h2>Overriding</h2>
+    <p class="lead">A method written in the child with the same name as one in the parent replaces it for objects of the child class. Nothing marks it as a replacement. The name alone does that.</p>
+<pre>    <span class="k">def</span> Move(self, Direction):
+        <span class="k">if</span> Direction == <span class="s">"up"</span>:
+            <span class="k">super</span>().SetYPosition(20)
+        <span class="k">elif</span> Direction == <span class="s">"down"</span>:
+            <span class="k">super</span>().SetYPosition(-20)
+        <span class="k">elif</span> Direction == <span class="s">"right"</span>:
+            <span class="k">super</span>().SetXPosition(20)
+        <span class="k">elif</span> Direction == <span class="s">"left"</span>:
+            <span class="k">super</span>().SetXPosition(-20)</pre>
+    <p>The parent's <code>Move</code> moves 10. This one moves 20 and is otherwise identical. It still calls the parent's set methods, so the limits written once in the parent still apply.</p>
+    <h3>Extending rather than replacing</h3>
+    <p>An overriding method can call the parent's version and add to it, rather than ignoring it. This is useful where the child does everything the parent does and a little more. Here <code>Pet</code> already has a <code>Description</code> method, and the child keeps what that returns and adds to the end of it.</p>
+<pre><span class="k">class</span> Duck(Pet):
+    <span class="k">def</span> Description(self):
+        <span class="k">return</span> <span class="k">super</span>().Description() + <span class="s">" and it swims"</span></pre>
+  </div>
+  <aside>
+    <div class="box fact"><h4>Which one runs</h4>
+      <p>Python looks in the object's own class first. If the method is there, that one runs. If it is not, Python looks in the parent.</p>
+      <p>So a child with no <code>Move</code> uses the parent's, and a child with one uses its own, with no change to the code that calls it.</p></div>
+  </aside>
+</section>
+
+<!-- 4 ------------------------------------------------------------ -->
+<section class="sec" id="poly">
+  <div>
+    <div class="num">4</div>
+    <h2>Polymorphism</h2>
+    <p class="lead">Two objects of different classes are sent the same instruction and each does the right thing for its own class. The code that sends the instruction does not need to know which class it is dealing with.</p>
+<pre>Jack = Character(<span class="s">"Jack"</span>, 50, 50)
+Karla = BikeCharacter(<span class="s">"Karla"</span>, 50, 50)
+
+<span class="k">for</span> Who <span class="k">in</span> (Jack, Karla):
+    Who.Move(<span class="s">"up"</span>)
+    Who.Move(<span class="s">"right"</span>)
+
+<span class="k">print</span>(Jack.GetXPosition(), Jack.GetYPosition())
+<span class="k">print</span>(Karla.GetXPosition(), Karla.GetYPosition())</pre>
+<pre class="out">60 60
+70 70</pre>
+    <p>Both start in the same place and both receive the same two instructions. The loop contains no test of what kind of character it is holding. Python chooses the method from the class of the object, and that choice is what polymorphism means.</p>
+    <p>This matters in a Paper 4 answer because it removes a block of IF statements. A question that asks for every object in an array to be output can be answered with one loop calling one method name, where each class has its own version of that method.</p>
+  </div>
+  <aside>
+    <div class="box tryit"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4 10-10"/></svg>Prove it</h4>
+      <p>Start both objects at the same position, send both the same calls, and print both results. Identical starting values and identical instructions are what make the different answers evidence of anything.</p></div>
+  </aside>
+</section>
+
+<!-- 5 ------------------------------------------------------------ -->
+<section class="sec" id="contain">
+  <div>
+    <div class="num">5</div>
+    <h2>Containment</h2>
+    <p class="lead">Containment is one object holding another as an attribute. The syllabus also calls it aggregation. It is not inheritance, and the test for which one a design needs is a short question.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Relationship</th><th>The test</th><th>Example</th><th>In Python</th></tr></thead>
+      <tbody>
+        <tr><td>Inheritance</td><td>IS-A</td><td>A bike character is a character.</td><td><code>class BikeCharacter(Character):</code></td></tr>
+        <tr><td>Containment</td><td>HAS-A</td><td>A game has a player.</td><td><code>self.__Player = Character(...)</code></td></tr>
+      </tbody></table></div>
+<pre><span class="k">class</span> Game:
+    <span class="c">#self.__Title string</span>
+    <span class="c">#self.__Player Character</span>
+
+    <span class="k">def</span> __init__(self, TitleP, PlayerP):
+        self.__Title = TitleP
+        self.__Player = PlayerP
+
+    <span class="k">def</span> GetPlayerName(self):
+        <span class="k">return</span> self.__Player.Name</pre>
+<pre>ThisGame = Game(<span class="s">"Race"</span>, Karla)
+<span class="k">print</span>(ThisGame.GetPlayerName())</pre>
+<pre class="out">Karla</pre>
+    <p>The <code>Game</code> object reaches the character it holds and asks it for something. An attribute of a class can be an object of another class, and the comment block names that class as the data type.</p>
+  </div>
+  <aside>
+    <div class="box fact"><h4>Choosing between them</h4>
+      <p>Say the sentence out loud. "A bike character is a character" is true, so inheritance. "A game is a character" is false and "a game has a character" is true, so containment.</p></div>
+  </aside>
+</section>
+
+<!-- 6 ------------------------------------------------------------ -->
+<section class="sec full" id="python">
+  <div>
+    <div class="num">6</div>
+    <h2>Pseudocode and Python</h2>
+    <p class="lead">A question states the design in pseudocode. These are the parts of an inheritance design that change on the way into Python.</p>
+    <div class="vs" role="table" aria-label="Inheritance pseudocode and Python compared">
+      <div class="h pc">Cambridge pseudocode</div><div class="h py">Python</div>
+      <div class="cell pc">CLASS Cat INHERITS Pet</div><div class="cell py">class Cat(Pet):</div><div class="note">The keyword INHERITS becomes brackets.</div>
+      <div class="cell pc">PUBLIC PROCEDURE NEW(GivenName : STRING)</div><div class="cell py">def __init__(self, GivenName):</div><div class="note">The constructor is named NEW in pseudocode and __init__ in Python.</div>
+      <div class="cell pc">SUPER.NEW(GivenName)</div><div class="cell py">super().__init__(GivenName)</div><div class="note">Calling the parent constructor. SUPER becomes super() with brackets.</div>
+      <div class="cell pc">SUPER.SetYPosition(20)</div><div class="cell py">super().SetYPosition(20)</div><div class="note">Calling any parent method.</div>
+      <div class="cell pc">MyCat ← NEW Cat("Kitty", "Shorthaired")</div><div class="cell py">MyCat = Cat("Kitty", "Shorthaired")</div><div class="note">Creating an object of the child class. Python has no NEW keyword.</div>
+      <div class="cell pc">PRIVATE Breed : STRING</div><div class="cell py">#self.__Breed string</div><div class="note">An attribute the child adds. Python declares it in the comment block as any other.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 ------------------------------------------------------------ -->
+<section class="sec full" id="mistakes">
+  <div>
+    <div class="num">7</div>
+    <h2>Common mistakes</h2>
+    <div class="mc">
+      <div class="card"><p class="wrong">&#10007; The parent is not named</p>
+        <p><code>class BikeCharacter:</code> declares a class that inherits nothing, and every parent method is then missing.</p>
+        <p class="right">&#10003; <code>class BikeCharacter(Character):</code></p>
+        <p class="src">November 2023 Paper 41 Question 3(c)(i), where the header is one of three marks.</p></div>
+      <div class="card"><p class="wrong">&#10007; The attributes are written again</p>
+        <p>The child repeats the parent's assignments instead of calling the parent constructor, so the inheritance does no work.</p>
+        <p class="right">&#10003; <code>super().__init__(NameP, XPositionP, YPositionP)</code></p>
+        <p class="src">The same question. The call to the parent constructor is a mark of its own.</p></div>
+      <div class="card"><p class="wrong">&#10007; Not every parameter is passed on</p>
+        <p>The child constructor takes three and passes two to the parent, so one attribute is never set.</p>
+        <p class="right">&#10003; Pass every parameter the parent needs, in the order it expects them.</p>
+        <p class="src">June 2025 Paper 42 Question 3(b)(i), where the constructor takes six.</p></div>
+      <div class="card"><p class="wrong">&#10007; The overriding method is given a new name</p>
+        <p><code>BikeMove()</code> does not override anything. The parent's <code>Move</code> is still what runs when <code>Move</code> is called.</p>
+        <p class="right">&#10003; Use the same name as the parent's method.</p>
+        <p class="src">November 2023 Paper 41 Question 3(c)(ii).</p></div>
+      <div class="card"><p class="wrong">&#10007; The override changes nothing</p>
+        <p>A method that is copied from the parent without the change the question asks for earns the header mark and no more.</p>
+        <p class="right">&#10003; Make the stated change, then test it against an object of the parent class.</p>
+        <p class="src">The same question, where the second mark is for the values changing by 20.</p></div>
+      <div class="card"><p class="wrong">&#10007; Limits re-written in the child</p>
+        <p>Copying the validation into the child means two copies to keep in step, and the question did not ask for it.</p>
+        <p class="right">&#10003; Call the parent's set method and let the limits stay in one place.</p>
+        <p class="src">June 2023 Paper 41 Question 2(b)(ii), which limits to a maximum height.</p></div>
+      <div class="card"><p class="wrong">&#10007; Inheritance where containment is meant</p>
+        <p>A class that holds another is not a kind of it. A game is not a character.</p>
+        <p class="right">&#10003; Apply the IS-A and HAS-A test before writing either.</p>
+        <p class="src">Any question whose design shows one class as an attribute of another.</p></div>
+      <div class="card"><p class="wrong">&#10007; A test that proves nothing</p>
+        <p>Two objects started at different positions will give different answers whether the override works or not.</p>
+        <p class="right">&#10003; Start both at the same values and send both the same calls.</p>
+        <p class="src">Any part that asks for a screenshot of the output.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 ------------------------------------------------------------ -->
+<section class="sec" id="exam">
+  <div>
+    <div class="num">8</div>
+    <h2>In the exam</h2>
+    <p class="lead">Inheritance is examined often and in a predictable shape. The question builds a parent class in its first part and asks for a child in a later one.</p>
+    <div class="box exam"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h3"/></svg>Declare the child class</h4>
+      <p>November 2023 Paper 41 Question 3(c)(i) gives three marks: the header naming the parent, the constructor taking all three parameters, and the call to the parent constructor with those parameters. June 2025 Paper 42 Question 3(b)(i) gives four for the same shape with a six parameter constructor.</p></div>
+    <div class="box exam"><h4>Then override a method</h4>
+      <p>November 2023 Paper 41 Question 3(c)(ii) gives two marks: the method header overriding the parent's, and the change the question describes. June 2025 Paper 42 Question 3(b)(ii) gives two for an overriding method that builds on the parent's result rather than replacing it.</p></div>
+    <div class="box exam"><h4>A child with attributes of its own</h4>
+      <p>June 2023 Paper 41 Question 2(b)(i) gives five marks for a class inheriting from a parent with three further private attributes of its own, their data types, and a constructor taking at least five parameters.</p></div>
+    <div class="box exam"><h4>Polymorphism in the main program</h4>
+      <p>June 2023 Paper 41 Question 2(c) gives three marks for output across objects of more than one class, where the marks go to one method per class and to the main program choosing correctly between them.</p></div>
+    <div class="box exam"><h4>Evidence</h4>
+      <p>Program code is copied into the numbered part of the evidence document, and where a part asks for a test, a screenshot of the output goes beside it. An override is only visible in output, so a part that asks for a screenshot is asking for proof that the child behaves differently from the parent.</p></div>
+  </div>
+  <aside>
+    <div class="box tryit"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4 10-10"/></svg>Check your own child class</h4>
+      <ul>
+        <li>Is the parent named in the brackets?</li>
+        <li>Does the constructor call the parent constructor?</li>
+        <li>Does every parameter reach the parent, in order?</li>
+        <li>Does the overriding method have the same name as the parent's?</li>
+        <li>Have you run one object of each class, from the same starting values?</li>
+      </ul></div>
+    <div class="box words"><h4>Before this</h4>
+      <p>Declaring a class, its attributes and its constructor is covered in the guide on the <a href="../../oop/">unit page</a>.</p></div>
+  </aside>
+</section>
+
+<footer>Year 13 Computer Science · Cambridge International AS &amp; A Level 9618 · Guide for Paper 4 Practical, syllabus section 20.1. Sources: the 9618 syllabus, the Cambridge pseudocode guide section 10.2, and the published question papers named on this page. Every Python example on this page was run before publication.</footer>
+</div>
+</body>
+</html>

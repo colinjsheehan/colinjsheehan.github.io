@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading and writing text files · Year 13 Guide</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="description" content="Text file handling in Python for Paper 4: the three modes, reading every line into an array, splitting a line, writing and appending, and where the marks are.">
+<meta name="guide-order" content="9">
+<meta name="guide-unit" content="files-and-exceptions">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1d2327; --muted:#55616a; --paper:#fffdf8; --rule:#e4ded2;
+  --topic:#0f6b6b; --topic-deep:#0a4d4d; --topic-soft:#e0f0ef;
+  --amber:#c47d16; --amber-soft:#fdf2df;
+  --red:#c0392b; --red-soft:#fbe9e7; --green:#2e7d52; --green-soft:#e6f4ec;
+  --blue:#1f6fb2; --blue-soft:#e6f0fa; --code-bg:#fbf7f0;
+  --kw:#1f6fb2; --str:#2e7d52;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 18px/1.6 "Source Sans 3",system-ui,sans-serif}
+a{color:var(--topic-deep)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+.mast{background:linear-gradient(120deg,var(--topic) 0%,#3aa3a0 100%);color:#fff;position:relative;overflow:hidden}
+.mast .wrap{padding-top:28px;padding-bottom:44px}
+.kicker{font:700 13px/1 "Source Sans 3",system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;opacity:.92}
+.mast h1{font:800 clamp(40px,7vw,76px)/1.0 "Fraunces",Georgia,serif;margin:14px 0 12px;letter-spacing:-.01em;max-width:15ch}
+.dek{font-size:21px;max-width:52ch;margin:0;opacity:.96}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.chip{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:600}
+.home{display:inline-block;margin-bottom:14px;color:#fff;font:600 15px/1 "Source Sans 3",system-ui,sans-serif;text-decoration:none;opacity:.92}.home:hover{text-decoration:underline}
+.mast svg.deco{position:absolute;right:-30px;top:10px;width:360px;opacity:.20}
+@media (max-width:700px){.mast svg.deco{display:none}}
+
+.toc{display:flex;flex-wrap:wrap;gap:6px 18px;padding:14px 0;border-bottom:1px solid var(--rule);font-size:15px;font-weight:600}
+.toc a{text-decoration:none;color:var(--muted)} .toc a:hover{color:var(--topic-deep)}
+.toc b{color:var(--topic-deep)}
+
+.sec{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;padding:44px 0;border-bottom:1px solid var(--rule)}
+.sec.full{grid-template-columns:minmax(0,1fr)}
+@media (max-width:900px){.sec{grid-template-columns:minmax(0,1fr)}}
+.num{font:800 15px/1 "Fraunces",serif;color:var(--topic);letter-spacing:.06em}
+h2{font:800 clamp(28px,4vw,40px)/1.1 "Fraunces",Georgia,serif;margin:6px 0 16px;color:var(--ink)}
+h3{font:700 21px/1.25 "Source Sans 3",system-ui,sans-serif;margin:26px 0 8px}
+p{margin:0 0 14px;max-width:68ch}
+.lead{font-size:20px;color:#2c353b}
+
+code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.9em}
+code{background:var(--code-bg);border:1px solid var(--rule);border-radius:5px;padding:1px 5px}
+pre{background:var(--code-bg);border:1px solid var(--rule);border-left:5px solid var(--topic);border-radius:8px;padding:14px 18px;overflow-x:auto;font:500 16px/1.55 "JetBrains Mono",monospace;margin:10px 0 16px}
+pre .k{color:var(--kw);font-weight:700} pre .s{color:var(--str)} pre .c{color:#8a8f94;font-style:italic}
+pre.out{border-left-color:var(--amber);background:#fffdf5}
+
+.box{border-radius:12px;padding:16px 18px;margin:18px 0;border:1px solid transparent}
+.box h4{margin:0 0 6px;font:800 13px/1.2 "Source Sans 3",system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.box p:last-child,.box ul:last-child{margin-bottom:0}
+.box ul{margin:6px 0 0;padding-left:20px}
+.exam{background:var(--blue-soft);border-color:#c5dbef} .exam h4{color:var(--blue)}
+.tryit{background:var(--green-soft);border-color:#c3e3cf} .tryit h4{color:var(--green)}
+.words{background:var(--topic-soft);border-color:#bfdfdd} .words h4{color:var(--topic-deep)}
+.fact{background:var(--amber-soft);border-color:#f0ddb6} .fact h4{color:var(--amber)}
+.ic{width:18px;height:18px;flex:none}
+dl{margin:8px 0 0} dt{font-weight:700} dd{margin:0 0 10px;color:#3a454c}
+aside{align-self:start;position:sticky;top:16px}
+@media (max-width:900px){aside{position:static}}
+
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:17px}
+th{background:#2f3b42;color:#fff;text-align:left;padding:10px 12px;font-weight:700}
+td{padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+tbody tr:nth-child(even) td{background:#f4f9f9}
+.tbl{overflow-x:auto}
+td code{white-space:nowrap}
+
+.vs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;border:1px solid var(--rule);border-radius:12px;overflow:hidden;margin:16px 0}
+.vs > div{padding:12px 16px} .vs .h{font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase}
+.vs .pc{background:var(--blue-soft)} .vs .py{background:#fff6e0}
+.vs .cell{padding:9px 16px;border-top:1px solid var(--rule);font:500 15px/1.5 "JetBrains Mono",monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.vs .cell.pc{background:#f3f8fd} .vs .cell.py{background:#fffaf0}
+.vs .note{grid-column:1/-1;padding:6px 16px 10px;border-top:none;font:400 15px "Source Sans 3",system-ui,sans-serif;color:var(--muted);background:#fff}
+
+.mc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0}
+@media (max-width:760px){.mc{grid-template-columns:minmax(0,1fr)}}
+.mc .card{background:#fff;border:1px solid var(--rule);border-top:6px solid var(--red);border-radius:12px;padding:14px 16px}
+.mc .wrong{color:var(--red);font-weight:700} .mc .right{color:var(--green);font-weight:700}
+.mc .card p{margin:6px 0}
+.mc .src{font-size:14px;color:var(--muted)}
+
+figure{margin:18px 0 22px} figcaption{font-size:14px;color:var(--muted);margin-top:6px}
+footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
+
+@media print{
+  html{filter:grayscale(100%)}
+  body{font-size:12pt;background:#fff}
+  .mast{background:#fff;color:var(--ink);border-bottom:4px solid #333} .mast svg.deco,.toc,.home{display:none}
+  .chip{border-color:#999} .sec{grid-template-columns:minmax(0,1fr) 240px;padding:18px 0;break-inside:avoid-page}
+  aside{position:static} a{color:var(--ink);text-decoration:none}
+}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <svg class="deco" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><path d="M46 14h66l42 42v130H46z"/><path d="M112 14v42h42"/><path d="M68 92h64M68 118h64M68 144h40"/></g></svg>
+  <div class="wrap">
+    <a class="home" href="../../files-and-exceptions/">&larr; Year 13 Unit 4: Files and exceptions</a>
+    <div class="kicker">Year 13 Guide · Paper 4 · Files and exceptions</div>
+    <h1>Reading and writing text files</h1>
+    <p class="dek">Every Paper 4 since 2021 has supplied a text file. The same few lines of Python open it, read every line into an array, and write an array back out again.</p>
+    <div class="chips"><span class="chip">Syllabus 20.2</span><span class="chip">Pseudocode guide 9.1</span><span class="chip">Paper 4 Practical</span><span class="chip">Python console mode</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="toc"><b>Contents</b>
+  <a href="#modes">1 Opening a file</a><a href="#read">2 Reading every line</a><a href="#split">3 Splitting a line</a>
+  <a href="#write">4 Writing and appending</a><a href="#guard">5 When the file is not there</a><a href="#python">6 Pseudocode and Python</a>
+  <a href="#mistakes">7 Common mistakes</a><a href="#exam">8 In the exam</a>
+</nav>
+
+<!-- 1 ------------------------------------------------------------ -->
+<section class="sec" id="modes">
+  <div>
+    <div class="num">1</div>
+    <h2>Opening a file</h2>
+    <p class="lead">A file has to be opened before anything can be read from it or written to it, and closed when the work is finished. The mode given when it is opened decides what is allowed and what happens to whatever the file already holds.</p>
+<pre>File = <span class="k">open</span>(<span class="s">"TheData.txt"</span>, <span class="s">"r"</span>)
+File.close()</pre>
+    <p>Three modes are examined. The difference between the last two is the one that costs marks, because opening for writing destroys the file's contents before a single line is written.</p>
+    <div class="tbl">
+    <table>
+      <thead><tr><th>Mode</th><th>Python</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>Read</td><td><code>open(Name, "r")</code></td><td>Opens an existing file so its lines can be read. Fails if the file is not there.</td></tr>
+        <tr><td>Write</td><td><code>open(Name, "w")</code></td><td>Creates the file if it does not exist, and empties it if it does. Everything that was in it is lost.</td></tr>
+        <tr><td>Append</td><td><code>open(Name, "a")</code></td><td>Creates the file if it does not exist, and adds to the end of it if it does. Nothing is lost.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <figure>
+      <svg viewBox="0 0 700 132" width="100%" role="img" aria-label="The same file opened in read, write and append mode">
+        <g font-family="JetBrains Mono, monospace" font-size="13">
+          <text x="0" y="16" font-family="Source Sans 3, sans-serif" font-size="14" font-weight="700" fill="#55616a">The file before</text>
+          <rect x="0" y="26" width="150" height="74" rx="8" fill="#fbf7f0" stroke="#0f6b6b"/>
+          <text x="16" y="48" fill="#1d2327">10,red</text>
+          <text x="16" y="68" fill="#1d2327">13,green</text>
+          <text x="16" y="88" fill="#1d2327">16,blue</text>
+
+          <path d="M160 63h40" stroke="#55616a" stroke-width="2"/>
+          <text x="210" y="16" font-family="Source Sans 3, sans-serif" font-size="14" font-weight="700" fill="#2e7d52">"r" read</text>
+          <rect x="210" y="26" width="150" height="74" rx="8" fill="#e6f4ec" stroke="#2e7d52"/>
+          <text x="226" y="48" fill="#1d2327">10,red</text>
+          <text x="226" y="68" fill="#1d2327">13,green</text>
+          <text x="226" y="88" fill="#1d2327">16,blue</text>
+
+          <text x="390" y="16" font-family="Source Sans 3, sans-serif" font-size="14" font-weight="700" fill="#c0392b">"w" write</text>
+          <rect x="390" y="26" width="150" height="74" rx="8" fill="#fbe9e7" stroke="#c0392b"/>
+          <text x="406" y="68" font-family="Source Sans 3, sans-serif" font-size="14" fill="#c0392b">empty</text>
+
+          <text x="550" y="16" font-family="Source Sans 3, sans-serif" font-size="14" font-weight="700" fill="#c47d16">"a" append</text>
+          <rect x="550" y="26" width="150" height="94" rx="8" fill="#fdf2df" stroke="#c47d16"/>
+          <text x="566" y="48" fill="#1d2327">10,red</text>
+          <text x="566" y="68" fill="#1d2327">13,green</text>
+          <text x="566" y="88" fill="#1d2327">16,blue</text>
+          <text x="566" y="108" fill="#c47d16">64,pink</text>
+
+        </g>
+      </svg>
+      <figcaption>The same file, opened three ways. Only one of the three keeps what was already there and adds to it. A question that says add to the file means append mode.</figcaption>
+    </figure>
+  </div>
+  <aside>
+    <div class="box words"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h11a4 4 0 0 1 4 4v10H8a4 4 0 0 1-4-4z"/><path d="M8 9h7M8 13h5"/></svg>Key words</h4>
+      <dl>
+        <dt>text file</dt><dd>A file of lines of text, read and written one line at a time.</dd>
+        <dt>mode</dt><dd>Read, write or append. Given when the file is opened.</dd>
+        <dt>EOF</dt><dd>End of file. The point where there are no more lines to read.</dd>
+        <dt>line break</dt><dd>The invisible character at the end of each line, written in Python as <code>\n</code>.</dd>
+        <dt>record</dt><dd>One line of the file, holding the values for one thing.</dd>
+      </dl></div>
+  </aside>
+</section>
+
+<!-- 2 ------------------------------------------------------------ -->
+<section class="sec" id="read">
+  <div>
+    <div class="num">2</div>
+    <h2>Reading every line</h2>
+    <p class="lead">A line read from a file arrives with its line break still attached. That invisible character is the cause of most of the trouble in this topic, so it is worth seeing once.</p>
+<pre>File = <span class="k">open</span>(<span class="s">"TheData.txt"</span>, <span class="s">"r"</span>)
+Line = File.readline()
+File.close()
+<span class="k">print</span>(Line)
+<span class="k">print</span>(<span class="k">repr</span>(Line))
+<span class="k">print</span>(<span class="k">repr</span>(Line.strip()))</pre>
+<pre class="out">10,red
+
+'10,red\n'
+'10,red'</pre>
+    <p>The blank line in the output is the line break being printed. <code>repr()</code> shows what the string actually holds, and <code>strip()</code> removes the break and any spaces at either end. The mark schemes award a mark for removing the line break, so <code>strip()</code> goes on every line as it is read.</p>
+    <h3>The standard shape</h3>
+    <p>This is the function that Paper 4 asks for most often: open the file, read every line into an array, close the file, return the array.</p>
+<pre><span class="k">def</span> ReadData():
+    DataArray = []
+    File = <span class="k">open</span>(<span class="s">"TheData.txt"</span>, <span class="s">"r"</span>)
+    <span class="k">for</span> Line <span class="k">in</span> File:
+        DataArray.append(Line.strip())
+    File.close()
+    <span class="k">return</span> DataArray
+
+Data = ReadData()
+<span class="k">print</span>(<span class="k">len</span>(Data), Data[0])</pre>
+<pre class="out">72 10,red</pre>
+    <p><code>for Line in File</code> reads to the end of the file whatever its length, which is what a question means when it says the function must work for a file with an unknown number of lines. A loop counting to a fixed number does not.</p>
+    <p>Where the question asks for the filename to be entered rather than written into the program, one more line does it, and the name read from the user is passed to <code>open()</code>.</p>
+<pre>FileName = <span class="k">input</span>(<span class="s">"Enter the filename"</span>)
+File = <span class="k">open</span>(FileName, <span class="s">"r"</span>)</pre>
+  </div>
+  <aside>
+    <div class="box fact"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.5"/></svg>Opening and closing</h4>
+      <p>The mark schemes pair them in a single mark point: opening the file in the right mode and closing it in an appropriate place.</p>
+      <p>Closing it after the loop, not inside it, is what an appropriate place means.</p></div>
+  </aside>
+</section>
+
+<!-- 3 ------------------------------------------------------------ -->
+<section class="sec" id="split">
+  <div>
+    <div class="num">3</div>
+    <h2>Splitting a line</h2>
+    <p class="lead">A line often holds more than one value, separated by a comma. <code>split()</code> cuts the line at every comma and returns the pieces as an array of strings.</p>
+<pre>Line = <span class="s">"10,red"</span>
+Parts = Line.split(<span class="s">","</span>)
+Number = <span class="k">int</span>(Parts[0])
+Colour = Parts[1]
+<span class="k">print</span>(Number + 5, Colour)</pre>
+<pre class="out">15 red</pre>
+    <p>Everything that comes out of a file is a string, including a line that looks like a number. <code>int()</code> converts it, and without that conversion arithmetic and numerical comparisons do the wrong thing or stop the program. The same applies to <code>float()</code> where the file holds decimals.</p>
+    <p>Where the split is done on a line that has not been stripped, the last piece carries the line break, so <code>strip()</code> comes first.</p>
+  </div>
+  <aside>
+    <div class="box tryit"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4 10-10"/></svg>Prove the conversion</h4>
+      <p>Print <code>Parts[0] + 5</code> without the <code>int()</code> and read the error. Then print <code>Parts[0] + "5"</code> and read the answer.</p>
+      <p>One stops the program and one gives <code>105</code>. Neither is the sum.</p></div>
+  </aside>
+</section>
+
+<!-- 4 ------------------------------------------------------------ -->
+<section class="sec" id="write">
+  <div>
+    <div class="num">4</div>
+    <h2>Writing and appending</h2>
+    <p class="lead">Writing is the same four steps in the other direction: open in the right mode, loop through the data, write each item, close the file.</p>
+<pre>Red = [10, 28, 46]
+
+File = <span class="k">open</span>(<span class="s">"Red.txt"</span>, <span class="s">"w"</span>)
+<span class="k">for</span> Item <span class="k">in</span> Red:
+    File.write(<span class="k">str</span>(Item))
+    File.write(<span class="s">"\n"</span>)
+File.close()</pre>
+    <p>Two things here are marks of their own. <code>write()</code> takes a string and nothing else, so a number has to go through <code>str()</code> first. And <code>write()</code> adds no line break, so without the second <code>write()</code> the whole array lands on one line. The file now holds:</p>
+<pre class="out">10
+28
+46</pre>
+    <h3>Appending to a file that already has data</h3>
+    <p>Changing the mode to <code>"a"</code> changes nothing else. Each run adds to the end rather than starting again.</p>
+<pre>File = <span class="k">open</span>(<span class="s">"Red.txt"</span>, <span class="s">"a"</span>)
+File.write(<span class="s">"64\n"</span>)
+File.close()</pre>
+<pre class="out">10
+28
+46
+64</pre>
+    <h3>Building a line from several values</h3>
+    <p>Where each line of the new file holds several values separated by commas, the line is built as a string first and written in one go.</p>
+<pre>Line = <span class="k">str</span>(Node[0]) + <span class="s">","</span> + <span class="k">str</span>(Node[1]) + <span class="s">","</span> + <span class="k">str</span>(Node[2])
+File.write(Line + <span class="s">"\n"</span>)</pre>
+  </div>
+  <aside>
+    <div class="box fact"><h4>Which mode the question wants</h4>
+      <p>Read the verb. Stores the content in a new file means write. Adds each item to the file means append.</p>
+      <p>November 2025 Paper 42 Question 3(d) asks for a new file. June 2025 Paper 41 Question 2(c) asks for each item to be appended to a new line.</p></div>
+  </aside>
+</section>
+
+<!-- 5 ------------------------------------------------------------ -->
+<section class="sec" id="guard">
+  <div>
+    <div class="num">5</div>
+    <h2>When the file is not there</h2>
+    <p class="lead">Opening a file that does not exist stops the program. Because the file is outside the program's control, every file operation is wrapped so that a missing or unreadable file produces a message instead of a crash.</p>
+<pre><span class="k">def</span> ReadData():
+    DataArray = []
+    FileName = <span class="k">input</span>(<span class="s">"Enter the filename"</span>)
+    <span class="k">try</span>:
+        File = <span class="k">open</span>(FileName, <span class="s">"r"</span>)
+        <span class="k">for</span> Line <span class="k">in</span> File:
+            DataArray.append(Line.strip())
+        File.close()
+    <span class="k">except</span>:
+        <span class="k">print</span>(<span class="s">"Cannot open file"</span>)
+    <span class="k">return</span> DataArray</pre>
+    <p>The mark point is worded as exception handling with an appropriate output, so all three parts are needed: the <code>try</code>, the <code>except</code>, and a message that says what went wrong. A <code>try</code> with an empty <code>except</code> earns nothing.</p>
+    <p>This is a mark point in nineteen of the twenty-nine mark schemes from June 2021 to November 2025, and thirteen of those question papers put it in the wording of the question. Exception handling has its own guide; what matters here is that it belongs around every file operation whether the question asks for it or not.</p>
+  </div>
+  <aside>
+    <div class="box exam"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg>Worth a mark on its own</h4>
+      <p>In June 2025 Paper 41 Question 2(a) the question says nothing about exception handling, and the mark scheme still lists it among the points available.</p></div>
+  </aside>
+</section>
+
+<!-- 6 ------------------------------------------------------------ -->
+<section class="sec full" id="python">
+  <div>
+    <div class="num">6</div>
+    <h2>Pseudocode and Python</h2>
+    <p>A question describes the file operations in pseudocode. These are the parts that change on the way into Python.</p>
+    <div class="vs">
+      <div class="h pc">Cambridge pseudocode</div><div class="h py">Python</div>
+      <div class="cell pc">OPENFILE "Data.txt" FOR READ</div><div class="cell py">File = open("Data.txt", "r")</div>
+      <div class="note">The mode is part of the command in pseudocode and the second argument in Python.</div>
+      <div class="cell pc">OPENFILE "Data.txt" FOR WRITE</div><div class="cell py">File = open("Data.txt", "w")</div>
+      <div class="note">Both empty the file. Any data already in it is lost.</div>
+      <div class="cell pc">OPENFILE "Data.txt" FOR APPEND</div><div class="cell py">File = open("Data.txt", "a")</div>
+      <div class="note">Both add to the end of whatever is already there.</div>
+      <div class="cell pc">READFILE "Data.txt", LineOfText</div><div class="cell py">LineOfText = File.readline()</div>
+      <div class="note">Reads the next line into a string variable.</div>
+      <div class="cell pc">WHILE NOT EOF("Data.txt")</div><div class="cell py">for Line in File:</div>
+      <div class="note">Both run to the end of the file. The Python loop reads the line as well, so there is no separate read inside it.</div>
+      <div class="cell pc">WRITEFILE "Data.txt", LineOfText</div><div class="cell py">File.write(LineOfText + "\n")</div>
+      <div class="note">The pseudocode command writes a whole line. Python writes exactly the string given, so the line break is added.</div>
+      <div class="cell pc">CLOSEFILE "Data.txt"</div><div class="cell py">File.close()</div>
+      <div class="note">Pseudocode names the file, Python uses the variable returned by open().</div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 ------------------------------------------------------------ -->
+<section class="sec full" id="mistakes">
+  <div>
+    <div class="num">7</div>
+    <h2>Common mistakes</h2>
+    <div class="mc">
+      <div class="card">
+        <p class="wrong">&#10007; The line break is left on</p>
+        <p>A line read from the file is <code>"red\n"</code>, so comparing it with <code>"red"</code> is false and the data goes into the wrong place.</p>
+        <p class="right">&#10003; <code>DataArray.append(Line.strip())</code></p>
+        <p class="src">Removing the line break is its own mark point in several mark schemes, June 2024 Paper 42 Question 1(a) among them.</p>
+      </div>
+      <div class="card">
+        <p class="wrong">&#10007; The file is opened for writing when the question says add</p>
+        <p>Mode <code>"w"</code> empties the file the moment it is opened, so the data that was supposed to be added to is gone.</p>
+        <p class="right">&#10003; Use <code>"a"</code> where the question says append or add to the file.</p>
+        <p class="src">June 2025 Paper 41 Question 2(c), where the procedure appends each item to a new line.</p>
+      </div>
+      <div class="card">
+        <p class="wrong">&#10007; The file is never closed</p>
+        <p>The program may still run, but the mark pairs opening the file with closing it, so the mark is lost.</p>
+        <p class="right">&#10003; <code>File.close()</code> after the loop, before the function returns.</p>
+        <p class="src">Phrased in the mark schemes as closing the file in an appropriate place.</p>
+      </div>
+      <div class="card">
+        <p class="wrong">&#10007; The file is opened inside the loop</p>
+        <p>Opening on every pass starts reading from the first line again, or, in write mode, empties the file on every pass.</p>
+        <p class="right">&#10003; Open once, loop, close once.</p>
+        <p class="src">Any question that reads or writes a whole file.</p>
+      </div>
+      <div class="card">
+        <p class="wrong">&#10007; A fixed count where the length is unknown</p>
+        <p><code>for i in range(50)</code> stops early on a longer file and fails on a shorter one.</p>
+        <p class="right">&#10003; <code>for Line in File</code> runs to the end whatever the length.</p>
+        <p class="src">June 2025 Paper 41 Question 2(a), which states the file has an unknown number of lines.</p>
+      </div>
+      <div class="card">
+        <p class="wrong">&#10007; Everything is written on one line</p>
+        <p><code>write()</code> adds no line break, so the whole array becomes a single line of the file.</p>
+        <p class="right">&#10003; Write <code>"\n"</code> after each item, or write <code>Item + "\n"</code>.</p>
+        <p class="src">A mark of its own in June 2025 Paper 41 Question 2(c).</p>
+      </div>
+      <div class="card">
+        <p class="wrong">&#10007; A number is written straight to the file</p>
+        <p><code>File.write(10)</code> stops the program, because <code>write()</code> takes a string and nothing else.</p>
+        <p class="right">&#10003; <code>File.write(str(Item))</code></p>
+        <p class="src">Any part that writes numbers out of an array.</p>
+      </div>
+      <div class="card">
+        <p class="wrong">&#10007; The values are used as strings</p>
+        <p>Data read from a file is text, so <code>"9"</code> is treated as larger than <code>"10"</code> and sums give the wrong answer.</p>
+        <p class="right">&#10003; <code>int(Parts[0])</code> as the value comes out of the line.</p>
+        <p class="src">June 2025 Paper 41 Question 2(b), where the integer is separated from the colour.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 ------------------------------------------------------------ -->
+<section class="sec" id="exam">
+  <div>
+    <div class="num">8</div>
+    <h2>In the exam</h2>
+    <p class="lead">Every one of the twenty-nine Paper 4 papers from June 2021 to November 2025 supplies or requires a text file. It is the most reliable thing on the paper.</p>
+    <div class="box exam"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg>Read a file into an array</h4>
+      <p>November 2024 Paper 41 Question 1(a) gives six marks for a function that declares an array, opens <code>Data.txt</code> to read, loops through the file storing each line, closes the file, returns the array, and handles the exception. June 2025 Paper 41 Question 2(a) gives seven for the same shape with the filename entered by the user and an unknown number of lines.</p></div>
+    <div class="box exam"><h4>Read a file straight into a structure</h4>
+      <p>November 2025 Paper 42 Question 3(c) gives four marks for a main program that reads each integer from the file and calls the procedure that adds a node to a binary tree. June 2023 Paper 41 Question 3(b)(iii) does the same with a stack, for five.</p></div>
+    <div class="box exam"><h4>Write an array out to a file</h4>
+      <p>June 2025 Paper 41 Question 2(c) gives five marks for a procedure that takes an array and a filename, opens the file to append, writes each item on its own line, closes the file and handles the exception. November 2025 Paper 42 Question 3(d) gives five for writing each node as a comma separated line to a file the candidate has to create.</p></div>
+    <div class="box exam"><h4>Evidence</h4>
+      <p>Program code is copied into the numbered part of the evidence document. Where a part asks for a screenshot of a file that the program has written, the filename has to be visible in the screenshot as well as the contents.</p></div>
+  </div>
+  <aside>
+    <div class="box tryit"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4 10-10"/></svg>Check your own file code</h4>
+      <ul>
+        <li>Is the mode the one the question asks for?</li>
+        <li>Is the file closed, after the loop?</li>
+        <li>Is the line break stripped as each line is read?</li>
+        <li>Is each value converted before it is used as a number?</li>
+        <li>Is a line break written after each item?</li>
+        <li>Is the whole thing inside try and except, with a message?</li>
+      </ul></div>
+    <div class="box words"><h4>Next</h4>
+      <p>Exception handling, and what the marks actually require of it, is covered in the guide on the <a href="../../files-and-exceptions/">unit page</a>.</p></div>
+  </aside>
+</section>
+
+<footer>Year 13 Computer Science · Cambridge International AS &amp; A Level 9618 · Guide for Paper 4 Practical, syllabus section 20.2. Sources: the 9618 syllabus, the Cambridge pseudocode guide section 9.1, and the published question papers named on this page. Every Python example on this page was run before publication.</footer>
+</div>
+
+</body>
+</html>

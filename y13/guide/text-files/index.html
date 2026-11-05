@@ -222,8 +222,8 @@ File = <span class="k">open</span>(FileName, <span class="s">"r"</span>)</pre>
   </div>
   <aside>
     <div class="box fact"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.5"/></svg>Opening and closing</h4>
-      <p>The mark schemes pair them in a single mark point: opening the file in the right mode and closing it in an appropriate place.</p>
-      <p>Closing it after the loop, not inside it, is what an appropriate place means.</p></div>
+      <p>The mark schemes pair them in a single mark point, so opening the file in the right mode and closing it afterwards are marked together.</p>
+      <p>Closing it after the loop rather than inside it is what counts as closing it in the right place.</p></div>
   </aside>
 </section>
 
@@ -304,7 +304,7 @@ File.write(Line + <span class="s">"\n"</span>)</pre>
     <span class="k">except</span>:
         <span class="k">print</span>(<span class="s">"Cannot open file"</span>)
     <span class="k">return</span> DataArray</pre>
-    <p>The mark point is worded as exception handling with an appropriate output, so all three parts are needed: the <code>try</code>, the <code>except</code>, and a message that says what went wrong. A <code>try</code> with an empty <code>except</code> earns nothing.</p>
+    <p>The marks require all three parts: the <code>try</code>, the <code>except</code>, and a message that says what went wrong. A <code>try</code> with an empty <code>except</code> earns nothing.</p>
     <p>Every one of the twenty-nine mark schemes from June 2021 to November 2025 awards marks for it, and only thirteen of those question papers put it in the wording of the question. In the 2021 and 2022 series it is two marks rather than one. Exception handling has its own guide; what matters here is that it belongs around every file operation whether the question asks for it or not.</p>
   </div>
   <aside>
@@ -361,7 +361,7 @@ File.write(Line + <span class="s">"\n"</span>)</pre>
         <p class="wrong">&#10007; The file is never closed</p>
         <p>The program may still run, but the mark pairs opening the file with closing it, so the mark is lost.</p>
         <p class="right">&#10003; <code>File.close()</code> after the loop, before the function returns.</p>
-        <p class="src">Phrased in the mark schemes as closing the file in an appropriate place.</p>
+        <p class="src">The mark schemes require the file to be closed somewhere sensible.</p>
       </div>
       <div class="card">
         <p class="wrong">&#10007; The file is opened inside the loop</p>

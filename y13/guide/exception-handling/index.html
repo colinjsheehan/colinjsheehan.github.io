@@ -7,7 +7,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta name="description" content="try and except in Python for Paper 4: the three parts the mark needs, why every file operation goes inside the try, when exception handling is the right tool, and the errors it catches.">
+<meta name="description" content="Exception handling for 9618 section 20.2: the written definition and reasons for Paper 3, and try and except in Python for Paper 4, with what the marks require of each.">
 <meta name="guide-order" content="10">
 <meta name="guide-unit" content="files-and-exceptions">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -104,10 +104,10 @@ footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
   <svg class="deco" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><path d="M100 26 18 170h164z"/><path d="M100 86v44M100 148v2"/></g></svg>
   <div class="wrap">
     <a class="home" href="../../files-and-exceptions/">&larr; Year 13 Unit 4: Files and exceptions</a>
-    <div class="kicker">Year 13 Guide · Paper 4 · Files and exceptions</div>
+    <div class="kicker">Year 13 Guide · Papers 3 and 4 · Files and exceptions</div>
     <h1>Exception handling</h1>
-    <p class="dek">Opening a file that is not there stops the program. A try and an except let the program print a message and carry on instead. Every Paper 4 mark scheme since 2021 has awarded marks for it.</p>
-    <div class="chips"><span class="chip">Syllabus 20.2</span><span class="chip">Paper 4 Practical</span><span class="chip">Python console mode</span></div>
+    <p class="dek">Opening a file that is not there stops the program. A try and an except let it print a message and carry on. Paper 4 marks the code, and Paper 3 asks in writing what an exception is and why it is handled.</p>
+    <div class="chips"><span class="chip">Syllabus 20.2</span><span class="chip">Paper 3 Advanced Theory</span><span class="chip">Paper 4 Practical</span><span class="chip">Python console mode</span></div>
   </div>
 </header>
 
@@ -115,7 +115,8 @@ footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
 <nav class="toc"><b>Contents</b>
   <a href="#what">1 What an exception is</a><a href="#shape">2 The shape in Python</a><a href="#inside">3 What goes inside the try</a>
   <a href="#when">4 When to use it</a><a href="#errors">5 The errors it catches</a>
-  <a href="#mistakes">6 Common mistakes</a><a href="#exam">7 In the exam</a>
+  <a href="#written">6 In a written answer</a>
+  <a href="#mistakes">7 Common mistakes</a><a href="#exam">8 In the exam</a>
 </nav>
 
 <!-- 1 ------------------------------------------------------------ -->
@@ -142,6 +143,14 @@ FileNotFoundError: [Errno 2] No such file or directory: 'Missing.txt'</pre>
 <span class="k">except</span>:
     <span class="k">print</span>(<span class="s">"Cannot open file"</span>)</pre>
 <pre class="out">Cannot open file</pre>
+    <h3>Why it is handled</h3>
+    <p>A written answer needs the reasons in plain terms rather than in terms of marks. Handling the exception means four things.</p>
+    <ul>
+      <li>The program does not halt unexpectedly.</li>
+      <li>Work already done is not lost, and a half written file is not left behind.</li>
+      <li>The user is told what went wrong instead of being shown a system error.</li>
+      <li>The program can do something about it, such as asking for the filename again, or can close down tidily.</li>
+    </ul>
   </div>
   <aside>
     <div class="box words"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h11a4 4 0 0 1 4 4v10H8a4 4 0 0 1-4-4z"/><path d="M8 9h7M8 13h5"/></svg>Key words</h4>
@@ -167,7 +176,7 @@ FileNotFoundError: [Errno 2] No such file or directory: 'Missing.txt'</pre>
 <span class="k">except</span>:
     <span class="k">print</span>(<span class="s">"There were no values to average"</span>)</pre>
 <pre class="out">There were no values to average</pre>
-    <p>The mark points are worded as exception handling with an appropriate output, so three things are needed and all three are checked:</p>
+    <p>The marks require three things, and all three are checked:</p>
     <ol>
       <li>the <code>try</code>, with the risky code inside it</li>
       <li>the <code>except</code></li>
@@ -180,7 +189,7 @@ FileNotFoundError: [Errno 2] No such file or directory: 'Missing.txt'</pre>
   </div>
   <aside>
     <div class="box fact"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.5"/></svg>Three languages, one idea</h4>
-      <p>Python writes <code>try</code> and <code>except</code>. Java and Visual Basic write <code>try</code> and <code>catch</code>. The mark schemes list all three, which is why the mark point says try, catch, except.</p></div>
+      <p>Python writes <code>try</code> and <code>except</code>. Java and Visual Basic write <code>try</code> and <code>catch</code>. The mark schemes accept all three, since the paper allows Python, Java and Visual Basic.</p></div>
   </aside>
 </section>
 
@@ -189,7 +198,7 @@ FileNotFoundError: [Errno 2] No such file or directory: 'Missing.txt'</pre>
   <div>
     <div class="num">3</div>
     <h2>What goes inside the try</h2>
-    <p class="lead">Several mark schemes state it exactly: all file access within the try. Opening the file inside the try and then reading it outside loses the mark, and the program stops at the first line that uses the file.</p>
+    <p class="lead">Several mark schemes make the point explicitly: every file operation has to sit inside the try. Opening the file inside it and then reading the file outside it loses the mark, and the program stops at the first line that uses the file.</p>
     <h3 class="bad">&#10007; Only the open is guarded</h3>
 <pre class="bad"><span class="k">try</span>:
     File = <span class="k">open</span>(Name, <span class="s">"r"</span>)
@@ -217,8 +226,8 @@ NameError: name 'File' is not defined</pre>
     <p>The <code>open()</code> never finished, so the variable <code>File</code> was never created, and the loop that follows has nothing to work with. Putting the reading and the closing inside the <code>try</code> as well removes both problems at once: there is one path for the file working and one path for it failing.</p>
   </div>
   <aside>
-    <div class="box exam"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg>The exact wording</h4>
-      <p>Two mark schemes spell the requirement out rather than leaving it implied, awarding the mark for exception handling with all file access inside the try, an appropriate catch and an output.</p></div>
+    <div class="box exam"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg>Spelled out twice</h4>
+      <p>Most mark schemes leave this implied. Four require it directly, making the position of the file operations part of the mark: November 2024 Paper 42, June 2025 Paper 43, and November 2025 Papers 41 and 43.</p></div>
   </aside>
 </section>
 
@@ -289,22 +298,52 @@ That is not a number</pre>
 </section>
 
 <!-- 6 ------------------------------------------------------------ -->
-<section class="sec full" id="mistakes">
+<section class="sec" id="written">
   <div>
     <div class="num">6</div>
+    <h2>In a written answer</h2>
+    <p class="lead">Paper 3 assesses sections 13 to 20 of the syllabus, so section 20.2 is examined in writing as well as in code. The written questions ask what an exception is, why handling it matters, and what can cause one.</p>
+    <h3>What an exception is</h3>
+    <p>An exception is an error that occurs while a program is running. It stops the program unless the program has been written to deal with it. It is not a syntax error, which is found before the program runs, and it is not a logic error, which produces a wrong answer rather than a halt.</p>
+    <h3>Causes to name as examples</h3>
+    <p>A written answer that asks for an example wants a cause, not a keyword.</p>
+    <div class="tbl">
+    <table>
+      <thead><tr><th>Cause</th><th>What the program was doing</th></tr></thead>
+      <tbody>
+        <tr><td>The file does not exist</td><td>Opening a file by a name the user typed</td></tr>
+        <tr><td>The text is not a number</td><td>Converting input before using it in a calculation</td></tr>
+        <tr><td>The index is out of range</td><td>Reading past the last element of an array</td></tr>
+        <tr><td>The divisor is zero</td><td>Working out an average with no values</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>The reasons for handling an exception are in section 1. A question that asks how termination can be avoided is asking for the try and except structure described in words, not for Python.</p>
+  </div>
+  <aside>
+    <div class="box exam"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg>Asked six times</h4>
+      <p>June 2022 Paper 32 Question 9, November 2023 Paper 32 Question 12, November 2023 Papers 31 and 33 inside a file handling question, November 2025 Paper 31 Question 10, Paper 32 Question 10 and Paper 33 Question 12.</p>
+      <p>All three November 2025 variants carried one.</p></div>
+  </aside>
+</section>
+
+<!-- 7 ------------------------------------------------------------ -->
+<section class="sec full" id="mistakes">
+  <div>
+    <div class="num">7</div>
     <h2>Common mistakes</h2>
     <div class="mc">
       <div class="card">
         <p class="wrong">&#10007; Only the open is inside the try</p>
         <p>The message prints and the program then stops at the first line that uses the file.</p>
         <p class="right">&#10003; Put the open, the loop and the close inside the <code>try</code>.</p>
-        <p class="src">Stated in the mark schemes as all file access within the try.</p>
+        <p class="src">Required directly in November 2024 Paper 42, June 2025 Paper 43, and November 2025 Papers 41 and 43.</p>
       </div>
       <div class="card">
         <p class="wrong">&#10007; The except block says nothing</p>
-        <p>A <code>try</code> with <code>pass</code> or an empty <code>except</code> hides the failure and earns nothing, because the mark point requires an output.</p>
+        <p>A <code>try</code> with <code>pass</code> or an empty <code>except</code> hides the failure and earns nothing, because an output is part of what is marked.</p>
         <p class="right">&#10003; <code>print("Cannot open file")</code></p>
-        <p class="src">Every mark point on this topic is worded with an appropriate output or message.</p>
+        <p class="src">Every mark scheme on this topic requires a message as well as the handling.</p>
       </div>
       <div class="card">
         <p class="wrong">&#10007; Exception handling used instead of an IF</p>
@@ -319,10 +358,10 @@ That is not a number</pre>
         <p class="src">June 2025 Paper 41 Question 2(a), where the question says nothing about it and the mark scheme lists it.</p>
       </div>
       <div class="card">
-        <p class="wrong">&#10007; The file is left open</p>
-        <p>Putting <code>close()</code> after the <code>except</code> block means it runs even when the file was never opened, which raises a second error.</p>
+        <p class="wrong">&#10007; The close sits after the except</p>
+        <p>Putting <code>close()</code> below the whole try and except means it runs even when the file was never opened, and that raises a second error on top of the first.</p>
         <p class="right">&#10003; Close the file as the last line inside the <code>try</code>.</p>
-        <p class="src">The mark schemes ask for the file closed in an appropriate place.</p>
+        <p class="src">The mark schemes require the file to be closed somewhere sensible.</p>
       </div>
       <div class="card">
         <p class="wrong">&#10007; The whole program is one try block</p>
@@ -334,19 +373,19 @@ That is not a number</pre>
   </div>
 </section>
 
-<!-- 7 ------------------------------------------------------------ -->
+<!-- 8 ------------------------------------------------------------ -->
 <section class="sec" id="exam">
   <div>
-    <div class="num">7</div>
+    <div class="num">8</div>
     <h2>In the exam</h2>
-    <p class="lead">Exception handling is never a question on its own. It is a mark point inside a question about a file, and in these papers it has never been asked about anything else.</p>
+    <p class="lead">On Paper 4 exception handling is never a question on its own. It is a mark point inside a question about a file, and in these papers it has not been attached to anything else. On Paper 3 it is asked directly.</p>
     <div class="box exam"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg>How often</h4>
       <p>Every one of the twenty-nine mark schemes from June 2021 to November 2025 awards marks for exception handling. Thirteen of those question papers ask for it in the wording of the question, so in the other sixteen the marks were there for candidates who added it without being told.</p></div>
     <div class="box exam"><h4>Where the mark sits</h4>
       <p>It is one of the points in a list that a part is marked against, so it is worth the same as opening the file or looping to the end of it. In June 2025 Paper 41 Question 2(c), five marks cover the header and the open, the loop, the write, the line break and the exception handling.</p>
       <p>In the eleven papers of the 2021 and 2022 series it is two marks rather than one, because the mark scheme splits it into the try and catch around the file work and an appropriate output. November 2022 Paper 41 Question 1(b) is marked that way. From June 2023 the two halves appear as one mark point, and a paper can still carry two or three of them where more than one part reads a file.</p></div>
     <div class="box exam"><h4>When the question asks in words</h4>
-      <p>November 2025 Paper 42 Question 3(d) says to include exception handling when writing to the file. June 2025 Paper 41 Question 2(c) says the procedure uses exception handling when opening and writing data to the text file. Both describe it in English because there is no pseudocode form.</p></div>
+      <p>November 2025 Paper 42 Question 3(d) and June 2025 Paper 41 Question 2(c) both name it in the requirements for the procedure being written. Both do so in English, because there is no pseudocode form for it.</p></div>
     <div class="box exam"><h4>Evidence</h4>
       <p>The code copied into the evidence document is what is marked, so the <code>try</code> and the <code>except</code> have to be visible in the pasted code for the part they belong to.</p></div>
   </div>
@@ -363,7 +402,7 @@ That is not a number</pre>
   </aside>
 </section>
 
-<footer>Year 13 Computer Science · Cambridge International AS &amp; A Level 9618 · Guide for Paper 4 Practical, syllabus section 20.2. Sources: the 9618 syllabus and the published question papers named on this page. Every Python example on this page was run before publication.</footer>
+<footer>Year 13 Computer Science · Cambridge International AS &amp; A Level 9618 · Guide for Papers 3 and 4, syllabus section 20.2. Sources: the 9618 syllabus and the published question papers named on this page. Every Python example on this page was run before publication.</footer>
 </div>
 
 </body>

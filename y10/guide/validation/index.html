@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validation and test data · Year 10 Guide</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="description" content="Validation and verification checks, validation loops in pseudocode and Python, and normal, abnormal, extreme and boundary test data.">
+<meta name="guide-order" content="9">
+<meta name="guide-unit" content="programming">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1d2327; --muted:#55616a; --paper:#fffdf8; --rule:#e4ded2;
+  --topic:#e07a1f; --topic-deep:#a8520d; --topic-soft:#fdf0e3;
+  --teal:#1f7a7a; --teal-soft:#e3f3f2; --plum:#6b3fa0; --plum-soft:#f1eaf9;
+  --red:#c0392b; --red-soft:#fbe9e7; --green:#2e7d52; --green-soft:#e6f4ec;
+  --blue:#1f6fb2; --blue-soft:#e6f0fa; --code-bg:#fbf7f0;
+  --kw:#1f6fb2; --str:#2e7d52;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 18px/1.6 "Source Sans 3",system-ui,sans-serif}
+a{color:var(--topic-deep)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* ---------- masthead */
+.mast{background:linear-gradient(120deg,#2e7d52 0%,#4fa874 100%);color:#fff;position:relative;overflow:hidden}
+.mast .wrap{padding-top:28px;padding-bottom:44px}
+.kicker{font:700 13px/1 "Source Sans 3",system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;opacity:.92}
+.mast h1{font:800 clamp(40px,7vw,76px)/1.0 "Fraunces",Georgia,serif;margin:14px 0 12px;letter-spacing:-.01em;max-width:14ch}
+.dek{font-size:21px;max-width:52ch;margin:0;opacity:.96}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.chip{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:600}
+.home{display:inline-block;margin-bottom:14px;color:#fff;font:600 15px/1 "Source Sans 3",system-ui,sans-serif;text-decoration:none;opacity:.92}.home:hover{text-decoration:underline}
+.mast svg.deco{position:absolute;right:-30px;top:10px;width:360px;opacity:.20}
+@media (max-width:700px){.mast svg.deco{display:none}}
+
+/* ---------- contents */
+.toc{display:flex;flex-wrap:wrap;gap:6px 18px;padding:14px 0;border-bottom:1px solid var(--rule);font-size:15px;font-weight:600}
+.toc a{text-decoration:none;color:var(--muted)} .toc a:hover{color:var(--topic-deep)}
+.toc b{color:var(--topic-deep)}
+
+/* ---------- layout */
+.sec{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;padding:44px 0;border-bottom:1px solid var(--rule)}
+.sec.full{grid-template-columns:minmax(0,1fr)}
+@media (max-width:900px){.sec{grid-template-columns:minmax(0,1fr)}}
+.num{font:800 15px/1 "Fraunces",serif;color:var(--topic);letter-spacing:.06em}
+h2{font:800 clamp(28px,4vw,40px)/1.1 "Fraunces",Georgia,serif;margin:6px 0 16px;color:var(--ink)}
+h3{font:700 21px/1.25 "Source Sans 3",system-ui,sans-serif;margin:26px 0 8px}
+p{margin:0 0 14px;max-width:68ch}
+.lead{font-size:20px;color:#2c353b}
+
+/* ---------- code */
+code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.9em}
+code{background:var(--code-bg);border:1px solid var(--rule);border-radius:5px;padding:1px 5px}
+pre{background:var(--code-bg);border:1px solid var(--rule);border-left:5px solid var(--topic);border-radius:8px;padding:14px 18px;overflow-x:auto;font:500 16px/1.55 "JetBrains Mono",monospace;margin:10px 0 16px}
+pre .k{color:var(--kw);font-weight:700} pre .s{color:var(--str)} pre .c{color:#8a8f94;font-style:italic}
+
+/* ---------- boxes */
+.box{border-radius:12px;padding:16px 18px;margin:18px 0;border:1px solid transparent}
+.box h4{margin:0 0 6px;font:800 13px/1.2 "Source Sans 3",system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.box p:last-child,.box ul:last-child{margin-bottom:0}
+.box ul{margin:6px 0 0;padding-left:20px}
+.exam{background:var(--blue-soft);border-color:#c5dbef} .exam h4{color:var(--blue)}
+.mistake{background:var(--red-soft);border-color:#f2c6c0} .mistake h4{color:var(--red)}
+.tryit{background:var(--green-soft);border-color:#c3e3cf} .tryit h4{color:var(--green)}
+.words{background:var(--topic-soft);border-color:#f3d5b5} .words h4{color:var(--topic-deep)}
+.fact{background:var(--plum-soft);border-color:#ddcdf0} .fact h4{color:var(--plum)}
+.ic{width:18px;height:18px;flex:none}
+dl{margin:8px 0 0} dt{font-weight:700} dd{margin:0 0 10px;color:#3a454c}
+aside{align-self:start;position:sticky;top:16px}
+@media (max-width:900px){aside{position:static}}
+
+/* ---------- tables */
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:17px}
+th{background:#2f3b42;color:#fff;text-align:left;padding:10px 12px;font-weight:700}
+td{padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+tbody tr:nth-child(even) td{background:#f6f9fc}
+.tbl{overflow-x:auto}
+
+/* ---------- operator cards */
+.ops{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}
+@media (max-width:700px){.ops{grid-template-columns:minmax(0,1fr)}}
+.op{border-radius:14px;padding:16px;color:#fff}
+.op h3{margin:0 0 4px;font:800 22px/1.1 "Fraunces",serif}
+.op .res{font-size:14px;opacity:.95;margin-bottom:10px}
+.op .syms{display:flex;flex-wrap:wrap;gap:6px}
+.op .syms span{background:rgba(255,255,255,.95);color:var(--ink);border-radius:7px;padding:3px 9px;font:700 17px "JetBrains Mono",monospace}
+.op.a{background:var(--topic)} .op.r{background:var(--teal)} .op.l{background:var(--plum)}
+
+/* ---------- versus */
+.vs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;border:1px solid var(--rule);border-radius:12px;overflow:hidden;margin:16px 0}
+.vs > div{padding:12px 16px} .vs .h{font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase}
+.vs .pc{background:var(--blue-soft)} .vs .py{background:#fff6e0}
+.vs .row{display:contents}
+.vs .cell{padding:9px 16px;border-top:1px solid var(--rule);font:500 16px "JetBrains Mono",monospace}
+.vs .cell.pc{background:#f3f8fd} .vs .cell.py{background:#fffaf0}
+.vs .note{grid-column:1/-1;padding:6px 16px 10px;border-top:none;font:400 15px "Source Sans 3",system-ui,sans-serif;color:var(--muted);background:#fff}
+
+/* ---------- misconception cards */
+.mc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0}
+@media (max-width:760px){.mc{grid-template-columns:minmax(0,1fr)}}
+.mc .card{background:#fff;border:1px solid var(--rule);border-top:6px solid var(--red);border-radius:12px;padding:14px 16px}
+.mc .wrong{color:var(--red);font-weight:700} .mc .right{color:var(--green);font-weight:700}
+.mc .card p{margin:6px 0}
+
+figure{margin:18px 0 22px} figcaption{font-size:14px;color:var(--muted);margin-top:6px}
+footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
+
+@media print{
+  html{filter:grayscale(100%)}
+  body{font-size:12pt;background:#fff}
+  .mast{background:#fff;color:var(--ink);border-bottom:4px solid #333} .mast svg.deco,.toc,.home{display:none}
+  .chip{border-color:#999} .sec{grid-template-columns:minmax(0,1fr) 240px;padding:18px 0;break-inside:avoid-page}
+  aside{position:static} a{color:var(--ink);text-decoration:none}
+}
+</style>
+<body>
+
+<header class="mast">
+  <svg class="deco" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M100 25l60 22v45c0 40-27 68-60 83-33-15-60-43-60-83V47z"/><path d="M72 100l20 20 38-42"/></g></svg>
+  <div class="wrap">
+    <a class="home" href="../../programming/">&larr; Year 10 Unit 1: Programming</a>
+    <div class="kicker">Year 10 Guide · Paper 2 · Programming</div>
+    <h1>Validation and test data</h1>
+    <p class="dek">How a program rejects data that cannot be right, how a person checks data that might be wrong, and how to choose values that test a program properly.</p>
+    <div class="chips"><span class="chip">Validation checks</span><span class="chip">Verification</span><span class="chip">Test data</span><span class="chip">Lesson 12 · web page 9</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="toc"><b>Contents</b>
+  <a href="#vv">1 Validation or verification</a><a href="#checks">2 Six checks</a><a href="#loop">3 A validation loop</a>
+  <a href="#verify">4 Verification checks</a><a href="#test">5 Test data</a><a href="#mistakes">6 Common mistakes</a><a href="#exam">7 In the exam</a>
+</nav>
+
+<!-- 1 ------------------------------------------------------------ -->
+<section class="sec" id="vv">
+  <div>
+    <div class="num">1</div>
+    <h2>Validation or verification?</h2>
+    <p class="lead">An online form asks for a person's age. One person types 250. Another means to type 52, but types 25. Each mistake needs a different kind of check.</p>
+    <div class="vs" role="table" aria-label="Validation and verification compared">
+      <div class="h pc">Validation</div><div class="h py">Verification</div>
+      <div class="cell pc" style="font-family:inherit">250 is not a possible age. A rule rejects it.</div>
+      <div class="cell py" style="font-family:inherit">25 is a possible age, so no rule can reject it. A person must check it.</div>
+      <div class="cell pc" style="font-family:inherit">Done automatically by the program.</div>
+      <div class="cell py" style="font-family:inherit">Checks the data entered is the data that was meant.</div>
+      <div class="cell pc" style="font-family:inherit">Checks data is <b>reasonable</b>.</div>
+      <div class="cell py" style="font-family:inherit">Checks data has not <b>changed</b> when it was entered.</div>
+    </div>
+    <p>Validation cannot tell you that data is correct. 25 passes a range check from 0 to 120, even though the person is 52.</p>
+  </div>
+  <aside>
+    <div class="box words"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h11a4 4 0 0 1 4 4v10H8a4 4 0 0 1-4-4z"/><path d="M8 9h7M8 13h5"/></svg>Key words</h4>
+      <dl>
+        <dt>validation</dt><dd>An automatic check that data is reasonable.</dd>
+        <dt>verification</dt><dd>A check that data has not changed when it was entered.</dd>
+        <dt>test data</dt><dd>Values chosen to test that a program works.</dd>
+        <dt>extreme</dt><dd>The largest or smallest acceptable value.</dd>
+        <dt>boundary</dt><dd>The largest or smallest acceptable value, and the first value past it.</dd>
+      </dl></div>
+  </aside>
+</section>
+
+<!-- 2 ------------------------------------------------------------ -->
+<section class="sec full" id="checks">
+  <div>
+    <div class="num">2</div>
+    <h2>Six validation checks</h2>
+    <p class="lead">Each check tests one thing about the data. Learn the name, what it checks, and one example.</p>
+    <div class="ops">
+      <div class="op a"><h3>Range</h3><div class="res">The value is between two limits</div><div class="syms"><span>Mark 0 to 100</span></div></div>
+      <div class="op r"><h3>Length</h3><div class="res">The number of characters</div><div class="syms"><span>Password 8 or more</span></div></div>
+      <div class="op l"><h3>Type</h3><div class="res">The data type is correct</div><div class="syms"><span>Age is an INTEGER</span></div></div>
+      <div class="op a"><h3>Presence</h3><div class="res">Some data has been entered</div><div class="syms"><span>Name not empty</span></div></div>
+      <div class="op r"><h3>Format</h3><div class="res">The data follows a pattern</div><div class="syms"><span>dd/mm/yyyy</span><span>has an @</span></div></div>
+      <div class="op l"><h3>Check digit</h3><div class="res">Detects errors in entered or transmitted data</div><div class="syms"><span>last digit of a bar code</span></div></div>
+    </div>
+    <p>A check digit is worked out from the other digits, often with <code>MOD</code>. If one digit is typed wrongly, the check digit no longer matches.</p>
+  </div>
+</section>
+
+<!-- 3 ------------------------------------------------------------ -->
+<section class="sec" id="loop">
+  <div>
+    <div class="num">3</div>
+    <h2>A validation loop</h2>
+    <p class="lead">An IF checks the input once, so a second wrong input is accepted. A loop checks after every input, until the input is valid.</p>
+    <figure>
+      <svg viewBox="0 0 700 170" role="img" aria-label="Input, then a loop that asks again while the value is invalid">
+        <g font-family="Source Sans 3, sans-serif" font-size="18">
+          <rect x="10" y="55" width="130" height="56" rx="10" fill="#e6f0fa" stroke="#1f6fb2" stroke-width="2"/>
+          <text x="75" y="89" text-anchor="middle" font-weight="700">INPUT</text>
+          <path d="M140 83h60" stroke="#1d2327" stroke-width="2.5" marker-end="url(#ar)"/>
+          <polygon points="290,30 380,83 290,136 200,83" fill="#fdf0e3" stroke="#e07a1f" stroke-width="2"/>
+          <text x="290" y="88" text-anchor="middle" font-weight="700">valid?</text>
+          <path d="M380 83h80" stroke="#2e7d52" stroke-width="2.5" marker-end="url(#ar)"/>
+          <text x="420" y="74" text-anchor="middle" fill="#2e7d52" font-weight="700">yes</text>
+          <rect x="465" y="55" width="220" height="56" rx="10" fill="#e6f4ec" stroke="#2e7d52" stroke-width="2"/>
+          <text x="575" y="89" text-anchor="middle" font-weight="700">carry on</text>
+          <path d="M290 136v22h-215v-40" fill="none" stroke="#c0392b" stroke-width="2.5" marker-end="url(#ar)"/>
+          <text x="185" y="152" text-anchor="middle" fill="#c0392b" font-weight="700">no: error message, ask again</text>
+          <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1d2327"/></marker></defs>
+        </g>
+      </svg>
+      <figcaption>The red path is the loop. It repeats until the value is valid.</figcaption>
+    </figure>
+    <h3>WHILE: the condition is the invalid case</h3>
+<pre><span class="k">OUTPUT</span> <span class="s">"Enter a mark from 0 to 100"</span>
+<span class="k">INPUT</span> Mark
+<span class="k">WHILE</span> Mark &lt; 0 <span class="k">OR</span> Mark &gt; 100 <span class="k">DO</span>
+    <span class="k">OUTPUT</span> <span class="s">"The mark must be from 0 to 100"</span>
+    <span class="k">INPUT</span> Mark
+<span class="k">ENDWHILE</span></pre>
+    <h3>REPEAT: the condition is the valid case</h3>
+<pre><span class="k">REPEAT</span>
+    <span class="k">OUTPUT</span> <span class="s">"Enter a mark from 0 to 100"</span>
+    <span class="k">INPUT</span> Mark
+<span class="k">UNTIL</span> Mark &gt;= 0 <span class="k">AND</span> Mark &lt;= 100</pre>
+    <h3>The same loop in Python</h3>
+<pre>mark = int(input(<span class="s">"Enter a mark from 0 to 100: "</span>))
+<span class="k">while</span> mark &lt; 0 <span class="k">or</span> mark &gt; 100:
+    mark = int(input(<span class="s">"The mark must be from 0 to 100: "</span>))</pre>
+  </div>
+  <aside>
+    <div class="box fact"><h4>OR becomes AND</h4>
+      <p>WHILE keeps going while the mark is <b>wrong</b>: below 0 OR above 100.</p>
+      <p>UNTIL stops when the mark is <b>right</b>: 0 or more AND 100 or less.</p></div>
+    <div class="box words"><h4>Four things to include</h4>
+      <ul><li>a loop: WHILE or REPEAT</li><li>the input, and the input again inside the loop</li><li>the correct condition</li><li>a prompt and an error message</li></ul></div>
+  </aside>
+</section>
+
+<!-- 4 ------------------------------------------------------------ -->
+<section class="sec" id="verify">
+  <div>
+    <div class="num">4</div>
+    <h2>Two verification checks</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Check</th><th>How it works</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><b>Visual check</b></td><td>The user reads the data on screen and confirms nothing has changed.</td><td>Checking an order before you press Buy.</td></tr>
+        <tr><td><b>Double entry check</b></td><td>The data is entered twice and the two are compared. If they differ, it is entered again.</td><td>Typing a new password twice.</td></tr>
+      </tbody></table></div>
+  </div>
+  <aside>
+    <div class="box exam"><h4>Name it, then say how it works</h4>
+      <p>"Visual check" alone is not enough. Add how it is used: the user looks through the data and confirms it.</p></div>
+  </aside>
+</section>
+
+<!-- 5 ------------------------------------------------------------ -->
+<section class="sec full" id="test">
+  <div>
+    <div class="num">5</div>
+    <h2>Four types of test data</h2>
+    <p class="lead">A program accepts a mark from 0 to 100 inclusive. Test it with values chosen for a reason.</p>
+    <figure>
+      <svg viewBox="0 0 860 190" role="img" aria-label="A number line from -10 to 110 showing normal, extreme, boundary and abnormal values">
+        <g font-family="Source Sans 3, sans-serif">
+          <rect x="130" y="70" width="600" height="20" rx="4" fill="#e6f4ec"/>
+          <line x1="40" y1="80" x2="820" y2="80" stroke="#1d2327" stroke-width="2.5"/>
+          <g font-size="16" text-anchor="middle" font-family="JetBrains Mono, monospace">
+            <line x1="124" y1="70" x2="124" y2="90" stroke="#1d2327" stroke-width="2"/><text x="118" y="115">-1</text>
+            <line x1="130" y1="64" x2="130" y2="96" stroke="#2e7d52" stroke-width="3"/><text x="138" y="135">0</text>
+            <line x1="430" y1="70" x2="430" y2="90" stroke="#1d2327" stroke-width="2"/><text x="430" y="115">50</text>
+            <line x1="730" y1="64" x2="730" y2="96" stroke="#2e7d52" stroke-width="3"/><text x="722" y="135">100</text>
+            <line x1="736" y1="70" x2="736" y2="90" stroke="#1d2327" stroke-width="2"/><text x="750" y="115">101</text>
+            <text x="805" y="115">150</text>
+          </g>
+          <text x="430" y="55" text-anchor="middle" font-size="16" font-weight="700" fill="#2e7d52">accepted: 0 to 100</text>
+          <text x="430" y="160" text-anchor="middle" font-size="17" font-weight="700" fill="#1f6fb2">normal</text>
+          <text x="130" y="160" text-anchor="middle" font-size="17" font-weight="700" fill="#6b3fa0">extreme</text>
+          <text x="730" y="160" text-anchor="middle" font-size="17" font-weight="700" fill="#6b3fa0">extreme</text>
+          <text x="130" y="182" text-anchor="middle" font-size="15" fill="#e07a1f" font-weight="700">boundary pair: -1 and 0</text>
+          <text x="730" y="182" text-anchor="middle" font-size="15" fill="#e07a1f" font-weight="700">boundary pair: 100 and 101</text>
+          <text x="805" y="160" text-anchor="middle" font-size="17" font-weight="700" fill="#c0392b">abnormal</text>
+        </g>
+      </svg>
+    </figure>
+    <div class="tbl"><table>
+      <thead><tr><th>Type</th><th>Meaning</th><th>Example</th><th>Expected result</th></tr></thead>
+      <tbody>
+        <tr><td><b>Normal</b></td><td>Data that should be accepted</td><td>50</td><td>accepted</td></tr>
+        <tr><td><b>Abnormal</b></td><td>Data that should be rejected</td><td>150, or fifty</td><td>rejected</td></tr>
+        <tr><td><b>Extreme</b></td><td>The largest or smallest acceptable value</td><td>0 or 100</td><td>accepted</td></tr>
+        <tr><td><b>Boundary</b></td><td>The largest or smallest acceptable value, and the first value past it</td><td>0 and -1, or 100 and 101</td><td>one accepted, one rejected</td></tr>
+      </tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 ------------------------------------------------------------ -->
+<section class="sec full" id="mistakes">
+  <div>
+    <div class="num">6</div>
+    <h2>Common mistakes</h2>
+    <div class="mc">
+      <div class="card"><p class="wrong">✗ An IF to validate</p>
+        <p>An IF asks again only once. A second wrong value gets through.</p>
+        <p class="right">✓ A WHILE or REPEAT loop that asks again until the value is valid</p></div>
+      <div class="card"><p class="wrong">✗ AND in the WHILE condition</p>
+        <p><code>WHILE Mark &lt; 0 AND Mark &gt; 100</code> is never TRUE: no mark is both.</p>
+        <p class="right">✓ <code>WHILE Mark &lt; 0 OR Mark &gt; 100</code></p></div>
+      <div class="card"><p class="wrong">✗ No INPUT inside the loop</p>
+        <p>The value never changes, so the loop never stops.</p>
+        <p class="right">✓ The error message, then INPUT again, inside the loop</p></div>
+      <div class="card"><p class="wrong">✗ Extreme data that is rejected</p>
+        <p>Extreme values are inside the range. 101 is not extreme for 0 to 100.</p>
+        <p class="right">✓ Extreme: 0 or 100. Boundary rejected: -1 or 101</p></div>
+      <div class="card"><p class="wrong">✗ Mixing up validation and verification</p>
+        <p>A double entry check is verification, not validation.</p>
+        <p class="right">✓ Validation: range, length, type, presence, format, check digit. Verification: visual, double entry</p></div>
+      <div class="card"><p class="wrong">✗ &gt; and &gt;= mixed up</p>
+        <p><code>Age &gt; 11</code> rejects 11 when 11 is allowed.</p>
+        <p class="right">✓ Read "inclusive" as <code>&gt;=</code> and <code>&lt;=</code></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 ------------------------------------------------------------ -->
+<section class="sec" id="exam">
+  <div>
+    <div class="num">7</div>
+    <h2>In the exam</h2>
+    <div class="box exam"><h4>Write a validation algorithm</h4>
+      <p>Marks go to the loop, the input, the condition and the messages. Write all four, even when the question is short.</p></div>
+    <div class="box exam"><h4>Choose test data</h4>
+      <p>Give a value <b>and</b> say what it tests. For a range of 1 to 50: normal 25, abnormal 60, extreme 1 or 50, boundary 0 or 51.</p></div>
+    <div class="box exam"><h4>Name the check</h4>
+      <p>Match the check to what the rule tests: a number of characters is length; an '@' or a date pattern is format; something entered is presence.</p></div>
+  </div>
+  <aside>
+    <div class="box tryit"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4 10-10"/></svg>Practise</h4>
+      <ul>
+        <li><a href="../../validation/">Page 9</a>, Steps 1 and 2: name the checks</li>
+        <li>Step 3: verification</li>
+        <li>Steps 4 and 5: test data</li>
+        <li>Step 6: a validation loop in Python</li>
+        <li>Step 7: the same loop in pseudocode</li>
+      </ul></div>
+    <div class="box words"><h4>See also</h4><p><a href="../python-first/">Python first</a>: write it in Python, test it, then translate it.</p></div>
+  </aside>
+</section>
+
+<footer>Year 10 Computer Science · Guide to Lesson 12 (web page 9).</footer>
+</div>
+</body>
+</html>

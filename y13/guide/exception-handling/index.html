@@ -106,7 +106,7 @@ footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
     <a class="home" href="../../files-and-exceptions/">&larr; Year 13 Unit 4: Files and exceptions</a>
     <div class="kicker">Year 13 Guide · Paper 4 · Files and exceptions</div>
     <h1>Exception handling</h1>
-    <p class="dek">Opening a file that is not there stops the program. A try and an except let the program print a message and carry on instead. It is a mark point in nineteen of the last twenty-nine mark schemes.</p>
+    <p class="dek">Opening a file that is not there stops the program. A try and an except let the program print a message and carry on instead. Every Paper 4 mark scheme since 2021 has awarded marks for it.</p>
     <div class="chips"><span class="chip">Syllabus 20.2</span><span class="chip">Paper 4 Practical</span><span class="chip">Python console mode</span></div>
   </div>
 </header>
@@ -173,6 +173,7 @@ FileNotFoundError: [Errno 2] No such file or directory: 'Missing.txt'</pre>
       <li>the <code>except</code></li>
       <li>an output that says what went wrong</li>
     </ol>
+    <p>In the 2021 and 2022 mark schemes those were two separate marks: one for the try and the catch around the file work, one for the output. From June 2023 the two are folded into a single mark point, and both halves are still required to earn it.</p>
     <p>An <code>except</code> block that does nothing, or that silently carries on, is not worth the mark. The message does not have to be long. <code>print("Cannot open file")</code> is enough, and it is what the published answers use.</p>
     <h3>There is no pseudocode for it</h3>
     <p>The Cambridge pseudocode guide has no exception handling commands, so a question describes it in words, usually as a line like include exception handling when writing to the file. The Python is the candidate's own.</p>
@@ -340,9 +341,10 @@ That is not a number</pre>
     <h2>In the exam</h2>
     <p class="lead">Exception handling is never a question on its own. It is a mark point inside a question about a file, and in these papers it has never been asked about anything else.</p>
     <div class="box exam"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg>How often</h4>
-      <p>It is a mark point in nineteen of the twenty-nine mark schemes from June 2021 to November 2025. Thirteen of those question papers ask for it in the wording of the question, which means that in the other six the mark was there for candidates who added it without being told.</p></div>
+      <p>Every one of the twenty-nine mark schemes from June 2021 to November 2025 awards marks for exception handling. Thirteen of those question papers ask for it in the wording of the question, so in the other sixteen the marks were there for candidates who added it without being told.</p></div>
     <div class="box exam"><h4>Where the mark sits</h4>
-      <p>It is one of the points in a list that a part is marked against, so it is worth the same as opening the file or looping to the end of it. In June 2025 Paper 41 Question 2(c), five marks cover the header and the open, the loop, the write, the line break and the exception handling.</p></div>
+      <p>It is one of the points in a list that a part is marked against, so it is worth the same as opening the file or looping to the end of it. In June 2025 Paper 41 Question 2(c), five marks cover the header and the open, the loop, the write, the line break and the exception handling.</p>
+      <p>In the eleven papers of the 2021 and 2022 series it is two marks rather than one, because the mark scheme splits it into the try and catch around the file work and an appropriate output. November 2022 Paper 41 Question 1(b) is marked that way. From June 2023 the two halves appear as one mark point, and a paper can still carry two or three of them where more than one part reads a file.</p></div>
     <div class="box exam"><h4>When the question asks in words</h4>
       <p>November 2025 Paper 42 Question 3(d) says to include exception handling when writing to the file. June 2025 Paper 41 Question 2(c) says the procedure uses exception handling when opening and writing data to the text file. Both describe it in English because there is no pseudocode form.</p></div>
     <div class="box exam"><h4>Evidence</h4>

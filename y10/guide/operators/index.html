@@ -128,7 +128,7 @@ footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
     <div class="kicker">Year 10 Guide · Paper 2 · Programming</div>
     <h1>Operators and library routines</h1>
     <p class="dek">The symbols that calculate, compare and combine, and the four ready-made routines every Paper 2 expects: DIV, MOD, ROUND and RANDOM.</p>
-    <div class="chips"><span class="chip">Syllabus 8.1.4(f)</span><span class="chip">Syllabus 8.1.7</span><span class="chip">Pseudocode pages 39 to 41</span><span class="chip">Lesson 11 · web page 8</span></div>
+    <div class="chips"><span class="chip">DIV and MOD</span><span class="chip">ROUND and RANDOM</span><span class="chip">Lesson 11 · web page 8</span></div>
   </div>
 </header>
 
@@ -155,7 +155,7 @@ footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
     </div>
     <p><code>^</code> means "raised to the power of", so <code>4 ^ 2</code> is 16. <code>&lt;&gt;</code> means "not equal to". The result of a relational operator is always of data type BOOLEAN.</p>
     <h3>Order of operations</h3>
-    <p>Multiplication and division are done before addition and subtraction, as in mathematics. Brackets make the order clear, and the syllabus recommends them in longer expressions.</p>
+    <p>Multiplication and division are done before addition and subtraction, as in mathematics. Brackets make the order clear: use them in longer expressions.</p>
 <pre>Answer <span class="k">←</span> Score * 100 / MaxMark
 Answer <span class="k">←</span> Pi * Radius ^ 2</pre>
   </div>
@@ -221,15 +221,15 @@ Answer <span class="k">←</span> Pi * Radius ^ 2</pre>
   <div>
     <div class="num">3</div>
     <h2>Where DIV and MOD are used</h2>
-    <p class="lead">These are more than arithmetic. Past papers use them to test numbers and to take numbers apart.</p>
+    <p class="lead">These are more than arithmetic. Programs use them to test numbers and to take numbers apart.</p>
     <div class="tbl"><table>
-      <thead><tr><th>Use</th><th>Pseudocode</th><th>Past paper</th></tr></thead>
+      <thead><tr><th>Use</th><th>Pseudocode</th></tr></thead>
       <tbody>
-        <tr><td>Is X even?</td><td><code>IF MOD(X, 2) = 0</code></td><td>June 2025 Paper 21 Q9(b)</td></tr>
-        <tr><td>Last digit of a number</td><td><code>355 MOD 10</code> is 5</td><td>June 2025 Paper 23 Q2</td></tr>
-        <tr><td>Remove the last digit</td><td><code>355 DIV 10</code> is 35</td><td>June 2025 Paper 23 Q2</td></tr>
-        <tr><td>Check digit</td><td><code>CheckDigit ← MOD(Total, 11)</code></td><td>November 2025 Paper 21 Q6</td></tr>
-        <tr><td>Hours from minutes</td><td><code>Hours ← DIV(Minutes, 60)</code></td><td>Page 8, Step 4</td></tr>
+        <tr><td>Is X even?</td><td><code>IF MOD(X, 2) = 0</code></td></tr>
+        <tr><td>Last digit of a number</td><td><code>355 MOD 10</code> is 5</td></tr>
+        <tr><td>Remove the last digit</td><td><code>355 DIV 10</code> is 35</td></tr>
+        <tr><td>Check digit</td><td><code>CheckDigit ← MOD(Total, 11)</code></td></tr>
+        <tr><td>Hours from minutes</td><td><code>Hours ← DIV(Minutes, 60)</code></td></tr>
       </tbody></table></div>
     <p>An even number has a remainder of 0 when it is divided by 2, so <code>MOD(X, 2) = 0</code> is TRUE for every even number and FALSE for every odd one.</p>
   </div>
@@ -281,7 +281,7 @@ Value <span class="k">←</span> <span class="k">ROUND</span>(<span class="k">RA
           </g>
         </g>
       </svg>
-      <figcaption>Line 06 of June 2024 Paper 21 Q4: an algorithm that allows between 1 and 20 values to be entered.</figcaption>
+      <figcaption>An algorithm that allows between 1 and 20 values to be entered.</figcaption>
     </figure>
   </div>
   <aside>
@@ -304,7 +304,7 @@ Value <span class="k">←</span> <span class="k">ROUND</span>(<span class="k">RA
   <span class="k">ELSE</span>
     Correct <span class="k">←</span> TRUE
 <span class="k">ENDIF</span></pre>
-    <p>This is the syllabus example. OR is TRUE when either comparison is TRUE, so any answer below 0 or above 100 sets Correct to FALSE.</p>
+    <p>OR is TRUE when either comparison is TRUE, so any answer below 0 or above 100 sets Correct to FALSE.</p>
     <div class="tbl"><table>
       <thead><tr><th>Operator</th><th>The result is TRUE when</th><th>Example</th></tr></thead>
       <tbody>
@@ -351,7 +351,7 @@ Value <span class="k">←</span> <span class="k">ROUND</span>(<span class="k">RA
       <div class="card"><p class="wrong">✗ Python symbols in a pseudocode answer</p>
         <p><code>IF X == 5</code>, <code>X != 0</code>, <code>17 % 5</code> and <code>17 // 5</code> are Python.</p>
         <p class="right">✓ <code>IF X = 5</code>, <code>X &lt;&gt; 0</code>, <code>MOD(17, 5)</code>, <code>DIV(17, 5)</code></p>
-        <p>The syllabus states that coding answers on Paper 2 must be in pseudocode, except in the scenario question.</p></div>
+        <p>Code answers on Paper 2 are written in pseudocode, except in the scenario question.</p></div>
       <div class="card"><p class="wrong">✗ <code>=</code> to assign in pseudocode</p>
         <p><code>Total = Total + Mark</code> is a comparison in pseudocode, not an assignment.</p>
         <p class="right">✓ <code>Total ← Total + Mark</code></p></div>
@@ -383,12 +383,12 @@ Value <span class="k">←</span> <span class="k">ROUND</span>(<span class="k">RA
     <div class="num">8</div>
     <h2>In the exam</h2>
     <div class="box exam"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h3"/></svg>"State the purpose", with an example</h4>
-      <p>June 2025 Paper 21 Q5 asks for the purpose of MOD and DIV and one example statement for each. The four marks are the two purposes and the two examples, so an answer with no example statements can earn two marks at most.</p>
+      <p>Some questions ask for the purpose of MOD and DIV and one example statement for each. Marks go to the purposes and to the examples, so give a full example statement every time.</p>
 <pre>X <span class="k">←</span> <span class="k">MOD</span>(10, 3)      Y <span class="k">←</span> <span class="k">DIV</span>(10, 3)</pre></div>
     <div class="box exam"><h4>"Explain the purpose"</h4>
-      <p>June 2023 Paper 21 Q4 (DIV and ROUND) and June 2023 Paper 23 Q2 (MOD and RANDOM) give two marks for each routine: what it does, then a second point or an example.</p></div>
+      <p>Expect two marks for each routine: what it does, then a second point or an example.</p></div>
     <div class="box exam"><h4>Use the routine in the statement</h4>
-      <p>June 2024 Paper 21 Q4(b) asks for a statement that outputs an average rounded to one decimal place. The marks go to ROUND with two values in its brackets, and to <code>(Total / Limit, 1)</code> as those values.</p></div>
+      <p>To output an average rounded to one decimal place, put ROUND in the statement with two values in its brackets: <code>ROUND(Total / Limit, 1)</code>.</p></div>
     <div class="box exam"><h4>Tick-box questions</h4>
       <p>One-mark questions name the operator from its description: the remainder (MOD), the quotient with the fractional part discarded (DIV), the result of <code>4 ^ 2</code> (16), less than or equal to (<code>&lt;=</code>).</p></div>
   </div>
@@ -397,15 +397,15 @@ Value <span class="k">←</span> <span class="k">ROUND</span>(<span class="k">RA
       <ul>
         <li><a href="../../operators/">Page 8</a>, Steps 1 to 3: sort, match and choose</li>
         <li>Step 4: DIV and MOD in Python</li>
-        <li>Step 5: June 2025 Paper 21 Q5</li>
+        <li>Step 5: the purpose of MOD and DIV</li>
         <li>Step 6: ROUND and RANDOM</li>
-        <li>Step 7: June 2024 Paper 21 Q4</li>
+        <li>Step 7: find the errors</li>
       </ul></div>
     <div class="box words"><h4>Next</h4><p><a href="../../validation/">Page 9: Validation and test data</a> uses AND, OR and MOD again.</p></div>
   </aside>
 </section>
 
-<footer>Year 10 Computer Science · Cambridge IGCSE 0478 · Guide to Lesson 11 (web page 8). Sources: syllabus 0478 for 2026 to 2028, pages 39 to 41, and the published question papers and mark schemes named on this page.</footer>
+<footer>Year 10 Computer Science · Guide to Lesson 11 (web page 8).</footer>
 </div>
 </body>
 </html>

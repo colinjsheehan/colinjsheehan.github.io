@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python first · Year 10 Guide</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="description" content="Write it in Python, test it, then translate it line by line into Cambridge pseudocode. A translation table and two worked examples.">
+<meta name="guide-order" content="7">
+<meta name="guide-unit" content="programming">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1d2327; --muted:#55616a; --paper:#fffdf8; --rule:#e4ded2;
+  --topic:#e07a1f; --topic-deep:#a8520d; --topic-soft:#fdf0e3;
+  --teal:#1f7a7a; --teal-soft:#e3f3f2; --plum:#6b3fa0; --plum-soft:#f1eaf9;
+  --red:#c0392b; --red-soft:#fbe9e7; --green:#2e7d52; --green-soft:#e6f4ec;
+  --blue:#1f6fb2; --blue-soft:#e6f0fa; --code-bg:#fbf7f0;
+  --kw:#1f6fb2; --str:#2e7d52;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 18px/1.6 "Source Sans 3",system-ui,sans-serif}
+a{color:var(--topic-deep)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* ---------- masthead */
+.mast{background:linear-gradient(120deg,var(--topic) 0%,#f0a050 100%);color:#fff;position:relative;overflow:hidden}
+.mast .wrap{padding-top:28px;padding-bottom:44px}
+.kicker{font:700 13px/1 "Source Sans 3",system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;opacity:.92}
+.mast h1{font:800 clamp(40px,7vw,76px)/1.0 "Fraunces",Georgia,serif;margin:14px 0 12px;letter-spacing:-.01em;max-width:14ch}
+.dek{font-size:21px;max-width:52ch;margin:0;opacity:.96}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.chip{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:600}
+.home{display:inline-block;margin-bottom:14px;color:#fff;font:600 15px/1 "Source Sans 3",system-ui,sans-serif;text-decoration:none;opacity:.92}.home:hover{text-decoration:underline}
+.mast svg.deco{position:absolute;right:-30px;top:10px;width:360px;opacity:.20}
+@media (max-width:700px){.mast svg.deco{display:none}}
+
+/* ---------- contents */
+.toc{display:flex;flex-wrap:wrap;gap:6px 18px;padding:14px 0;border-bottom:1px solid var(--rule);font-size:15px;font-weight:600}
+.toc a{text-decoration:none;color:var(--muted)} .toc a:hover{color:var(--topic-deep)}
+.toc b{color:var(--topic-deep)}
+
+/* ---------- layout */
+.sec{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;padding:44px 0;border-bottom:1px solid var(--rule)}
+.sec.full{grid-template-columns:minmax(0,1fr)}
+@media (max-width:900px){.sec{grid-template-columns:minmax(0,1fr)}}
+.num{font:800 15px/1 "Fraunces",serif;color:var(--topic);letter-spacing:.06em}
+h2{font:800 clamp(28px,4vw,40px)/1.1 "Fraunces",Georgia,serif;margin:6px 0 16px;color:var(--ink)}
+h3{font:700 21px/1.25 "Source Sans 3",system-ui,sans-serif;margin:26px 0 8px}
+p{margin:0 0 14px;max-width:68ch}
+.lead{font-size:20px;color:#2c353b}
+
+/* ---------- code */
+code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.9em}
+code{background:var(--code-bg);border:1px solid var(--rule);border-radius:5px;padding:1px 5px}
+pre{background:var(--code-bg);border:1px solid var(--rule);border-left:5px solid var(--topic);border-radius:8px;padding:14px 18px;overflow-x:auto;font:500 16px/1.55 "JetBrains Mono",monospace;margin:10px 0 16px}
+pre .k{color:var(--kw);font-weight:700} pre .s{color:var(--str)} pre .c{color:#8a8f94;font-style:italic}
+
+/* ---------- boxes */
+.box{border-radius:12px;padding:16px 18px;margin:18px 0;border:1px solid transparent}
+.box h4{margin:0 0 6px;font:800 13px/1.2 "Source Sans 3",system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.box p:last-child,.box ul:last-child{margin-bottom:0}
+.box ul{margin:6px 0 0;padding-left:20px}
+.exam{background:var(--blue-soft);border-color:#c5dbef} .exam h4{color:var(--blue)}
+.mistake{background:var(--red-soft);border-color:#f2c6c0} .mistake h4{color:var(--red)}
+.tryit{background:var(--green-soft);border-color:#c3e3cf} .tryit h4{color:var(--green)}
+.words{background:var(--topic-soft);border-color:#f3d5b5} .words h4{color:var(--topic-deep)}
+.fact{background:var(--plum-soft);border-color:#ddcdf0} .fact h4{color:var(--plum)}
+.ic{width:18px;height:18px;flex:none}
+dl{margin:8px 0 0} dt{font-weight:700} dd{margin:0 0 10px;color:#3a454c}
+aside{align-self:start;position:sticky;top:16px}
+@media (max-width:900px){aside{position:static}}
+
+/* ---------- tables */
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:17px}
+th{background:#2f3b42;color:#fff;text-align:left;padding:10px 12px;font-weight:700}
+td{padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+tbody tr:nth-child(even) td{background:#f6f9fc}
+.tbl{overflow-x:auto}
+
+/* ---------- operator cards */
+.ops{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}
+@media (max-width:700px){.ops{grid-template-columns:minmax(0,1fr)}}
+.op{border-radius:14px;padding:16px;color:#fff}
+.op h3{margin:0 0 4px;font:800 22px/1.1 "Fraunces",serif}
+.op .res{font-size:14px;opacity:.95;margin-bottom:10px}
+.op .syms{display:flex;flex-wrap:wrap;gap:6px}
+.op .syms span{background:rgba(255,255,255,.95);color:var(--ink);border-radius:7px;padding:3px 9px;font:700 17px "JetBrains Mono",monospace}
+.op.a{background:var(--topic)} .op.r{background:var(--teal)} .op.l{background:var(--plum)}
+
+/* ---------- versus */
+.vs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;border:1px solid var(--rule);border-radius:12px;overflow:hidden;margin:16px 0}
+.vs > div{padding:12px 16px} .vs .h{font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase}
+.vs .pc{background:var(--blue-soft)} .vs .py{background:#fff6e0}
+.vs .row{display:contents}
+.vs .cell{padding:9px 16px;border-top:1px solid var(--rule);font:500 16px "JetBrains Mono",monospace}
+.vs .cell.pc{background:#f3f8fd} .vs .cell.py{background:#fffaf0}
+.vs .note{grid-column:1/-1;padding:6px 16px 10px;border-top:none;font:400 15px "Source Sans 3",system-ui,sans-serif;color:var(--muted);background:#fff}
+
+/* ---------- misconception cards */
+.mc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0}
+@media (max-width:760px){.mc{grid-template-columns:minmax(0,1fr)}}
+.mc .card{background:#fff;border:1px solid var(--rule);border-top:6px solid var(--red);border-radius:12px;padding:14px 16px}
+.mc .wrong{color:var(--red);font-weight:700} .mc .right{color:var(--green);font-weight:700}
+.mc .card p{margin:6px 0}
+
+figure{margin:18px 0 22px} figcaption{font-size:14px;color:var(--muted);margin-top:6px}
+footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
+
+@media print{
+  html{filter:grayscale(100%)}
+  body{font-size:12pt;background:#fff}
+  .mast{background:#fff;color:var(--ink);border-bottom:4px solid #333} .mast svg.deco,.toc,.home{display:none}
+  .chip{border-color:#999} .sec{grid-template-columns:minmax(0,1fr) 240px;padding:18px 0;break-inside:avoid-page}
+  aside{position:static} a{color:var(--ink);text-decoration:none}
+}
+</style>
+<body>
+
+<header class="mast">
+  <div class="wrap">
+    <a class="home" href="../../programming/">&larr; Year 10 Unit 1: Programming</a>
+    <div class="kicker">Year 10 Guide · Paper 2 · Programming</div>
+    <h1>Python first</h1>
+    <p class="dek">Write the algorithm in Python. Run it and test it. Then translate it, line by line, into Cambridge pseudocode.</p>
+    <div class="chips"><span class="chip">Used on pages 8 and 9</span><span class="chip">Use it for every written algorithm</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="toc"><b>Contents</b>
+  <a href="#method">1 The method</a><a href="#table">2 Translation table</a><a href="#ex1">3 Example: a validation loop</a>
+  <a href="#ex2">4 Example: a total and an average</a><a href="#traps">5 Traps</a>
+</nav>
+
+<!-- 1 ------------------------------------------------------------ -->
+<section class="sec" id="method">
+  <div>
+    <div class="num">1</div>
+    <h2>The method</h2>
+    <p class="lead">Pseudocode cannot be run. Python can. So solve the problem where you can test it, then write the answer in pseudocode.</p>
+    <table>
+      <thead><tr><th>Step</th><th>What you do</th></tr></thead>
+      <tbody>
+        <tr><td><b>1 Solve</b></td><td>Write the algorithm in Python.</td></tr>
+        <tr><td><b>2 Test</b></td><td>Run it. Use normal, abnormal and extreme data. Fix it until the output is correct.</td></tr>
+        <tr><td><b>3 Translate</b></td><td>Write each Python line as a pseudocode line. Use the table in section 2.</td></tr>
+      </tbody>
+    </table>
+    <p>In the exam you cannot run code. The practice in lessons teaches you the shape of each algorithm, so you can write it straight into pseudocode.</p>
+  </div>
+  <aside>
+    <div class="box exam"><h4>In the exam</h4>
+      <p>Paper 2 code answers must be in pseudocode. Python is allowed only in the final 15-mark scenario question.</p></div>
+  </aside>
+</section>
+
+<!-- 2 ------------------------------------------------------------ -->
+<section class="sec full" id="table">
+  <div>
+    <div class="num">2</div>
+    <h2>Translation table</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Python</th><th>Cambridge pseudocode</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td><code>mark = 63</code></td><td><code>Mark ← 63</code></td><td>The arrow assigns.</td></tr>
+        <tr><td><code>mark = int(input("Mark: "))</code></td><td><code>OUTPUT "Mark: "</code><br><code>INPUT Mark</code></td><td>The prompt is a separate OUTPUT.</td></tr>
+        <tr><td><code>print("Total", total)</code></td><td><code>OUTPUT "Total ", Total</code></td><td></td></tr>
+        <tr><td><code>==</code> &nbsp; <code>!=</code></td><td><code>=</code> &nbsp; <code>&lt;&gt;</code></td><td>Equal to, not equal to.</td></tr>
+        <tr><td><code>and</code> &nbsp; <code>or</code> &nbsp; <code>not</code></td><td><code>AND</code> &nbsp; <code>OR</code> &nbsp; <code>NOT</code></td><td></td></tr>
+        <tr><td><code>if age &gt;= 18:</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;print("Adult")</code><br><code>else:</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;print("Child")</code></td>
+            <td><code>IF Age &gt;= 18</code><br><code>&nbsp;&nbsp;THEN</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;OUTPUT "Adult"</code><br><code>&nbsp;&nbsp;ELSE</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;OUTPUT "Child"</code><br><code>ENDIF</code></td><td>Pseudocode ends the block with ENDIF.</td></tr>
+        <tr><td><code>for count in range(1, 11):</code></td><td><code>FOR Count ← 1 TO 10</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;...</code><br><code>NEXT Count</code></td><td>range stops <b>before</b> 11. TO includes 10.</td></tr>
+        <tr><td><code>while mark &lt; 0 or mark &gt; 100:</code></td><td><code>WHILE Mark &lt; 0 OR Mark &gt; 100 DO</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;...</code><br><code>ENDWHILE</code></td><td>Same condition, same meaning.</td></tr>
+        <tr><td>(no REPEAT in Python)</td><td><code>REPEAT</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;...</code><br><code>UNTIL Mark &gt;= 0 AND Mark &lt;= 100</code></td><td>Write a WHILE in Python. UNTIL gives the condition to <b>stop</b>.</td></tr>
+        <tr><td><code>total = total + mark</code></td><td><code>Total ← Total + Mark</code></td><td>Totalling.</td></tr>
+        <tr><td><code>count = count + 1</code></td><td><code>Count ← Count + 1</code></td><td>Counting.</td></tr>
+        <tr><td><code>17 // 5</code> &nbsp; <code>17 % 5</code></td><td><code>DIV(17, 5)</code> &nbsp; <code>MOD(17, 5)</code></td><td>3 and 2.</td></tr>
+        <tr><td><code>round(4.56, 1)</code></td><td><code>ROUND(4.56, 1)</code></td><td>4.6</td></tr>
+        <tr><td><code>random.random()</code></td><td><code>RANDOM()</code></td><td>A number from 0 to 1.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- 3 ------------------------------------------------------------ -->
+<section class="sec" id="ex1">
+  <div>
+    <div class="num">3</div>
+    <h2>Example: a validation loop</h2>
+    <p class="lead">Input a number. Keep asking until it is from 1 to 20 inclusive.</p>
+    <h3>1 Solve in Python</h3>
+<pre>number = int(input(<span class="s">"Enter a number from 1 to 20: "</span>))
+<span class="k">while</span> number &lt; 1 <span class="k">or</span> number &gt; 20:
+    number = int(input(<span class="s">"Must be from 1 to 20. Enter again: "</span>))
+print(<span class="s">"Accepted:"</span>, number)</pre>
+    <h3>2 Test</h3>
+    <p>Type 0, then 21, then 20. The program rejects 0 and 21 and accepts 20.</p>
+    <h3>3 Translate</h3>
+<pre><span class="k">OUTPUT</span> <span class="s">"Enter a number from 1 to 20"</span>
+<span class="k">INPUT</span> Number
+<span class="k">WHILE</span> Number &lt; 1 <span class="k">OR</span> Number &gt; 20 <span class="k">DO</span>
+    <span class="k">OUTPUT</span> <span class="s">"Must be from 1 to 20. Enter again"</span>
+    <span class="k">INPUT</span> Number
+<span class="k">ENDWHILE</span>
+<span class="k">OUTPUT</span> <span class="s">"Accepted: "</span>, Number</pre>
+  </div>
+  <aside>
+    <div class="box words"><h4>Line by line</h4>
+      <p>Each Python <code>input</code> line becomes two lines: an OUTPUT for the prompt and an INPUT.</p>
+      <p>The indented block ends with ENDWHILE.</p></div>
+  </aside>
+</section>
+
+<!-- 4 ------------------------------------------------------------ -->
+<section class="sec" id="ex2">
+  <div>
+    <div class="num">4</div>
+    <h2>Example: a total and an average</h2>
+    <p class="lead">Input 10 numbers. Output the total and the average.</p>
+    <h3>1 Solve in Python</h3>
+<pre>total = 0
+<span class="k">for</span> count <span class="k">in</span> range(1, 11):
+    number = int(input(<span class="s">"Enter a number: "</span>))
+    total = total + number
+print(<span class="s">"Total:"</span>, total)
+print(<span class="s">"Average:"</span>, total / 10)</pre>
+    <h3>2 Test</h3>
+    <p>Enter 1 to 10. The total is 55 and the average is 5.5.</p>
+    <h3>3 Translate</h3>
+<pre>Total <span class="k">←</span> 0
+<span class="k">FOR</span> Count <span class="k">←</span> 1 <span class="k">TO</span> 10
+    <span class="k">OUTPUT</span> <span class="s">"Enter a number"</span>
+    <span class="k">INPUT</span> Number
+    Total <span class="k">←</span> Total + Number
+<span class="k">NEXT</span> Count
+<span class="k">OUTPUT</span> <span class="s">"Total: "</span>, Total
+<span class="k">OUTPUT</span> <span class="s">"Average: "</span>, Total / 10</pre>
+  </div>
+  <aside>
+    <div class="box words"><h4>Line by line</h4>
+      <p><code>range(1, 11)</code> becomes <code>1 TO 10</code>.</p>
+      <p>The total starts at 0 <b>before</b> the loop, in both languages.</p></div>
+  </aside>
+</section>
+
+<!-- 5 ------------------------------------------------------------ -->
+<section class="sec full" id="traps">
+  <div>
+    <div class="num">5</div>
+    <h2>Traps</h2>
+    <div class="mc">
+      <div class="card"><p class="wrong">✗ Python left in the answer</p>
+        <p><code>==</code>, <code>!=</code>, <code>%</code>, <code>//</code>, <code>int(input())</code> and a colon at the end of a line are Python.</p>
+        <p class="right">✓ <code>=</code>, <code>&lt;&gt;</code>, <code>MOD</code>, <code>DIV</code>, <code>INPUT</code>, no colon</p></div>
+      <div class="card"><p class="wrong">✗ The range stop value copied</p>
+        <p><code>range(1, 11)</code> written as <code>FOR Count ← 1 TO 11</code> runs 11 times.</p>
+        <p class="right">✓ <code>FOR Count ← 1 TO 10</code></p></div>
+      <div class="card"><p class="wrong">✗ No end to the block</p>
+        <p>Python ends a block by indenting less. Pseudocode needs the word.</p>
+        <p class="right">✓ <code>ENDIF</code>, <code>ENDWHILE</code>, <code>NEXT Count</code>, <code>UNTIL ...</code></p></div>
+      <div class="card"><p class="wrong">✗ A WHILE condition copied into UNTIL</p>
+        <p>WHILE gives the condition to keep going. UNTIL gives the condition to stop.</p>
+        <p class="right">✓ <code>WHILE Mark &lt; 0 OR Mark &gt; 100</code> becomes <code>UNTIL Mark &gt;= 0 AND Mark &lt;= 100</code></p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec full">
+  <div>
+    <div class="box tryit"><h4>Practise</h4>
+      <ul>
+        <li><a href="../../operators/">Page 8</a>, Step 4: DIV and MOD in Python, then in pseudocode</li>
+        <li><a href="../../validation/">Page 9</a>, Step 6: a validation loop in Python. Step 7: the same loop in pseudocode</li>
+      </ul></div>
+  </div>
+</section>
+
+<footer>Year 10 Computer Science · Guide to the Python first method.</footer>
+</div>
+</body>
+</html>

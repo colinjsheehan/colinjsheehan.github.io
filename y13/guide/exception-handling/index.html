@@ -106,7 +106,7 @@ footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
     <a class="home" href="../../files-and-exceptions/">&larr; Year 13 Unit 4: Files and exceptions</a>
     <div class="kicker">Year 13 Guide · Paper 4 · Files and exceptions</div>
     <h1>Exception handling</h1>
-    <p class="dek">A file that is not there stops the program dead. Exception handling turns that into a message and keeps the program running, and it is a mark in nineteen of the last twenty-nine mark schemes.</p>
+    <p class="dek">Opening a file that is not there stops the program. A try and an except let the program print a message and carry on instead. It is a mark point in nineteen of the last twenty-nine mark schemes.</p>
     <div class="chips"><span class="chip">Syllabus 20.2</span><span class="chip">Paper 4 Practical</span><span class="chip">Python console mode</span></div>
   </div>
 </header>
@@ -161,7 +161,7 @@ FileNotFoundError: [Errno 2] No such file or directory: 'Missing.txt'</pre>
   <div>
     <div class="num">2</div>
     <h2>The shape in Python</h2>
-    <p class="lead">Two keywords and an indented block each. Python runs the <code>try</code> block, and the moment anything in it raises an exception it abandons the rest of that block and runs the <code>except</code> block instead.</p>
+    <p class="lead">The shape is two keywords, each with an indented block under it. Python runs the <code>try</code> block. If anything in it raises an exception, the rest of that block is abandoned and the <code>except</code> block runs instead.</p>
 <pre><span class="k">try</span>:
     Average = Total / Count
 <span class="k">except</span>:
@@ -188,7 +188,7 @@ FileNotFoundError: [Errno 2] No such file or directory: 'Missing.txt'</pre>
   <div>
     <div class="num">3</div>
     <h2>What goes inside the try</h2>
-    <p class="lead">Several mark schemes state it exactly: all file access within the try. Opening the file inside and then reading it outside is the most common way this mark is lost, and it does not even work.</p>
+    <p class="lead">Several mark schemes state it exactly: all file access within the try. Opening the file inside the try and then reading it outside loses the mark, and the program stops at the first line that uses the file.</p>
     <h3 class="bad">&#10007; Only the open is guarded</h3>
 <pre class="bad"><span class="k">try</span>:
     File = <span class="k">open</span>(Name, <span class="s">"r"</span>)
@@ -226,7 +226,7 @@ NameError: name 'File' is not defined</pre>
   <div>
     <div class="num">4</div>
     <h2>When to use it</h2>
-    <p class="lead">The syllabus asks for judgement about when exception handling is appropriate, not for it to be sprinkled everywhere. The test is whether the thing that might fail is under the program's control.</p>
+    <p class="lead">The syllabus asks candidates to know when exception handling is appropriate. The test is whether the thing that might fail is under the program's control.</p>
     <div class="tbl">
     <table>
       <thead><tr><th>Situation</th><th>Tool</th><th>Why</th></tr></thead>
@@ -262,7 +262,7 @@ That is not a number</pre>
   <div>
     <div class="num">5</div>
     <h2>The errors it catches</h2>
-    <p class="lead">A bare <code>except</code> catches everything, which is what the published answers use and what the marks accept. Reading the name of the error is still worth doing, because the name says what went wrong.</p>
+    <p class="lead">A bare <code>except</code> catches everything, which is what the published answers use and what the marks accept. The name Python prints for an uncaught error says what went wrong.</p>
     <div class="tbl">
     <table>
       <thead><tr><th>Error</th><th>Caused by</th><th>What Python prints</th></tr></thead>

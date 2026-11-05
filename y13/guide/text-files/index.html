@@ -130,7 +130,7 @@ footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
     <p class="lead">A file has to be opened before anything can be read from it or written to it, and closed when the work is finished. The mode given when it is opened decides what is allowed and what happens to whatever the file already holds.</p>
 <pre>File = <span class="k">open</span>(<span class="s">"TheData.txt"</span>, <span class="s">"r"</span>)
 File.close()</pre>
-    <p>Three modes are examined. The difference between the last two is the one that costs marks, because opening for writing destroys the file's contents before a single line is written.</p>
+    <p>Three modes are examined. The difference between the last two is the one that costs marks: opening a file for writing empties it, and opening it for appending does not.</p>
     <div class="tbl">
     <table>
       <thead><tr><th>Mode</th><th>Python</th><th>What it does</th></tr></thead>
@@ -190,7 +190,7 @@ File.close()</pre>
   <div>
     <div class="num">2</div>
     <h2>Reading every line</h2>
-    <p class="lead">A line read from a file arrives with its line break still attached. That invisible character is the cause of most of the trouble in this topic, so it is worth seeing once.</p>
+    <p class="lead">A line read from a file arrives with its line break still attached. The character does not show in printed output, and removing it is a mark point in several mark schemes.</p>
 <pre>File = <span class="k">open</span>(<span class="s">"TheData.txt"</span>, <span class="s">"r"</span>)
 Line = File.readline()
 File.close()
@@ -276,7 +276,7 @@ File.close()</pre>
 46
 64</pre>
     <h3>Building a line from several values</h3>
-    <p>Where each line of the new file holds several values separated by commas, the line is built as a string first and written in one go.</p>
+    <p>Where each line of the new file holds several values separated by commas, the line is built as a string first and written in a single call.</p>
 <pre>Line = <span class="k">str</span>(Node[0]) + <span class="s">","</span> + <span class="k">str</span>(Node[1]) + <span class="s">","</span> + <span class="k">str</span>(Node[2])
 File.write(Line + <span class="s">"\n"</span>)</pre>
   </div>
@@ -353,7 +353,7 @@ File.write(Line + <span class="s">"\n"</span>)</pre>
       </div>
       <div class="card">
         <p class="wrong">&#10007; The file is opened for writing when the question says add</p>
-        <p>Mode <code>"w"</code> empties the file the moment it is opened, so the data that was supposed to be added to is gone.</p>
+        <p>Mode <code>"w"</code> empties the file as it is opened, so the data that was to be added to is no longer there.</p>
         <p class="right">&#10003; Use <code>"a"</code> where the question says append or add to the file.</p>
         <p class="src">June 2025 Paper 41 Question 2(c), where the procedure appends each item to a new line.</p>
       </div>
@@ -402,7 +402,7 @@ File.write(Line + <span class="s">"\n"</span>)</pre>
   <div>
     <div class="num">8</div>
     <h2>In the exam</h2>
-    <p class="lead">Every one of the twenty-nine Paper 4 papers from June 2021 to November 2025 supplies or requires a text file. It is the most reliable thing on the paper.</p>
+    <p class="lead">Every one of the twenty-nine Paper 4 papers from June 2021 to November 2025 supplies or requires a text file.</p>
     <div class="box exam"><h4><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg>Read a file into an array</h4>
       <p>November 2024 Paper 41 Question 1(a) gives six marks for a function that declares an array, opens <code>Data.txt</code> to read, loops through the file storing each line, closes the file, returns the array, and handles the exception. June 2025 Paper 41 Question 2(a) gives seven for the same shape with the filename entered by the user and an unknown number of lines.</p></div>
     <div class="box exam"><h4>Read a file straight into a structure</h4>

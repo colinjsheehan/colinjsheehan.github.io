@@ -109,7 +109,7 @@ footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
     <a class="home" href="../../oop/">&larr; Year 13 Unit 3: Object-oriented programming</a>
     <div class="kicker">Year 13 Guide · Paper 4 · Object-oriented programming</div>
     <h1>Inheritance and polymorphism</h1>
-    <p class="dek">A child class takes everything its parent has, then changes the one thing that differs. Two lines of Python do it, and the second question of a Paper 4 class scenario usually asks for them.</p>
+    <p class="dek">A child class takes everything its parent has and changes only what differs. Two lines of Python declare it. A Paper 4 class scenario usually asks for a child class in a later part of the question.</p>
     <div class="chips"><span class="chip">Syllabus 20.1</span><span class="chip">Pseudocode guide 10.2</span><span class="chip">Paper 4 Practical</span><span class="chip">Python console mode</span></div>
   </div>
 </header>
@@ -183,7 +183,7 @@ footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
     <span class="k">def</span> __init__(self, NameP, XPositionP, YPositionP):
         <span class="k">super</span>().__init__(NameP, XPositionP, YPositionP)</pre>
     <p>The brackets name the parent. <code>super()</code> means the parent class, so <code>super().__init__(...)</code> runs the parent's constructor and lets it set the attributes it already knows how to set. The child's constructor does not repeat those assignments.</p>
-    <p>That is the whole of it. The object that comes out has every method of the parent:</p>
+    <p>Those two lines are all that inheritance requires. The object that comes out has every method of the parent:</p>
 <pre>Karla = BikeCharacter(<span class="s">"Karla"</span>, 50, 50)
 <span class="k">print</span>(Karla.GetXPosition(), Karla.GetYPosition())</pre>
 <pre class="out">50 50</pre>

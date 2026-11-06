@@ -362,6 +362,22 @@ ul.wordlist b { color:var(--teal); }
 .pick .opt[disabled] { cursor:not-allowed; opacity:.8; }
 .pick.locked .opt.sel { opacity:1; }
 
+/* CHECKED (6 Nov 2026): a questions step with "check": "once". After the check the
+   chosen option is green (right) or red (not right), the right option is outlined
+   in green, and each says so in words, so colour is never the only signal. */
+.pick .opt .flag { font-size:13px; font-weight:700; }
+.pick.locked .opt.pk-ok, .pick.locked .opt.pk-bad, .pick.locked .opt.pk-key { opacity:1; }
+.pick .opt.pk-ok { border-color:#2E7D32; background:#D6EEDD; box-shadow:0 0 0 2px #2E7D32 inset; }
+.pick .opt.pk-ok .flag { color:#1B5E20; }
+.pick .opt.pk-bad { border-color:var(--red); background:#FBE4E2; box-shadow:0 0 0 2px var(--red) inset; }
+.pick .opt.pk-bad .flag { color:var(--red); }
+.pick .opt.pk-key:not(.pk-ok) { border-color:#2E7D32; background:#F1F9F3; box-shadow:0 0 0 2px #2E7D32 inset; }
+.pick .opt.pk-key:not(.pk-ok) .flag { color:#1B5E20; }
+.q .reveal { margin:6px 0 0; padding:8px 12px; background:var(--lteal);
+             border-left:4px solid var(--teal); border-radius:6px; }
+.q .reveal b { display:block; font-size:13px; color:var(--teal); }
+.q .reveal p { margin:2px 0 0; font-size:15px; }
+
 /* ---------------------------------------------------- drag steps (3 Oct 2026)
    Cards into boxes. Every card and every box is a real button: that is what
    makes tapping, the keyboard and VoiceOver work without a line of extra code,

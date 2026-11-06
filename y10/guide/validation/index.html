@@ -161,7 +161,7 @@ footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
         <dt>verification</dt><dd>A check that data has not changed when it was entered.</dd>
         <dt>test data</dt><dd>Values chosen to test that a program works.</dd>
         <dt>extreme</dt><dd>The largest or smallest acceptable value.</dd>
-        <dt>boundary</dt><dd>The largest or smallest acceptable value, and the first value past it.</dd>
+        <dt>boundary</dt><dd>The largest or smallest acceptable value, and the first rejected value past it.</dd>
       </dl></div>
   </aside>
 </section>
@@ -175,9 +175,9 @@ footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
     <div class="ops">
       <div class="op a"><h3>Range</h3><div class="res">The value is between two limits</div><div class="syms"><span>Mark 0 to 100</span></div></div>
       <div class="op r"><h3>Length</h3><div class="res">The number of characters</div><div class="syms"><span>Password 8 or more</span></div></div>
-      <div class="op l"><h3>Type</h3><div class="res">The data type is correct</div><div class="syms"><span>Age is an INTEGER</span></div></div>
+      <div class="op l"><h3>Type</h3><div class="res">The data type</div><div class="syms"><span>Age is an INTEGER</span></div></div>
       <div class="op a"><h3>Presence</h3><div class="res">Some data has been entered</div><div class="syms"><span>Name not empty</span></div></div>
-      <div class="op r"><h3>Format</h3><div class="res">The data follows a pattern</div><div class="syms"><span>dd/mm/yyyy</span><span>has an @</span></div></div>
+      <div class="op r"><h3>Format</h3><div class="res">The pattern of the data</div><div class="syms"><span>dd/mm/yyyy</span><span>has an @</span></div></div>
       <div class="op l"><h3>Check digit</h3><div class="res">Detects errors in entered or transmitted data</div><div class="syms"><span>last digit of a bar code</span></div></div>
     </div>
     <p>A check digit is worked out from the other digits, often with <code>MOD</code>. If one digit is typed wrongly, the check digit no longer matches.</p>
@@ -288,7 +288,7 @@ footer{padding:28px 0 60px;color:var(--muted);font-size:14px}
         <tr><td><b>Normal</b></td><td>Data that should be accepted</td><td>50</td><td>accepted</td></tr>
         <tr><td><b>Abnormal</b></td><td>Data that should be rejected</td><td>150, or fifty</td><td>rejected</td></tr>
         <tr><td><b>Extreme</b></td><td>The largest or smallest acceptable value</td><td>0 or 100</td><td>accepted</td></tr>
-        <tr><td><b>Boundary</b></td><td>The largest or smallest acceptable value, and the first value past it</td><td>0 and -1, or 100 and 101</td><td>one accepted, one rejected</td></tr>
+        <tr><td><b>Boundary</b></td><td>The largest or smallest acceptable value, and the first rejected value past it</td><td>0 and -1, or 100 and 101</td><td>one accepted, one rejected</td></tr>
       </tbody></table></div>
   </div>
 </section>

@@ -81,6 +81,13 @@
     dragRight: "\u2713", dragAnswer: "\u2192 ",
     dragScore: function (n, of) { return n + "/" + of + " \u2713"; },
     dragRecordedFirst: "",
+    /* Question steps that can be checked. Symbols only, as above. (No word may
+       be quoted in this comment: the Year 7 word check reads string literals out
+       of this block, and a comment is part of it.) */
+    qCheck: "\u2713?", qOneCheck: "", qProgress: function (n, of) { return n + "/" + of; },
+    qScore: function (n, of) { return n + "/" + of + " \u2713"; },
+    qWrittenDone: "\u2713", qRecordedFirst: "", qRight: "\u2713", qWrong: "\u2717",
+    qRightAnswer: "\u2192", qModel: "\u2192",
     shut: function (label) { return label; },
     /* No word here either. The verifier refuses a code step with required lines
        on a simple page until Colin decides the wording for it, so this is the
@@ -124,6 +131,17 @@
     dragAnswer: "Answer: ",
     dragScore: function (n, of) { return n + " out of " + of + " right"; },
     dragRecordedFirst: "Your answers were recorded before these were shown.",
+    /* A questions step with "check": "once". The same rule as a drag step: one
+       tap shuts every answer, writes them down with the time, and only then shows
+       which choices were right and the model answer for each written question. */
+    qCheck: "Check my answers",
+    qOneCheck: "You can check once every question has an answer. You only get one check.",
+    qProgress: function (n, of) { return n + " of " + of + " questions answered"; },
+    qScore: function (n, of) { return n + " out of " + of + " right"; },
+    qWrittenDone: "Your answers are shut. Compare each one with its model answer.",
+    qRecordedFirst: "Your answers were recorded before these were shown.",
+    qRight: "Right", qWrong: "Not right", qRightAnswer: "The right answer",
+    qModel: "Model answer",
     shut: function (label) {
       return label + " is closed while you answer this step. Check your answers "
         + "to open it again.";
@@ -838,6 +856,9 @@
        same ** and ` marks as the intro. */
     if (step.task) cardEl.appendChild(rich(el("div", "task"), step.task));
 
+    var chk = qCheckOn(step);
+    var qm = chk ? (state.steps[String(i)] || {}).qmark : null;
+    var qkey = qm ? (dragKey(step) || {}) : null;
     (step.questions || []).forEach(function (q) {
       var box = el("div", "q");
       box.appendChild(el("span", "qlabel", q.label));
@@ -846,8 +867,8 @@
       if (q.image) box.appendChild(pics([{ src: q.image }]));
       if (q.images) box.appendChild(pics(q.images));
       if (q.pick) {
-        box.appendChild(pickEl(q));
-        if (state.locked[q.id]) box.appendChild(el("p", "locknote", TX.locked));
+        box.appendChild(pickEl(q, qm ? { chosen: qm.picks[q.id], right: qkey[q.id] } : null));
+        if (state.locked[q.id] && !chk) box.appendChild(el("p", "locknote", TX.locked));
         cardEl.appendChild(box);
         return;
       }
@@ -868,11 +889,16 @@
         saveSoon();
         updateRunGate();
         renderNavSoon();
+        if (chk) refreshQCheck();
       });
       box.appendChild(ta);
-      if (state.locked[q.id]) box.appendChild(el("p", "locknote", TX.locked));
+      if (state.locked[q.id] && !chk) box.appendChild(el("p", "locknote", TX.locked));
+      /* The model answer is only built once the check has been made. Before that
+         it is in the page's data but not in the document. */
+      if (qm && q.reveal) box.appendChild(revealEl(q));
       cardEl.appendChild(box);
     });
+    if (chk) cardEl.appendChild(qCheckRow(step, i));
 
     /* DRILL: "drill": "A while loop needs ...". The key sentence of the lesson,
        said aloud together (choral drill). Last thing on the card.
@@ -1605,7 +1631,7 @@
      the answer like any typed answer, so the nav tick, the lock on a prediction
      and the hand-in PDF all work unchanged. The box carries readOnly like a
      textarea does, so one test works for both. */
-  function pickEl(q) {
+  function pickEl(q, mk) {
     var box = el("div", "pick");
     box.id = "q-" + q.id;
     q.pick.forEach(function (o) {
@@ -1616,6 +1642,21 @@
       var cap = o.label != null ? o.label : (o.img ? "" : o.v);
       if (cap) b.appendChild(el("span", "", cap));
       if (state.answers[q.id] === o.v) b.classList.add("sel");
+      /* MARKED (check "once"). Said in words as well as colour: the chosen option
+         is Right or Not right, and the right option is named when it was missed. The
+         class names are pk-ok, pk-bad and pk-key, never "right": main.cardonly
+         .right is the hidden output pane, and a class of that name hides the
+         option. */
+      if (mk) {
+        if (o.v === mk.chosen) {
+          b.classList.add(o.v === mk.right ? "pk-ok" : "pk-bad");
+          b.appendChild(el("span", "flag", o.v === mk.right ? TX.qRight : TX.qWrong));
+        }
+        if (o.v === mk.right) {
+          b.classList.add("pk-key");
+          if (o.v !== mk.chosen) b.appendChild(el("span", "flag", TX.qRightAnswer));
+        }
+      }
       b.addEventListener("click", function () {
         if (box.readOnly) return;
         state.answers[q.id] = o.v;
@@ -1625,11 +1666,104 @@
         saveSoon();
         updateRunGate();
         renderNavSoon();
+        refreshQCheck();
       });
       box.appendChild(b);
     });
     if (state.locked[q.id]) lockEl(box);
     return box;
+  }
+
+  /* CHECK ONCE ON A QUESTIONS STEP (6 Nov 2026, Year 10 request). The same rule
+     as a drag step. "check": "once" on a step of kind "questions" adds a Check
+     button. It turns on when every question in the step has an answer. One tap
+     shuts every answer (the existing locked state), writes down the time, and
+     only then marks the choices and opens the model answers.
+
+     THE KEY. Pick questions are marked against TEACHER["answers"][id], which
+     build_site.py copies into the page as key_b64, encoded, for such a step
+     only. A written question is never scored: it carries an optional "reveal"
+     (a short model answer the year chat paraphrases, public by design) that is
+     not built into the card until the check has been made, so the student marks
+     their own. The recorded answer is always the one given before the check. */
+  function qCheckOn(step) {
+    return !SIMPLE && step.kind === "questions" && step.check === "once";
+  }
+  function qProgress(step) {
+    var qs = step.questions || [];
+    return { done: qs.filter(answered).length, need: qs.length };
+  }
+  function qCheckRow(step, i) {
+    var s = state.steps[String(i)] || {};
+    var row = el("div", "drow qrow");
+    if (s.qmark) {
+      var m = s.qmark;
+      row.appendChild(el("p", "dtally" + (m.of && m.score === m.of ? " all" : ""),
+                         m.of ? TX.qScore(m.score, m.of) : TX.qWrittenDone));
+      row.appendChild(el("p", "dnote", TX.qRecordedFirst));
+      return row;
+    }
+    var p = qProgress(step);
+    var tally = el("p", "dtally" + (p.done === p.need ? " all" : ""), TX.qProgress(p.done, p.need));
+    tally.id = "qtally";
+    row.appendChild(tally);
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn";
+    btn.id = "qcheck";
+    btn.dataset.check = String(i);
+    btn.textContent = TX.qCheck;
+    btn.disabled = p.done < p.need;
+    btn.addEventListener("click", function () { qMark(i); });
+    row.appendChild(btn);
+    var note = el("p", "dnote", TX.qOneCheck);
+    note.id = "qnote";
+    note.hidden = p.done >= p.need;
+    row.appendChild(note);
+    return row;
+  }
+  function refreshQCheck() {
+    var i = state.current, step = L.steps[i], btn = $("qcheck");
+    if (!btn || !qCheckOn(step) || (state.steps[String(i)] || {}).qmark) return;
+    var p = qProgress(step);
+    btn.disabled = p.done < p.need;
+    $("qtally").textContent = TX.qProgress(p.done, p.need);
+    $("qtally").className = "dtally" + (p.done === p.need ? " all" : "");
+    $("qnote").hidden = p.done >= p.need;
+  }
+  /* THE ORDER IS THE POINT, as for a drag step: the answers are shut and written
+     down with the time first, and the key is only read after that. */
+  function qMark(i) {
+    var step = L.steps[i];
+    if (!qCheckOn(step)) return;
+    var s = st(i);
+    if (s.qmark) return;
+    var p = qProgress(step);
+    if (p.done < p.need) return;
+    keepFirstAnswers(i);
+    var picks = {}, hasReveal = 0;
+    step.questions.forEach(function (q) {
+      state.locked[q.id] = true;
+      if (q.pick) picks[q.id] = state.answers[q.id];
+      else if (q.reveal) hasReveal++;
+    });
+    var at = new Date().toISOString();
+    var key = dragKey(step) || {}, score = 0, of = 0;
+    step.questions.forEach(function (q) {
+      if (!q.pick) return;
+      of++;
+      if (picks[q.id] === key[q.id]) score++;
+    });
+    s.qmark = { at: at, picks: picks, score: score, of: of, models: hasReveal };
+    save();
+    renderCard(i);
+    renderNavSoon();
+  }
+  function revealEl(q) {
+    var d = el("div", "reveal");
+    d.appendChild(el("b", "", TX.qModel));
+    d.appendChild(rich(el("p"), q.reveal));
+    return d;
   }
 
   function lockEl(e) {
@@ -2157,12 +2291,27 @@
           }
         });
       }
+      /* A questions step that can be checked says whether it was, and when. The
+         time is the one taken at the check, before any mark or model answer was
+         on screen. Written answers are not scored; the line says so. */
+      var pq = qCheckOn(step) ? s.qmark : null, pkey = pq ? (dragKey(step) || {}) : null;
+      if (qCheckOn(step)) {
+        if (pq) {
+          var nm = pq.models || 0;
+          text("Checked at " + pq.at.slice(11, 16) + "." + (pq.of ? "  " + pq.score + " out of "
+               + pq.of + " right." : "")
+               + (nm ? "  Model answers opened at " + pq.at.slice(11, 16)
+                       + ". Written answers are not scored." : ""), 10, "bold");
+        } else text("Not checked. The answers below were not marked.", 10, "bold");
+      }
       (step.questions || []).forEach(function (q) {
         gap(1);
         text(q.label + "  " + unmark(q.prompt), 10, "bold");
         if (q.code) text(q.code, 9, "normal", "courier", 4);
         var a = (state.answers[q.id] || "").trim();
-        var tagged = state.locked[q.id] ? "  (prediction, locked before the code was run)" : "";
+        var tagged = state.locked[q.id] && !qCheckOn(step)
+          ? "  (prediction, locked before the code was run)" : "";
+        if (pq && q.pick) tagged = (pq.picks[q.id] === pkey[q.id]) ? "     right" : "     wrong";
         text("Answer: " + (a || "(blank)") + tagged, 10, "normal", "helvetica", 4);
         var f0 = ((state.first || {})[q.id] || "").trim();
         if (f0 && f0 !== a) {
@@ -2268,13 +2417,20 @@
                      checked: dm2 ? dm2.at : null,
                      score: dm2 ? dm2.score : null, of: dm2 ? dm2.of : null };
       }
+      if (qCheckOn(step)) {
+        var qm2 = s.qmark;
+        row.qcheck = { checked: qm2 ? qm2.at : null, score: qm2 ? qm2.score : null,
+                       of: qm2 ? qm2.of : null, models: qm2 ? (qm2.models || 0) : 0 };
+      }
       if (step.questions && step.questions.length) {
+        var dkey2 = (qCheckOn(step) && s.qmark) ? (dragKey(step) || {}) : null;
         row.qs = step.questions.map(function (q) {
           var a = (state.answers[q.id] || "").trim();
           var f0 = ((state.first || {})[q.id] || "").trim();
           var o = { id: q.id, label: q.label, a: a };
           if (f0 && f0 !== a) { o.first = f0; o.edits = (state.edits || {})[q.id] || 1; }
           if (state.locked[q.id]) o.locked = true;
+          if (dkey2 && q.pick) o.right = (s.qmark.picks[q.id] === dkey2[q.id]);
           return o;
         });
       }

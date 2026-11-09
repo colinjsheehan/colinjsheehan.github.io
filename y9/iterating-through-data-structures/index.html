@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 9 Iterating data | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; Computer Science</div>
+    <h1>Year 9: Iterating through data structures</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Send to my teacher sends it to your teacher.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y9-iterating-through-data-structures", "order": 32, "version": 1, "unit": "sequences-of-data", "year": "Year 9", "slug": "iterating-through-data-structures", "folder": "y9", "title": "Iterating through data structures", "short": "Iterating data", "objective": "Use a while loop to add items to a list, and compare the characters in strings.", "keywords": ["iteration", "string", "mutable", "immutable", "len()"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From earlier lessons", "intro": ["Answer all three. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "Which construct repeats actions in a program?", "pick": [{"v": "sequence"}, {"v": "selection"}, {"v": "iteration"}]}, {"id": "r2", "label": "R2", "prompt": "A while loop runs ...", "pick": [{"v": "a set number of times"}, {"v": "until its condition is no longer met"}]}, {"id": "r3", "label": "R3", "prompt": "colours = [\"red\", \"blue\", \"yellow\", \"green\"]. What is colours[1]?", "pick": [{"v": "red"}, {"v": "blue"}, {"v": "yellow"}]}]}, {"kind": "code", "nav": "P", "label": "Predict", "title": "Form a band", "remember": "A while loop repeats while its condition is True.", "intro": ["The user types Drums, Guitar and Bass. Answer Pa before you run it.", "Then press Run, type the three instruments and check."], "code": "band = []\nwhile len(band) < 3:\n    instrument = input(\"Pick an instrument: \")\n    band.append(instrument)\nprint(band)\n", "inputs": ["Drums", "Guitar", "Bass"], "questions": [{"id": "pa", "label": "Pa", "prompt": "How many times does it ask for an instrument?", "pick": [{"v": "2"}, {"v": "3"}, {"v": "4"}]}, {"id": "pb", "label": "Pb", "prompt": "What would you change so that it asks five times?"}], "expected_b64": "WydEcnVtcycsICdHdWl0YXInLCAnQmFzcydd"}, {"kind": "questions", "nav": "W", "label": "Words", "title": "Five words for today", "intro": ["Read each row. Say each word. Then answer W1 to W3."], "table": {"headers": ["Term", "What it means", "Example"], "code_cols": [2], "rows": [["iteration", "Repeating a set of instructions in a loop.", "while len(band) < 3:"], ["string", "A data type that holds a collection of characters.", "language = \"Python\""], ["len()", "len() gives the number of items in a list, or the number of characters in a string.", "len(band)"], ["mutable", "Able to be changed. A list is mutable.", "band.append(\"Bass\")"], ["immutable", "Not able to be changed. A string is immutable.", "language[0]"]]}, "drill": "A **list** is mutable. A **string** is immutable.", "questions": [{"id": "w1", "label": "W1", "prompt": "A list can be changed. It is ...", "pick": [{"v": "mutable"}, {"v": "immutable"}]}, {"id": "w2", "label": "W2", "prompt": "What does len(\"Python\") give?", "pick": [{"v": "5"}, {"v": "6"}, {"v": "7"}]}, {"id": "w3", "label": "W3", "prompt": "A string is a collection of ...", "pick": [{"v": "lists"}, {"v": "numbers only"}, {"v": "characters"}]}]}, {"kind": "code", "nav": "1", "label": "Step 1: read the condition", "title": "The band needs a guitar", "remember": "not in is True when the item is not in the list.", "intro": ["The band must have a guitar player.", "Answer 1a and 1b. Then run it and type Drums, Bass and Guitar."], "code": "band = []\nwhile \"Guitar\" not in band:\n    instrument = input(\"Pick an instrument: \")\n    band.append(instrument)\nprint(band)\n", "inputs": ["Drums", "Bass", "Guitar"], "questions": [{"id": "s1a", "label": "1a", "prompt": "When does the loop stop?", "pick": [{"v": "after three instruments"}, {"v": "when Guitar is in the list"}, {"v": "when the list is empty"}]}, {"id": "s1b", "label": "1b", "prompt": "The first instrument typed is Guitar. How many times does it ask?", "pick": [{"v": "0"}, {"v": "1"}, {"v": "3"}]}], "expected_b64": "WydEcnVtcycsICdCYXNzJywgJ0d1aXRhcidd"}, {"kind": "code", "nav": "2", "label": "Step 2: fill the gap", "title": "Five cities", "remember": "len() gives the number of items in a list.", "intro": ["The trip has five cities.", "Replace the ____ so that the loop stops when the trip has five cities.", "Run it and type Paris, Dublin, Vienna, Prague and Athens."], "code": "trip = []\nwhile len(trip) < ____:\n    city = input(\"Next city: \")\n    trip.append(city)\nprint(\"Itinerary:\", trip)\n", "inputs": ["Paris", "Dublin", "Vienna", "Prague", "Athens"], "hint": "The loop runs while the length is less than the number of cities.", "questions": [{"id": "s2a", "label": "2a", "prompt": "What is len(trip) when the loop stops?"}], "expected_b64": "SXRpbmVyYXJ5OiBbJ1BhcmlzJywgJ0R1YmxpbicsICdWaWVubmEnLCAnUHJhZ3VlJywgJ0F0aGVucydd"}, {"kind": "code", "nav": "3", "label": "Step 3: write the condition", "title": "Until London", "remember": "not in is True when the item is not in the list.", "intro": ["The trip now goes on until London is in it.", "Replace the ____ with a condition. Use Step 1 as the pattern.", "Run it and type Paris, Dublin and London."], "code": "trip = []\nwhile ____:\n    city = input(\"Next city: \")\n    trip.append(city)\nprint(\"Itinerary:\", trip)\n", "inputs": ["Paris", "Dublin", "London"], "hint": "The condition uses \"London\", not in and trip.", "questions": [{"id": "s3a", "label": "3a", "prompt": "London is the first city typed. How many cities are in the trip?"}], "expected_b64": "SXRpbmVyYXJ5OiBbJ1BhcmlzJywgJ0R1YmxpbicsICdMb25kb24nXQ=="}, {"kind": "questions", "nav": "4", "label": "Step 4: strings and lists", "title": "Strings and lists", "check": "once", "intro": ["Read the table. Answer 4a to 4e without running anything."], "table": {"headers": ["", "List", "String"], "code_cols": [1, 2], "rows": [["Create", "numbers = [16, 76, 11]", "language = \"Python\""], ["Length", "len(numbers)", "len(language)"], ["in", "32 in numbers", "\"ty\" in language"], ["Index", "numbers[1]", "language[1]"], ["Change one item", "numbers[0] = 15", "not allowed"]]}, "questions": [{"id": "s4a", "label": "4a", "prompt": "What does len(language) give?", "pick": [{"v": "1"}, {"v": "6"}, {"v": "7"}]}, {"id": "s4b", "label": "4b", "prompt": "What does \"ty\" in language give?", "pick": [{"v": "True"}, {"v": "False"}]}, {"id": "s4c", "label": "4c", "prompt": "What is language[1]?", "pick": [{"v": "P"}, {"v": "y"}, {"v": "t"}]}, {"id": "s4d", "label": "4d", "prompt": "language[0] = \"J\" gives an error. Why?", "pick": [{"v": "a string is immutable"}, {"v": "index 0 does not exist"}, {"v": "J is not a letter"}]}, {"id": "s4e", "label": "4e", "prompt": "What does len(\"Oak National Academy\") give?", "pick": [{"v": "18"}, {"v": "20"}, {"v": "3"}]}], "key_b64": "eyJzNGEiOiI2IiwiczRiIjoiRmFsc2UiLCJzNGMiOiJ5IiwiczRkIjoiYSBzdHJpbmcgaXMgaW1tdXRhYmxlIiwiczRlIjoiMjAifQ=="}, {"kind": "questions", "nav": "5", "label": "Step 5: compare characters", "title": "Laura and Jun", "check": "once", "intro": ["Each print line tests the two names. Say whether it prints True or False."], "code": "name1 = \"Laura\"\nname2 = \"Jun\"\nprint(name1[0] == name2[0])        # 5a\nprint(len(name1) != len(name2))    # 5b\nprint(name1[0] not in name2)       # 5c\nprint(name2[1] in name1)           # 5d", "questions": [{"id": "s5a", "label": "5a", "prompt": "What does line 5a print?", "pick": [{"v": "True"}, {"v": "False"}]}, {"id": "s5b", "label": "5b", "prompt": "What does line 5b print?", "pick": [{"v": "True"}, {"v": "False"}]}, {"id": "s5c", "label": "5c", "prompt": "What does line 5c print?", "pick": [{"v": "True"}, {"v": "False"}]}, {"id": "s5d", "label": "5d", "prompt": "What does line 5d print?", "pick": [{"v": "True"}, {"v": "False"}]}], "key_b64": "eyJzNWEiOiJGYWxzZSIsInM1YiI6IlRydWUiLCJzNWMiOiJUcnVlIiwiczVkIjoiVHJ1ZSJ9"}, {"kind": "code", "nav": "Make", "label": "Make: guess the capital", "title": "Guess the capital", "remember": "A list is mutable. A string is immutable.", "make": {"task": "Complete the four numbered parts.", "rules": ["Part 1: indent the lines inside the loop.", "Parts 2 to 4: each clue prints one letter or the length of city.", "Test: Berlin, Milan, Mexico, Malaga, then Madrid.", "Malaga prints Try again. Madrid ends the game."], "checkpoint": "part 1 and part 2 written.", "homework": "parts 3 and 4, then the test.", "watch": "Each new elif goes above the else."}, "code": "city = \"Madrid\"\ndone = False\n\n# 1. Put everything below in a while loop that runs while done is False.\nguess = input(\"Guess the capital: \")\nif guess == city:\n    print(\"You've got it.\")\n    done = True\nelif guess == \"\":\n    print(\"It was\", city)\n    done = True\n# 2. Add an elif: the first letters are different.\n# 3. Add an elif: the lengths are different.\n# 4. Add an elif: the second letter of city is not in the guess.\nelse:\n    print(\"Try again\")\n", "inputs": ["Berlin", "Milan", "Mexico", "Malaga", "Madrid"], "hint": "Part 2 compares city[0] with guess[0]. Use the not equal operator.", "questions": [{"id": "mk1", "label": "M1", "prompt": "Copy your elif line for part 2."}, {"id": "mk2", "label": "M2", "prompt": "Write the five lines your program printed in the test."}]}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything.", "Steps 1 to 5, the Make and these questions are adapted from Oak National Academy, Iterating through data structures.", "Licence: Open Government Licence v3.0."], "questions": [{"id": "e1", "label": "E1", "prompt": "A string is a data type that is a collection of ____."}, {"id": "e2", "label": "E2", "prompt": "Lists are ____, which means their contents can be changed."}, {"id": "e3", "label": "E3", "prompt": "Which code checks that the first character of name1 is not in name2?", "pick": [{"v": "name1[0] == name2[0]"}, {"v": "len(name1) != len(name2)"}, {"v": "name1[0] not in name2"}]}, {"id": "e4", "label": "E4", "prompt": "Which statement about strings is true?", "pick": [{"v": "Strings are mutable."}, {"v": "Strings are immutable."}, {"v": "Strings can only hold letters."}]}, {"id": "e5", "label": "E5", "prompt": "message = \"Hello\". Which code gives the first letter?", "pick": [{"v": "message[0]"}, {"v": "message[1]"}, {"v": "message[\"H\"]"}]}]}]};</script>
+<script>window.HANDIN = {"url": "https://script.google.com/macros/s/AKfycbyP2LqOk-4DeaVfkEDzcYRsj1IouiyK8-ABjsfiKV0N5Q-bvcY4YrCqMQN4dsoWIBmc/exec", "word": true};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 9 Iterating practice | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; Computer Science</div>
+    <h1>Year 9: Iterating: practice</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Send to my teacher sends it to your teacher.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y9-iterating-practice", "order": 33, "version": 1, "unit": "sequences-of-data", "year": "Year 9", "slug": "iterating-practice", "folder": "y9", "title": "Iterating: practice", "short": "Iterating practice", "objective": "Use while loops with lists and strings, and use a flag to end a loop.", "keywords": ["iteration", "flag", "mutable", "immutable", "len()"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From earlier lessons", "intro": ["Answer all three. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "Which line sets age to the number 13?", "pick": [{"v": "age (13)"}, {"v": "age = 13"}, {"v": "age = \"13\""}]}, {"id": "r2", "label": "R2", "prompt": "A variable that tells a program whether a condition has been met is a ...", "pick": [{"v": "flag"}, {"v": "list"}, {"v": "index"}]}, {"id": "r3", "label": "R3", "prompt": "A string variable is given a new value. What happens to the old value?", "pick": [{"v": "it is kept at the end"}, {"v": "it is overwritten"}, {"v": "it causes an error"}]}]}, {"kind": "questions", "nav": "W", "label": "Words", "title": "Five words for today", "intro": ["Read each row. Say each word. Then answer W1 and W2."], "table": {"headers": ["Term", "What it means", "Example"], "code_cols": [2], "rows": [["iteration", "Repeating a set of instructions in a loop.", "while len(trip) < 3:"], ["flag", "A variable that records whether a condition has been met.", "done = False"], ["mutable", "Able to be changed. A list is mutable.", "trip.append(\"Rome\")"], ["immutable", "Not able to be changed. A string is immutable.", "word[0]"], ["len()", "The number of items in a list, or of characters in a string.", "len(name)"]]}, "drill": "A **list** is mutable. A **string** is immutable.", "questions": [{"id": "w1", "label": "W1", "prompt": "Which one is immutable?", "pick": [{"v": "a list"}, {"v": "a string"}]}, {"id": "w2", "label": "W2", "prompt": "done = False before a loop is an example of a ...", "pick": [{"v": "flag"}, {"v": "list method"}, {"v": "string"}]}]}, {"kind": "code", "nav": "1", "label": "Step 1: write the condition", "title": "No city twice", "remember": "not in is True when the item is not in the list.", "intro": ["A city is added only if it is not already in the trip.", "Replace the ____ with a condition.", "Run it and type Paris, Rome, Paris and Oslo."], "code": "trip = []\nwhile len(trip) < 3:\n    city = input(\"Next city: \")\n    if ____:\n        trip.append(city)\n    else:\n        print(\"Already in the trip\")\nprint(\"Itinerary:\", trip)\n", "inputs": ["Paris", "Rome", "Paris", "Oslo"], "hint": "The condition uses city, not in and trip.", "questions": [{"id": "s1a", "label": "1a", "prompt": "Four cities were typed. Why does the trip have three?"}], "expected_b64": "QWxyZWFkeSBpbiB0aGUgdHJpcApJdGluZXJhcnk6IFsnUGFyaXMnLCAnUm9tZScsICdPc2xvJ10="}, {"kind": "code", "nav": "2", "label": "Step 2: fill the gap", "title": "The password", "remember": "The loop runs while done is False.", "intro": ["The loop ends when the password is right.", "Fill the gap. Run it and type cat, dog, then epsom."], "code": "password = \"epsom\"\ndone = False\nwhile done == False:\n    guess = input(\"Password: \")\n    if guess == password:\n        print(\"Correct\")\n        done = ____\n    else:\n        print(\"Try again\")\n", "inputs": ["cat", "dog", "epsom"], "hint": "The loop stops when done is no longer False.", "questions": [{"id": "s2a", "label": "2a", "prompt": "What would happen if the gap were False?", "pick": [{"v": "the loop would never stop"}, {"v": "it would stop at once"}, {"v": "an IndexError"}]}], "expected_b64": "VHJ5IGFnYWluClRyeSBhZ2FpbgpDb3JyZWN0"}, {"kind": "questions", "nav": "3", "label": "Step 3: strings and lists", "title": "Mutable and immutable", "check": "once", "intro": ["Read the program. Answer 3a to 3c."], "code": "word = \"cat\"\nletters = [\"c\", \"a\", \"t\"]\nletters[0] = \"b\"      # line 3\nword[0] = \"b\"         # line 4", "questions": [{"id": "s3a", "label": "3a", "prompt": "Which line gives an error?", "pick": [{"v": "line 3"}, {"v": "line 4"}, {"v": "neither"}]}, {"id": "s3b", "label": "3b", "prompt": "Which line changes word to bat without an error?", "pick": [{"v": "word = \"bat\""}, {"v": "word[0] = \"b\""}, {"v": "word.append(\"b\")"}]}, {"id": "s3c", "label": "3c", "prompt": "Describe how a string is different from a list. Use the words mutable and immutable."}], "key_b64": "eyJzM2EiOiJsaW5lIDQiLCJzM2IiOiJ3b3JkID0gXCJiYXRcIiJ9"}, {"kind": "code", "nav": "4", "label": "Step 4: run and answer", "title": "Inside a name", "remember": "len() counts every character, spaces too.", "intro": ["Answer 4a to 4c. Then run it, type Ada Lovelace and check."], "code": "name = input(\"Name: \")\nprint(len(name))\nprint(name[0])\nprint(\"v\" in name)\n", "inputs": ["Ada Lovelace"], "questions": [{"id": "s4a", "label": "4a", "prompt": "What is len(\"Ada Lovelace\")?", "pick": [{"v": "11"}, {"v": "12"}, {"v": "2"}]}, {"id": "s4b", "label": "4b", "prompt": "What is name[0]?", "pick": [{"v": "A"}, {"v": "d"}, {"v": "L"}]}, {"id": "s4c", "label": "4c", "prompt": "What does \"v\" in name give?", "pick": [{"v": "True"}, {"v": "False"}]}], "expected_b64": "MTIKQQpUcnVl"}, {"kind": "code", "nav": "Make", "label": "Make: letter hunt", "title": "Find every letter", "remember": "A list is mutable. A string is immutable.", "make": {"task": "Write the numbered parts under the three variables.", "rules": ["python has six different letters.", "Test p, z, p, y, t, h, o, n.", "That prints Yes, No, Already found, then Yes five times.", "Then it prints You found every letter and stops."], "checkpoint": "parts 1 and 2 written.", "homework": "part 3, then the test.", "watch": "Check found before secret, or a letter is added twice."}, "code": "secret = \"python\"\nfound = []\ndone = False\n\n# 1. Repeat while done is False.\n# 2. Ask for one letter.\n#    If it is in found, print: Already found\n#    If it is in secret, add it to found and print: Yes\n#    Otherwise print: No\n# 3. When found has 6 letters, print: You found every letter\n#    and set done to True.\n", "inputs": ["p", "z", "p", "y", "t", "h", "o", "n"], "hint": "Part 2 is an if, an elif and an else. Step 1 has the same shape.", "questions": [{"id": "mk1", "label": "M1", "prompt": "Copy the line that checks whether the letter is in secret."}, {"id": "mk2", "label": "M2", "prompt": "Write what your program printed for the test."}]}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything.", "R1 to R3 and Steps 1 to 4 are adapted from Oak National Academy, Iterating through data structures.", "Licence: Open Government Licence v3.0."], "questions": [{"id": "e1", "label": "E1", "prompt": "Which condition adds city only when it is not already in trip?", "pick": [{"v": "if city in trip:"}, {"v": "if city not in trip:"}, {"v": "if trip in city:"}]}, {"id": "e2", "label": "E2", "prompt": "What is len(\"Kuala Lumpur\")?", "pick": [{"v": "11"}, {"v": "12"}, {"v": "2"}]}, {"id": "e3", "label": "E3", "prompt": "A loop starts with while done == False. Which line ends it?", "pick": [{"v": "done = True"}, {"v": "done = False"}, {"v": "done == True"}]}]}]};</script>
+<script>window.HANDIN = {"url": "https://script.google.com/macros/s/AKfycbyP2LqOk-4DeaVfkEDzcYRsj1IouiyK8-ABjsfiKV0N5Q-bvcY4YrCqMQN4dsoWIBmc/exec", "word": true};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

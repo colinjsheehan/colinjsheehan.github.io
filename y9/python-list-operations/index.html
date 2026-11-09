@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 9 List operations | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; Computer Science</div>
+    <h1>Year 9: Python list operations</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Send to my teacher sends it to your teacher.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y9-python-list-operations", "order": 30, "version": 1, "unit": "sequences-of-data", "year": "Year 9", "slug": "python-list-operations", "folder": "y9", "title": "Python list operations", "short": "List operations", "objective": "Add items to a list, remove items from a list and sort a list.", "keywords": ["list method", "append", "remove", "pop", "sort"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From earlier lessons", "intro": ["Answer all three. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "Which reads the first item in a list called names?", "pick": [{"v": "names[0]"}, {"v": "names[1]"}, {"v": "names(0)"}]}, {"id": "r2", "label": "R2", "prompt": "An IndexError happens when ...", "pick": [{"v": "a list has too many items"}, {"v": "the index does not exist in the list"}, {"v": "a list has two of the same item"}]}, {"id": "r3", "label": "R3", "prompt": "A list can grow or shrink as items are added or removed. It is ...", "pick": [{"v": "static"}, {"v": "dynamic"}]}]}, {"kind": "code", "nav": "P", "label": "Predict", "title": "Where is Venus?", "remember": "The index counts from 0.", "intro": ["planets.index(\"Venus\") gives the index of Venus in the list.", "Answer Pa. Then press Run and check."], "code": "planets = [\"Mercury\", \"Venus\",\n           \"Earth\", \"Mars\",\n           \"Jupiter\", \"Saturn\",\n           \"Uranus\", \"Neptune\"]\nposition = planets.index(\"Venus\")\nprint(position)\n", "predict_first": "pa", "questions": [{"id": "pa", "label": "Pa", "prompt": "Predict the number it prints."}, {"id": "pb", "label": "Pb", "prompt": "What would planets.index(\"Neptune\") give?"}], "expected_b64": "MQ=="}, {"kind": "questions", "nav": "W", "label": "Words", "title": "Five words for today", "intro": ["Read each row. Say each word. Then answer W1 to W3."], "table": {"headers": ["Term", "What it means", "Example"], "code_cols": [2], "rows": [["list method", "A built-in operation on a list. It follows a dot.", "planets.append(\"Uranus\")"], ["append", "append adds an item to the end of a list.", "planets.append(\"Uranus\")"], ["remove", "remove takes away the first item with that value.", "planets.remove(\"Pluto\")"], ["pop", "pop takes away an item by its index. With no index it takes the last item.", "planets.pop()"], ["sort", "sort puts the items in order, lowest first.", "scores.sort()"]]}, "drill": "**append** adds to the end. **sort** puts the items in order.", "questions": [{"id": "w1", "label": "W1", "prompt": "Which method adds an item to the end?", "pick": [{"v": "append"}, {"v": "remove"}, {"v": "sort"}]}, {"id": "w2", "label": "W2", "prompt": "Which method takes away an item by its value?", "pick": [{"v": "pop"}, {"v": "remove"}, {"v": "append"}]}, {"id": "w3", "label": "W3", "prompt": "Which method puts a list in order?", "pick": [{"v": "index"}, {"v": "append"}, {"v": "sort"}]}]}, {"kind": "questions", "nav": "1", "label": "Step 1: choose the method", "title": "Which method does the job?", "check": "once", "intro": ["Read the program. Answer 1a to 1c without running anything."], "code": "planets = [\"Mercury\", \"Venus\",\n           \"Earth\", \"Mars\",\n           \"Jupiter\", \"Saturn\"]\nplanets.append(\"Uranus\")\nplanets.insert(0, \"Sun\")\nplanets.pop()", "questions": [{"id": "s1a", "label": "1a", "prompt": "Where does append put Uranus?", "pick": [{"v": "at the start"}, {"v": "at the end"}, {"v": "at index 1"}]}, {"id": "s1b", "label": "1b", "prompt": "Where does insert(0, \"Sun\") put Sun?", "pick": [{"v": "at index 0"}, {"v": "at the end"}]}, {"id": "s1c", "label": "1c", "prompt": "Which item does planets.pop() take away?", "pick": [{"v": "Sun"}, {"v": "Mercury"}, {"v": "Uranus"}]}], "key_b64": "eyJzMWEiOiJhdCB0aGUgZW5kIiwiczFiIjoiYXQgaW5kZXggMCIsInMxYyI6IlVyYW51cyJ9"}, {"kind": "code", "nav": "2", "label": "Step 2: write three lines", "title": "Planets known by 1930", "remember": "append adds to the end.", "intro": ["Replace each ____ with one line that adds the planet to the end of the list. Run it."], "code": "planets = [\"Mercury\", \"Venus\",\n           \"Earth\", \"Mars\",\n           \"Jupiter\", \"Saturn\"]\nprint(\"Planets in antiquity:\")\nprint(planets)\n____    # add Uranus to the end\n____    # add Neptune to the end\n____    # add Pluto to the end\nprint(\"Planets known by 1930:\")\nprint(planets)\n", "hint": "Each line is planets, a dot, the method and the planet in brackets.", "questions": [{"id": "s2a", "label": "2a", "prompt": "How many items are in the list at the end?"}], "expected_b64": "UGxhbmV0cyBpbiBhbnRpcXVpdHk6ClsnTWVyY3VyeScsICdWZW51cycsICdFYXJ0aCcsICdNYXJzJywgJ0p1cGl0ZXInLCAnU2F0dXJuJ10KUGxhbmV0cyBrbm93biBieSAxOTMwOgpbJ01lcmN1cnknLCAnVmVudXMnLCAnRWFydGgnLCAnTWFycycsICdKdXBpdGVyJywgJ1NhdHVybicsICdVcmFudXMnLCAnTmVwdHVuZScsICdQbHV0bydd"}, {"kind": "code", "nav": "3", "label": "Step 3: write one line", "title": "Planets after 2006", "intro": ["In 2006, Pluto stopped being called a planet.", "Replace the ____ with one line that takes Pluto out of the list. Run it."], "code": "planets = [\"Mercury\", \"Venus\",\n           \"Earth\", \"Mars\",\n           \"Jupiter\", \"Saturn\", \"Uranus\",\n           \"Neptune\", \"Pluto\"]\n____    # take Pluto out of the list\nprint(\"Planets after 2006:\")\nprint(planets)\n", "hint": "The method takes away an item by its value.", "questions": [{"id": "s3a", "label": "3a", "prompt": "Write a second way to take Pluto away, using pop."}], "expected_b64": "UGxhbmV0cyBhZnRlciAyMDA2OgpbJ01lcmN1cnknLCAnVmVudXMnLCAnRWFydGgnLCAnTWFycycsICdKdXBpdGVyJywgJ1NhdHVybicsICdVcmFudXMnLCAnTmVwdHVuZSdd"}, {"kind": "code", "nav": "4", "label": "Step 4: predict, then change", "title": "Lowest first", "remember": "sort puts the items in order, lowest first.", "intro": ["Answer 4a, then press Run and check.", "Then change scores.sort() to scores.sort(reverse=True). Run it again and answer 4b."], "code": "scores = [7, 2, 9, 4]\nscores.sort()\nprint(scores)\n", "predict_first": "s4a", "questions": [{"id": "s4a", "label": "4a", "prompt": "Predict the line it prints."}, {"id": "s4b", "label": "4b", "prompt": "After the change, what does it print?"}, {"id": "s4c", "label": "4c", "prompt": "A list of names is sorted with sort(). What order are they in?", "pick": [{"v": "A to Z"}, {"v": "Z to A"}, {"v": "the order they were typed"}]}], "expected_b64": "WzIsIDQsIDcsIDld"}, {"kind": "code", "nav": "5", "label": "Step 5: fill two gaps", "title": "The dice game: sort the rolls", "intro": ["The attacker rolls three dice and the defender rolls two.", "Each player's rolls are sorted highest first.", "Fill the two gaps. Run it."], "code": "attacker = [3, 6, 2]\ndefender = [5, 4]\nattacker.sort(____)\ndefender.sort(____)\nprint(\"Attacker:\", attacker)\nprint(\"Defender:\", defender)\n", "hint": "Step 4 used the same words to sort highest first.", "questions": [{"id": "s5a", "label": "5a", "prompt": "After sorting, what is attacker[0]?"}], "expected_b64": "QXR0YWNrZXI6IFs2LCAzLCAyXQpEZWZlbmRlcjogWzUsIDRd"}, {"kind": "code", "nav": "Make", "label": "Make: score the dice game", "title": "Who loses a point?", "remember": "append adds to the end. sort puts the items in order.", "make": {"task": "Write the three numbered parts under the sorted rolls.", "rules": ["Compare attacker[0] with defender[0], then attacker[1] with defender[1].", "The lower roll loses a point. If the rolls are equal, the attacker loses the point.", "With the rolls given, both players end on -1.", "Change attacker to [1, 1, 2]. The attacker then ends on -2 and the defender on 0."], "checkpoint": "part 1 written.", "homework": "parts 2 and 3, then the second test.", "watch": "Use > in the comparison, so that an equal roll goes to the defender."}, "code": "attacker_points = 0\ndefender_points = 0\nattacker = [3, 6, 2]\ndefender = [5, 4]\nattacker.sort(reverse=True)\ndefender.sort(reverse=True)\nprint(\"Attacker:\", attacker)\nprint(\"Defender:\", defender)\n\n# 1. Compare the highest rolls: attacker[0] and defender[0].\n#    The lower roll loses a point. If they are equal, the attacker loses.\n\n\n# 2. Compare the second highest rolls in the same way.\n\n\n# 3. Print the points for each player.\n", "hint": "Each comparison is an if and an else. One branch takes 1 from defender_points, the other from attacker_points.", "questions": [{"id": "mk1", "label": "M1", "prompt": "Copy your first if line."}, {"id": "mk2", "label": "M2", "prompt": "Write your two tests: the rolls, the expected points and the actual points."}]}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything.", "Steps 1 to 5, the Make and these questions are adapted from Oak National Academy, Python list operations.", "Licence: Open Government Licence v3.0."], "questions": [{"id": "e1", "label": "E1", "prompt": "Which method adds an item to the end of a list?", "pick": [{"v": "list.insert()"}, {"v": "list.add()"}, {"v": "list.append()"}, {"v": "list.remove()"}]}, {"id": "e2", "label": "E2", "prompt": "Which method takes away the last item when you do not know its index?", "pick": [{"v": "list.pop()"}, {"v": "list.remove()"}, {"v": "list.delete()"}]}, {"id": "e3", "label": "E3", "prompt": "list.sort(reverse=True) sorts a list in ____ order."}, {"id": "e4", "label": "E4", "prompt": "Which method finds the index of an item?", "pick": [{"v": "list.find(item)"}, {"v": "list.search(item)"}, {"v": "list.index(item)"}]}]}]};</script>
+<script>window.HANDIN = {"url": "https://script.google.com/macros/s/AKfycbyP2LqOk-4DeaVfkEDzcYRsj1IouiyK8-ABjsfiKV0N5Q-bvcY4YrCqMQN4dsoWIBmc/exec", "word": true};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

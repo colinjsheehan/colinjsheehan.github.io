@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 9 Functions and lists | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; Computer Science</div>
+    <h1>Year 9: Functions and lists</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. Send to my teacher sends it to your teacher.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y9-functions-and-lists", "order": 27.3, "version": 1, "year": "Year 9", "slug": "functions-and-lists", "folder": "y9", "title": "Functions and lists", "short": "Functions and lists", "objective": "Pass a list into a function, loop over it inside the function, and return one value.", "keywords": ["list", "index", "traversal", "parameter", "return value"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "From earlier lessons", "intro": ["Answer all four. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "What value does double(7) return?", "code": "def double(number):\n    return number * 2"}, {"id": "r2", "label": "R2", "prompt": "What does print(scores[3]) print?", "code": "scores = [12, 18, 15, 20, 10, 17]"}, {"id": "r3", "label": "R3", "prompt": "A qualifying score is at least 15. Which condition is right?", "pick": [{"v": "score > 15"}, {"v": "score >= 15"}, {"v": "score == 15"}]}, {"id": "r4", "label": "R4", "prompt": "What value is stored in result?", "code": "def display_total(total):\n    print(\"Total cost: RM\", total)\n\nresult = display_total(36)"}]}, {"kind": "code", "nav": "P", "label": "Predict", "title": "A list goes in", "remember": "Nothing inside a def runs until it is called.", "intro": ["count_above counts the values in a list that are above a limit.", "Answer Pa and Pb. Then press Run and check."], "code": "def count_above(values, limit):\n    count = 0\n    for index in range(0, len(values)):\n        if values[index] > limit:\n            count = count + 1\n    return count\n\nresult = count_above([4, 9, 7], 6)\nprint(\"Above 6:\", result)\n", "predict_first": "pa", "questions": [{"id": "pa", "label": "Pa", "prompt": "Predict the line it prints."}, {"id": "pb", "label": "Pb", "prompt": "What goes into count_above?", "pick": [{"v": "the list and 6"}, {"v": "only the list"}, {"v": "only 6"}]}], "expected_b64": "QWJvdmUgNjogMg=="}, {"kind": "questions", "nav": "W", "label": "Words", "title": "Five words for today", "intro": ["Read each row. Say each word. Then answer W1 to W3."], "table": {"headers": ["Term", "What it means", "Example"], "code_cols": [2], "rows": [["list", "A list stores many values under one name.", "scores = [12, 18, 15]"], ["index", "The position of a value in a list. The first index is 0.", "scores[0]"], ["traversal", "Visiting every value in a list, one at a time, with a loop.", "for index in range(0, len(scores)):"], ["parameter", "The name in the def line that receives a value. A list can be a parameter.", "def find_highest(scores):"], ["return value", "The one value a function gives back.", "return highest"]]}, "drill": "A function takes the **list** in and gives **one value** back.", "questions": [{"id": "w1", "label": "W1", "prompt": "In count_above(values, limit), values is a ...", "pick": [{"v": "parameter"}, {"v": "return value"}]}, {"id": "w2", "label": "W2", "prompt": "What is the index of 9 in [4, 9, 7]?"}, {"id": "w3", "label": "W3", "prompt": "count_above([4, 9, 7], 6) gives back how many values?", "pick": [{"v": "one"}, {"v": "three"}]}]}, {"kind": "questions", "nav": "1", "label": "Step 1: trace", "title": "Trace count_above", "intro": ["The call is count_above([4, 9, 7], 6). The first row is done.", "Complete the trace in 1a to 1c, then answer 1d. Do not run anything."], "readonly": "def count_above(values, limit):\n    count = 0\n    for index in range(0, len(values)):\n        if values[index] > limit:\n            count = count + 1\n    return count", "table": {"headers": ["index", "values[index]", "values[index] > 6", "count"], "rows": [["before the loop", "", "", "0"], ["0", "4", "False", "0"], ["1", "9", "1a", "1b"], ["2", "7", "True", "1c"]]}, "questions": [{"id": "s1a", "label": "1a", "prompt": "Is 9 > 6 True or False?", "pick": [{"v": "True"}, {"v": "False"}]}, {"id": "s1b", "label": "1b", "prompt": "What is count after index 1?"}, {"id": "s1c", "label": "1c", "prompt": "What is count after index 2?"}, {"id": "s1d", "label": "1d", "prompt": "Which line gives the count back?"}]}, {"kind": "code", "nav": "2", "label": "Step 2: predict, then run", "title": "The highest score", "remember": "highest starts as the first score, so the loop starts at index 1.", "intro": ["find_highest gives back the largest value in the list.", "Answer 2a and 2b. Then press Run and answer 2c."], "code": "def find_highest(scores):\n    highest = scores[0]\n    for index in range(1, len(scores)):\n        if scores[index] > highest:\n            highest = scores[index]\n    return highest\n\ntop = find_highest([12, 18, 15, 20])\nprint(\"Highest:\", top)\n", "predict_first": "s2a", "questions": [{"id": "s2a", "label": "2a", "prompt": "Predict the line it prints."}, {"id": "s2b", "label": "2b", "prompt": "What is highest after index 2 (15)?"}, {"id": "s2c", "label": "2c", "prompt": "Why does the loop start at index 1, not index 0?"}], "expected_b64": "SGlnaGVzdDogMjA="}, {"kind": "code", "nav": "3", "label": "Step 3: fill two gaps", "title": "The total", "remember": "Add the value at each index, then give the total back.", "intro": ["Fill the two gaps so the program prints the total of the six scores.", "Run it. Then answer 3a."], "code": "def calculate_total(scores):\n    total = 0\n    for index in range(0, len(scores)):\n        total = total + ____\n    return ____\n\nscores = [12, 18, 15, 20, 10, 17]\nprint(\"Total:\", calculate_total(scores))\n", "hint": "The first gap is the score at this index. The second gap is the variable that holds the sum.", "questions": [{"id": "s3a", "label": "3a", "prompt": "Change the list to six scores of 15. What does it print?"}], "expected_b64": "VG90YWw6IDky"}, {"kind": "code", "nav": "4", "label": "Step 4: find and fix", "title": "Exactly 15", "intro": ["A qualifying score is at least 15. Four of the six scores qualify.", "Predict 4a first, then press Run. Fix the function so it prints 4."], "code": "def count_qualifying(scores, minimum):\n    count = 0\n    for index in range(0, len(scores)):\n        if scores[index] > minimum:\n            count = count + 1\n    return count\n\nscores = [12, 18, 15, 20, 10, 17]\nprint(\"Qualifying:\", count_qualifying(scores, 15))\n", "predict_first": "s4a", "hint": "At least 15 includes 15 itself. Look at the comparison sign.", "questions": [{"id": "s4a", "label": "4a", "prompt": "Predict the line it prints."}, {"id": "s4b", "label": "4b", "prompt": "Which score was missed, and why?"}], "expected_b64": "UXVhbGlmeWluZzogNA==", "req_b64": "WyJjb3VudF9xdWFsaWZ5aW5nKHNjb3JlcywgMTUpIiwicmV0dXJuIGNvdW50Il0="}, {"kind": "drag", "mode": "match", "nav": "5", "label": "Step 5: match", "title": "What comes back?", "check": "once", "intro": ["Each call gives back one value. Match each value to its call. One card is not needed."], "readonly": "scores = [12, 18, 15, 20, 10, 17]", "cards": [{"id": "v92", "text": "92"}, {"id": "v4", "text": "4"}, {"id": "v6", "text": "6"}, {"id": "v20", "text": "20"}, {"id": "v2", "text": "2"}], "targets": [{"id": "tTotal", "text": "calculate_total(scores)"}, {"id": "tHigh", "text": "find_highest(scores)"}, {"id": "tQual", "text": "count_qualifying(scores, 15)"}, {"id": "tAbove", "text": "count_above([4, 9, 7], 6)"}], "key_b64": "eyJ2MiI6InRBYm92ZSIsInYyMCI6InRIaWdoIiwidjQiOiJ0UXVhbCIsInY5MiI6InRUb3RhbCJ9", "shuffle": 0}, {"kind": "code", "nav": "6", "label": "Step 6: write a function", "title": "The fastest time", "remember": "The fastest time is the lowest number.", "intro": ["Write find_lowest where the comment is. Copy the shape of find_highest and change what must change.", "Run it. It should print Fastest: 14.5."], "code": "def find_highest(scores):\n    highest = scores[0]\n    for index in range(1, len(scores)):\n        if scores[index] > highest:\n            highest = scores[index]\n    return highest\n\n# write find_lowest(times) here\n\n\ntimes = [14.8, 15.2, 14.5, 16.0, 14.9]\nprint(\"Fastest:\", find_lowest(times))\n", "hint": "Three things change: the name, the variable, and the comparison sign.", "questions": [{"id": "s6a", "label": "6a", "prompt": "Write the if line of your function."}], "expected_b64": "RmFzdGVzdDogMTQuNQ==", "req_b64": "WyJkZWYgZmluZF9sb3dlc3QoIiwicmFuZ2UoMSwgbGVuKCJd"}, {"kind": "code", "nav": "Make", "label": "Make: your own list", "title": "Two functions, one list", "remember": "A function takes the list in and gives one value back.", "make": {"task": "Store a list of your own. Write two functions that each take the list and return one value.", "rules": ["Each function returns its answer. It does not print.", "Print each answer outside the functions, with a label.", "Test each function on a list whose answer you know."], "choose": ["the total", "the highest or the lowest", "how many are at least a number you choose", "the average"], "checkpoint": "the list and one function, tested.", "homework": "the second function and a test table.", "watch": "A function that prints instead of returning gives back None."}, "code": "# 1. Store five to eight numbers of your own in a list.\n\n\n# 2. Write your first function. It takes the list and returns one value.\n\n\n# 3. Write your second function. It also returns one value.\n\n\n# 4. Call both functions. Print each answer with a label.\n", "hint": "Steps 3 and 6 have the shapes: a total, and a highest or lowest.", "questions": [{"id": "mk1", "label": "M1", "prompt": "Copy your two def lines."}, {"id": "mk2", "label": "M2", "prompt": "Write your test table: the list, expected, actual."}]}, {"kind": "drag", "mode": "match", "nav": "C1", "label": "Challenge 1: pseudocode", "title": "count_above in exam pseudocode", "check": "once", "intro": ["Exam papers write count_above in pseudocode. Match each Python line to the pseudocode line that does the same job. One card is not needed."], "cards": [{"id": "cIf", "text": "if values[index] > limit:"}, {"id": "cDef", "text": "def count_above(values, limit):"}, {"id": "cRet", "text": "return count"}, {"id": "cPrint", "text": "print(count)"}, {"id": "cFor", "text": "for index in range(0, len(values)):"}, {"id": "cZero", "text": "count = 0"}], "targets": [{"id": "tDef", "text": "FUNCTION CountAbove(Values : ARRAY[1:3] OF INTEGER, Limit : INTEGER) RETURNS INTEGER"}, {"id": "tZero", "text": "Count \u2190 0"}, {"id": "tFor", "text": "FOR Index \u2190 1 TO 3"}, {"id": "tIf", "text": "IF Values[Index] > Limit THEN"}, {"id": "tRet", "text": "RETURN Count"}], "key_b64": "eyJjRGVmIjoidERlZiIsImNGb3IiOiJ0Rm9yIiwiY0lmIjoidElmIiwiY1JldCI6InRSZXQiLCJjWmVybyI6InRaZXJvIn0=", "shuffle": 0}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Use find_highest from Step 2. Answer without running anything."], "questions": [{"id": "e1", "label": "E1", "prompt": "What goes into find_highest?", "pick": [{"v": "a list"}, {"v": "one number"}]}, {"id": "e2", "label": "E2", "prompt": "What comes out of find_highest, and how?"}, {"id": "e3", "label": "E3", "prompt": "Why does count_qualifying use >= and not >?"}]}]};</script>
+<script>window.HANDIN = {"url": "https://script.google.com/macros/s/AKfycbyP2LqOk-4DeaVfkEDzcYRsj1IouiyK8-ABjsfiKV0N5Q-bvcY4YrCqMQN4dsoWIBmc/exec", "word": true};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

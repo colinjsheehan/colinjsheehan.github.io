@@ -2148,11 +2148,11 @@ function showEditor(on, key, code, ro){
     $("#roNote").textContent = ro ? "Predict first. The code unlocks after you run it." : "";
   }
 }
-function readBtn(){ return `<button class="say" data-read>🔊 Read aloud</button> `; }
+/* The Read aloud button was removed on 14 Nov 2026 at Colin's request. readBtn() is kept,
+   returning nothing, so the pages that called it need no change. */
+function readBtn(){ return ""; }
 function bindCommon(){
   card.querySelectorAll(".kw").forEach(k => { k.onclick = () => showWord(k.dataset.k, k); k.onkeydown = ev => { if (ev.key === "Enter") showWord(k.dataset.k, k); }; });
-  const rb = card.querySelector("[data-read]");
-  if (rb) rb.onclick = () => { try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(card.querySelector("[data-readable]").innerText); u.lang = "en-GB"; u.rate = .9; speechSynthesis.speak(u); } catch(e){} };
 }
 function scrollToErr(){ const e = card.querySelector(".errbox"); if (e) setTimeout(() => e.scrollIntoView({block:"center"}), 50); }
 function render(){

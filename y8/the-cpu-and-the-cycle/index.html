@@ -427,6 +427,9 @@ body.off #shelf{opacity:.6}
 .handin input.free{margin:6px 0}
 .handin #hsend{margin-top:8px}
 .handin #hmsg{margin-top:10px;font-weight:800;min-height:1.4em}
+/* .reg sets display:flex, which beat .part{display:none}: the CIR showed whenever the
+   registers did. It shows only when the lesson switches the cir part on. (14 Nov 2026) */
+body:not(.p-cir) .reg.cir{display:none}
 
 </style>
 <script>window.HANDIN = {"url": "https://script.google.com/macros/s/AKfycbyP2LqOk-4DeaVfkEDzcYRsj1IouiyK8-ABjsfiKV0N5Q-bvcY4YrCqMQN4dsoWIBmc/exec", "word": true};</script>
@@ -1612,6 +1615,9 @@ Object.assign(ICON, {
   fetch: '<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#0B7A6E"/><path d="M14 24h18M26 17l7 7-7 7" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/></svg>',
   decode: '<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#5B34D9"/><text x="24" y="31" text-anchor="middle" font-size="20" font-weight="900" fill="#fff" font-family="sans-serif">?</text></svg>',
   execute: '<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#C2410C"/><path d="M19 14l14 10-14 10z" fill="#fff"/></svg>',
+  register: '<svg viewBox="0 0 48 48"><rect x="4" y="12" width="40" height="24" rx="6" fill="#2A2540"/><text x="24" y="31" text-anchor="middle" font-size="16" font-weight="900" fill="#fff" font-family="monospace">42</text></svg>',
+  pc: '<svg viewBox="0 0 48 48"><rect x="4" y="12" width="40" height="24" rx="6" fill="#2A2540" stroke="#0B7A6E" stroke-width="3"/><path d="M12 24h16M23 18l6 6-6 6" stroke="#7FE0D2" stroke-width="3.5" fill="none" stroke-linecap="round"/><text x="37" y="29" text-anchor="middle" font-size="13" font-weight="900" fill="#fff" font-family="monospace">5</text></svg>',
+  accumulator: '<svg viewBox="0 0 48 48"><rect x="4" y="12" width="40" height="24" rx="6" fill="#2A2540" stroke="#C2410C" stroke-width="3"/><text x="24" y="30" text-anchor="middle" font-size="14" font-weight="900" fill="#FDBA8C" font-family="monospace">=8</text></svg>',
   cycle: '<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="16" fill="none" stroke="#5B34D9" stroke-width="4" stroke-dasharray="18 7"/><path d="M36 10l4 8-9 1" fill="#5B34D9"/></svg>'
 });
 /* default glossary; a lesson can add or replace words in L.words */
@@ -1817,6 +1823,9 @@ async function runCode(src){
     curLine = line; markLine(line, "cur");
     const ev = {type:"cond", line, text: src, value: v};
     r.events.push(ev); r.conds = (r.conds || []).concat([ev]);
+    /* The condition line is an instruction too: the PC points to it while it is checked
+       (not counted as a trip, as before). Added for A2, 14 Nov 2026. */
+    if (has("registers")) setReg("#pcv", "line " + line);
     showCond(src, v); setAcc(v ? "True" : "False"); announce(`${src} is ${v ? "True" : "False"}`);
     return Sk.misceval.promiseToSuspension(sleep(speedMs(60, 900)).then(() => v ? Sk.builtin.bool.true$ : Sk.builtin.bool.false$));
   });
@@ -2139,11 +2148,11 @@ function showEditor(on, key, code, ro){
     $("#roNote").textContent = ro ? "Predict first. The code unlocks after you run it." : "";
   }
 }
-function readBtn(){ return `<button class="say" data-read>🔊 Read aloud</button> `; }
+/* The Read aloud button was removed on 14 Nov 2026 at Colin's request. readBtn() is kept,
+   returning nothing, so the pages that called it need no change. */
+function readBtn(){ return ""; }
 function bindCommon(){
   card.querySelectorAll(".kw").forEach(k => { k.onclick = () => showWord(k.dataset.k, k); k.onkeydown = ev => { if (ev.key === "Enter") showWord(k.dataset.k, k); }; });
-  const rb = card.querySelector("[data-read]");
-  if (rb) rb.onclick = () => { try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(card.querySelector("[data-readable]").innerText); u.lang = "en-GB"; u.rate = .9; speechSynthesis.speak(u); } catch(e){} };
 }
 function scrollToErr(){ const e = card.querySelector(".errbox"); if (e) setTimeout(() => e.scrollIntoView({block:"center"}), 50); }
 function render(){

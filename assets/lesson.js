@@ -9,8 +9,8 @@
         so a refresh or a closed tab loses nothing
      4. HAND IN: builds one PDF of everything - answers, code, output, whether the
         output matched, which hints were opened, the drawing - and posts it to
-        the teacher (Send to my teacher). A page built with no hand-in address
-        downloads it instead, for the student to upload to Google Classroom.
+        the teacher (Send to my teacher), or, for Google Classroom, downloads it.
+        A page with a hand-in address has both buttons, the download first.
 
    The editor, symbol bar, input() handling and Skulpt settings are carried over
    from epsom_turtle.html unchanged, because each of those is a BYOD decision
@@ -48,8 +48,9 @@
   var SIMPLE = !!L.simple;
   /* The hand-in address. build_site.py writes window.HANDIN = {url, word} into a
      page only when handin_receiver/handin_config.json holds an address. A page
-     with one has Send to my teacher and no download button. A page without one
-     keeps the download button, because it is then the only way to hand in. */
+     with one has the download button and then Send to my teacher (Colin, 16 Nov
+     2026: only his classes send, and a page cannot tell which class it is open
+     for). A page without one has the download button alone. */
   var HANDIN = (window.HANDIN && typeof window.HANDIN.url === "string"
                 && window.HANDIN.url) ? window.HANDIN : null;
   var TX = SIMPLE ? {
@@ -113,8 +114,8 @@
     handinNote: "Your work is saved in this browser on this device. Make the "
       + "hand-in PDF before the end of the lesson: it holds your code, so you can "
       + "paste it back in on another device and carry on.",
-    sendNote: "Your work is saved in this browser on this device. Send it to your "
-      + "teacher before the end of the lesson.",
+    sendNote: "Your work is saved in this browser on this device. When it is "
+      + "finished, download it for Google Classroom or send it to your teacher.",
     /* The drag step's own wording lives here, not in the lesson files. It is the
        same sentence on every drag step, so a lesson that wrote its own would be
        repeating the interface at the student, which is what the reading-load work
@@ -2468,15 +2469,15 @@
 
   /* SEND TO MY TEACHER (13 Oct 2026). The same PDF the download button makes is
      posted to a Google Apps Script web app (handin_receiver/receiver.js), which
-     saves it into a Drive folder that belongs to the teacher. Since 28 Oct 2026
-     this is the only way to hand in on a page that has an address: build_site.py
-     leaves the download button out of such a page, so when sending fails the
-     pupil is told to tell the teacher.
+     saves it into a Drive folder that belongs to the teacher. From 28 Oct to
+     15 Nov 2026 this was the only way to hand in on a page that had an address.
+     From 16 Nov 2026 the download button stays on such a page, in front of Send,
+     for the classes that upload to Google Classroom. When sending fails the pupil
+     is still told to tell the teacher.
 
      OFF UNLESS CONFIGURED. build_site.py writes window.HANDIN = {url, word} into
      a page only when handin_receiver/handin_config.json holds an address. Without
-     one nothing below runs, no send button is added, and the page keeps the
-     download button.
+     one nothing below runs and no send button is added.
      The Year 7 (i) pages (SIMPLE) get it too, with symbols in place of words (see
      the send entries in TX): that course has taught no word for it.
 
@@ -2493,8 +2494,13 @@
     var WORDKEY = "epsom:handin-word";
     var sendBtn = document.createElement("button");
     sendBtn.className = "btn amber"; sendBtn.id = "send"; sendBtn.textContent = TX.sendLabel;
-    /* The word box (if any) and the button go in front of the status line. */
-    msgEl.parentNode.insertBefore(sendBtn, msgEl);
+    /* The word box (if any) and the button go in front of the status line, in one
+       group, so that they wrap together. Without it the word box could sit beside
+       the download button while Send wrapped onto the next row (16 Nov 2026). */
+    var grp = document.createElement("span");
+    grp.className = "sendgrp";
+    grp.appendChild(sendBtn);
+    msgEl.parentNode.insertBefore(grp, msgEl);
     var wordEl = null;
     if (HANDIN.word) {
       wordEl = document.createElement("input");
@@ -2504,7 +2510,7 @@
       wordEl.addEventListener("input", function () {
         try { localStorage.setItem(WORDKEY, wordEl.value); } catch (e) {}
       });
-      msgEl.parentNode.insertBefore(wordEl, sendBtn);
+      grp.insertBefore(wordEl, sendBtn);
     }
     msgEl.setAttribute("role", "status");
 

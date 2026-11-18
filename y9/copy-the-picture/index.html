@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 9 Copy the picture | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; Computer Science</div>
+    <h1>Year 9: Copy the picture</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Download PDF for Google Classroom</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. When it is finished, download it for Google Classroom or send it to your teacher.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y9-copy-the-picture", "order": 27.9, "version": 1, "year": "Year 9", "slug": "copy-the-picture", "folder": "y9", "title": "Copy the picture", "short": "Copy the picture", "objective": "Copy a picture with the turtle: find the start point of each part, then draw it one part at a time.", "keywords": ["penup()", "goto()", "begin_fill()", "start point", "grid"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "Before you start", "intro": ["Answer all four. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "Which command moves the turtle without drawing a line?", "pick": [{"v": "penup()"}, {"v": "pendown()"}, {"v": "forward()"}]}, {"id": "r2", "label": "R2", "prompt": "The turtle faces right. Which way does it face after left(90)?", "pick": [{"v": "up"}, {"v": "down"}, {"v": "left"}]}, {"id": "r3", "label": "R3", "prompt": "A triangle has three equal sides. What turn does each corner need?", "pick": [{"v": "120"}, {"v": "90"}, {"v": "60"}]}, {"id": "r4", "label": "R4", "prompt": "Which command goes before the lines of a filled shape?", "pick": [{"v": "begin_fill()"}, {"v": "end_fill()"}, {"v": "fillcolor()"}]}]}, {"kind": "questions", "nav": "T", "label": "Toolbox", "title": "The commands you need", "intro": ["Every picture today uses only these commands.", "A loop and a function are there if you want them. They are not needed."], "table": {"headers": ["Command", "What it does", "Example"], "code_cols": [2], "rows": [["penup()", "Lifts the pen. The turtle moves without drawing.", "penup()"], ["goto(x, y)", "Jumps to a point on the grid.", "goto(-20, -150)"], ["pendown()", "Puts the pen down again.", "pendown()"], ["forward(n)", "Moves forward n steps, drawing if the pen is down.", "forward(40)"], ["left(a) and right(a)", "Turn by a degrees.", "left(90)"], ["color(c) and fillcolor(c)", "Set the pen colour and the fill colour.", "fillcolor(\"brown\")"], ["begin_fill() and end_fill()", "Fill the shape drawn between them.", "begin_fill()"], ["a loop (if you want)", "Repeats the indented lines.", "for side in range(4):\n    forward(30)\n    right(90)"], ["a function (if you want)", "Names a set of lines. Call it with a value.", "def square(size):\n    for side in range(4):\n        forward(size)\n        right(90)"]]}, "drill": "**penup**, **goto**, **pendown**: then draw the part.", "questions": [{"id": "t1", "label": "T1", "prompt": "Write the three lines that move the turtle to (-20, -150) without drawing."}]}, {"kind": "code", "nav": "A1", "label": "A1: the tree, blank page", "title": "The tree: blank page", "turtle": true, "remember": "One grid square is 50 by 50. The dots are the start points.", "intro": ["Do A1 or A2, not both. A1 starts with a blank page.", "Copy the tree. Draw one part at a time and run after each part."], "images": [{"src": "../img/y9_copy_tree.png", "big": true, "alt": "A green ground line, a brown trunk and a green triangle on top."}], "code": "from turtle import *\npensize(3)\n\n", "hint": "Three parts: the ground, the trunk, then the leaves. Each part starts with penup, goto and pendown.", "questions": [{"id": "a1a", "label": "A1a", "prompt": "Write the goto line for the leaves."}]}, {"kind": "code", "nav": "A2", "label": "A2: the tree, with a plan", "title": "The tree: with a plan", "turtle": true, "remember": "A rectangle is four sides. Turn left(90) at every corner.", "intro": ["Do A1 or A2, not both. A2 gives you a plan.", "The ground is done. Finish the trunk, then draw the leaves."], "images": [{"src": "../img/y9_copy_tree.png", "big": true, "alt": "A green ground line, a brown trunk and a green triangle on top."}], "code": "from turtle import *\npensize(3)\n\n# the ground: a green line, 600 long\npenup()\ngoto(-300, -150)\npendown()\ncolor(\"green\")\nforward(600)\n\n# the trunk: a brown rectangle, 40 wide and 100 tall\npenup()\ngoto(-20, -150)\npendown()\ncolor(\"black\")\nfillcolor(\"brown\")\nbegin_fill()\nforward(40)\nleft(90)\n\n\nend_fill()\n\n# the leaves: a green triangle, each side 200\npenup()\ngoto(-100, -50)\npendown()\n\n", "hint": "The trunk needs three more sides and turns. The leaves need fillcolor, begin_fill, three sides, three left(120) turns and end_fill.", "questions": [{"id": "a2a", "label": "A2a", "prompt": "How many forward lines does the trunk need?"}], "req_b64": "WyJnb3RvKC0xMDAsIC01MCkiXQ=="}, {"kind": "code", "nav": "B1", "label": "B1: the robot, blank page", "title": "The robot: blank page", "turtle": true, "remember": "One grid square is 50 by 50. The dots are the start points.", "intro": ["Do B1 or B2, not both. B1 starts with a blank page.", "Copy the robot. Draw one part at a time and run after each part."], "images": [{"src": "../img/y9_copy_robot.png", "big": true, "alt": "A grey square head, an antenna, two blue square eyes and a red mouth."}], "code": "from turtle import *\npensize(3)\n\n", "hint": "Five parts: the head, the antenna, two eyes and the mouth. Each part starts with penup, goto and pendown.", "questions": [{"id": "b1a", "label": "B1a", "prompt": "Which two parts of the robot are the same shape and size?"}]}, {"kind": "code", "nav": "B2", "label": "B2: the robot, with a plan", "title": "The robot: with a plan", "turtle": true, "remember": "Turn right(90) at every corner of a square drawn clockwise.", "intro": ["Do B1 or B2, not both. B2 gives you a plan.", "The head is done. Draw the antenna, the eyes and the mouth."], "images": [{"src": "../img/y9_copy_robot.png", "big": true, "alt": "A grey square head, an antenna, two blue square eyes and a red mouth."}], "code": "from turtle import *\npensize(3)\n\n# the head: a grey square, each side 160\npenup()\ngoto(-80, 120)\npendown()\nfillcolor(\"grey\")\nbegin_fill()\nforward(160)\nright(90)\nforward(160)\nright(90)\nforward(160)\nright(90)\nforward(160)\nright(90)\nend_fill()\n\n# the antenna: a line 50 long, straight up from the top of the head\npenup()\ngoto(0, 120)\npendown()\n\n\n# the left eye: a blue square, each side 30\npenup()\ngoto(-50, 80)\npendown()\n\n\n# the right eye: the same, at (20, 80)\n\n\n# the mouth: a red rectangle, 100 wide and 20 tall, at (-50, 10)\n\n", "hint": "The antenna turns to face up, goes 50, then turns back to face right. The right eye is the left eye again after goto(20, 80).", "questions": [{"id": "b2a", "label": "B2a", "prompt": "Copy the lines that draw the antenna."}], "req_b64": "WyJnb3RvKDIwLCA4MCkiLCJnb3RvKC01MCwgMTApIl0="}, {"kind": "code", "nav": "C1", "label": "Challenge: a function", "title": "Shorter code", "turtle": true, "remember": "A function names a set of lines. A parameter takes a value.", "intro": ["The two eyes repeat the same eight lines.", "Write a function eye() that draws one eye. Call it twice."], "images": [{"src": "../img/y9_copy_robot.png", "big": true, "alt": "The same robot as B1."}], "code": "from turtle import *\npensize(3)\n\n# write def eye(): here\n\n\nfillcolor(\"blue\")\npenup()\ngoto(-50, 80)\npendown()\n# call eye() here\n\npenup()\ngoto(20, 80)\npendown()\n# call eye() here\n", "hint": "Put begin_fill, a loop of forward(30) and right(90), and end_fill inside the function.", "questions": [{"id": "c1a", "label": "C1a", "prompt": "Why is the code with the function shorter?"}], "req_b64": "WyJkZWYgZXllKCIsImdvdG8oMjAsIDgwKSJd"}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything."], "questions": [{"id": "e1", "label": "E1", "prompt": "Why does each part start with penup() and goto()?"}, {"id": "e2", "label": "E2", "prompt": "The leaves are a triangle. How many sides, and what turn at each corner?"}, {"id": "e3", "label": "E3", "prompt": "Name one part of your picture that a loop could draw."}]}]};</script>
+<script>window.HANDIN = {"url": "https://script.google.com/macros/s/AKfycbyP2LqOk-4DeaVfkEDzcYRsj1IouiyK8-ABjsfiKV0N5Q-bvcY4YrCqMQN4dsoWIBmc/exec", "word": true};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

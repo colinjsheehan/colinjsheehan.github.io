@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 9 Test practice | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; Computer Science</div>
+    <h1>Year 9: Test practice</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Download PDF for Google Classroom</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. When it is finished, download it for Google Classroom or send it to your teacher.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y9-test-practice", "order": 26.7, "reviews": "Reviews the five sections of Cumulative Assessment 1.", "label": "R3", "review": true, "version": 1, "year": "Year 9", "slug": "test-practice", "folder": "y9", "title": "Test practice", "short": "Test practice", "objective": "Practise every section of the test: sequence, variables, input, strings, and binary and hexadecimal.", "keywords": ["heading", "variable", "input()", "int()", "index", "slice", "nibble", "hexadecimal"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "Before you start", "intro": ["Answer all four. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "Which command moves the turtle without drawing a line?", "pick": [{"v": "penup()"}, {"v": "pendown()"}, {"v": "forward()"}]}, {"id": "r2", "label": "R2", "prompt": "What type of value does input() always give?", "pick": [{"v": "text"}, {"v": "a number"}]}, {"id": "r3", "label": "R3", "prompt": "What does this print?", "code": "print(\"8\" + \"8\")"}, {"id": "r4", "label": "R4", "prompt": "How many bits are in a byte?"}]}, {"kind": "code", "nav": "A1", "label": "A1: find and fix", "title": "One wrong turn", "turtle": true, "remember": "right(90) turns clockwise. left(90) turns anticlockwise.", "intro": ["This program should draw a rectangle 120 wide and 60 tall. Press Run.", "One turn is wrong. Fix it so the rectangle closes."], "code": "from turtle import *\npensize(3)\n\nforward(120)\nright(90)\nforward(60)\nleft(90)\nforward(120)\nright(90)\nforward(60)\n", "hint": "Every turn in this rectangle goes the same way.", "questions": [{"id": "a1a", "label": "A1a", "prompt": "Write the line that was wrong, and what it should be."}, {"id": "a1b", "label": "A1b", "prompt": "The turtle starts facing right. Which way does it face at the end of the fixed program?", "pick": [{"v": "up"}, {"v": "down"}, {"v": "left"}, {"v": "right"}]}]}, {"kind": "code", "nav": "A2", "label": "A2: write the commands", "title": "The goal", "turtle": true, "remember": "One command on each line, in the order the turtle moves.", "intro": ["The turtle faces up. The goal is 50 tall and 80 wide.", "Write five commands under the comment: up, across to the right, then down.", "Press Run."], "code": "from turtle import *\npensize(3)\nleft(90)\n\n# the turtle faces up: draw the goal here\n\n", "hint": "Up is forward. Then turn to face right, go across, and turn to face down.", "questions": [{"id": "a2a", "label": "A2a", "prompt": "Copy your five commands."}], "req_b64": "WyJmb3J3YXJkKDUwKSIsImZvcndhcmQoODApIl0="}, {"kind": "code", "nav": "B1", "label": "B1: find and fix", "title": "A name spelt two ways", "turtle": true, "remember": "A variable name must be spelt the same way every time.", "intro": ["Press Run. The program stops with an error. Answer B1a.", "Fix the line with the error. Run it again."], "code": "from turtle import *\npensize(3)\n\ngrass_colour = \"green\"\n\nfillcolor(grass_color)\nbegin_fill()\nforward(200)\nright(90)\nforward(30)\nright(90)\nforward(200)\nright(90)\nforward(30)\nright(90)\nend_fill()\n\nprint(\"Grass:\", grass_colour)\n", "hint": "Compare the name on the fillcolor line with the name that was stored.", "questions": [{"id": "b1a", "label": "B1a", "prompt": "What type of error is it?", "pick": [{"v": "NameError"}, {"v": "TypeError"}, {"v": "IndexError"}]}], "expected_b64": "R3Jhc3M6IGdyZWVu"}, {"kind": "code", "nav": "B2", "label": "B2: change one line", "title": "A bigger triangle", "turtle": true, "intro": ["The sides must change from 60 to 90. Change one line only.", "Press Run. It prints Side: 90."], "code": "from turtle import *\npensize(3)\n\nside = 60\n\nforward(side)\nleft(120)\nforward(side)\nleft(120)\nforward(side)\nleft(120)\n\nprint(\"Side:\", side)\n", "questions": [{"id": "b2a", "label": "B2a", "prompt": "Copy the line you changed."}, {"id": "b2b", "label": "B2b", "prompt": "Why store the length in a variable instead of typing 90 three times?"}], "expected_b64": "U2lkZTogOTA=", "req_b64": "WyJzaWRlID0gOTAiLCJmb3J3YXJkKHNpZGUpIl0="}, {"kind": "code", "nav": "C1", "label": "C1: predict, then run", "title": "Text, not a number", "intro": ["When the program asks, you will type 7.", "Answer C1a. Then press Run, type 7 and answer C1b."], "code": "score = input(\"Score? \")\n\nprint(score + score)\n", "inputs": ["7"], "predict_first": "c1a", "questions": [{"id": "c1a", "label": "C1a", "prompt": "Predict what it prints."}, {"id": "c1b", "label": "C1b", "prompt": "Explain why it does not print 14."}], "expected_b64": "Nzc="}, {"kind": "code", "nav": "C2", "label": "C2: find and fix", "title": "Text plus a number", "remember": "int() turns text such as \"5\" into the number 5.", "intro": ["Press Run and type 5. The program stops with an error.", "Fix the first line. Run it again and type 5. It prints Total: 15."], "code": "boxes = input(\"How many boxes? \")\n\ntotal = boxes + 10\n\nprint(\"Total:\", total)\n", "inputs": ["5"], "hint": "Fix the line that asks, not the line that adds.", "questions": [{"id": "c2a", "label": "C2a", "prompt": "What type of error is it?", "pick": [{"v": "TypeError"}, {"v": "NameError"}, {"v": "IndexError"}]}, {"id": "c2b", "label": "C2b", "prompt": "Copy your fixed first line."}], "expected_b64": "VG90YWw6IDE1", "req_b64": "WyJ0b3RhbCA9IGJveGVzICsgMTAiXQ=="}, {"kind": "code", "nav": "D1", "label": "D1: predict, then run", "title": "Length, index and slice", "remember": "The first index is 0. A slice [0:3] stops before index 3.", "intro": ["Answer D1a. Then press Run and check."], "code": "city = \"Kuantan\"\n\nprint(len(city))\nprint(city[1])\nprint(city[0:3])\n", "predict_first": "d1a", "questions": [{"id": "d1a", "label": "D1a", "prompt": "Predict the three lines it prints."}], "expected_b64": "Nwp1Ckt1YQ=="}, {"kind": "code", "nav": "D2", "label": "D2: find and fix", "title": "Past the end", "intro": ["The last line should print the last letter of Borneo. Press Run.", "Fix the last line so it prints o."], "code": "place = \"Borneo\"\n\nprint(len(place))\nprint(place[6])\n", "hint": "Six letters have the indexes 0 to 5.", "questions": [{"id": "d2a", "label": "D2a", "prompt": "What type of error is it?", "pick": [{"v": "IndexError"}, {"v": "NameError"}, {"v": "TypeError"}]}, {"id": "d2b", "label": "D2b", "prompt": "Why is there no index 6?"}], "expected_b64": "Ngpv", "req_b64": "WyJwbGFjZSA9IFwiQm9ybmVvXCIiLCJwcmludChsZW4ocGxhY2UpKSJd"}, {"kind": "code", "nav": "D3", "label": "D3: fill the gap", "title": "One letter", "intro": ["Fill the gap so the program prints the letter a from Penang.", "Press Run. Then answer D3a without running anything."], "code": "town = \"Penang\"\n\nprint(town[____])\n", "hint": "Count from 0: P is 0, e is 1.", "questions": [{"id": "d3a", "label": "D3a", "prompt": "What does print(town[0:3]) print?"}], "expected_b64": "YQ=="}, {"kind": "convert", "nav": "E1", "label": "E1: binary to denary", "title": "Bytes to denary", "bits": 8, "direction": "to_denary", "remember": "Add the columns that have a 1.", "intro": ["Type the denary number for each byte.", "The box turns green when the answer is right. Amber means check it again."], "items": [12, 66, 203, 144, 35], "questions": []}, {"kind": "convert", "nav": "E2", "label": "E2: denary to binary", "title": "Denary to bytes", "bits": 8, "direction": "to_binary", "remember": "Does the column fit? Yes: 1, and take it away. No: 0.", "intro": ["Type a 1 or a 0 under each column. All eight, including the 0s at the front."], "items": [24, 72, 161, 99, 250], "questions": []}, {"kind": "convert", "nav": "E3", "label": "E3: nibbles", "title": "4 bits to denary", "bits": 4, "direction": "to_denary", "remember": "A nibble is 4 bits. Its columns are 8, 4, 2 and 1.", "intro": ["Type the denary number for each nibble."], "items": [6, 11, 13, 2, 14], "questions": []}, {"kind": "convert", "nav": "H1", "label": "H1: binary to hex", "title": "Bytes to hex", "bits": 8, "direction": "bin_to_hex", "remember": "Cut the byte in half. Convert each nibble. 10 to 15 are A to F.", "intro": ["Cut each byte at the gap and convert each nibble on paper.", "Then type one hex digit in each box."], "items": [214, 59, 168, 30], "questions": []}, {"kind": "convert", "nav": "H2", "label": "H2: hex to binary", "title": "Hex to bytes", "bits": 8, "direction": "hex_to_bin", "remember": "One hex digit is always four bits, zeros included: 1 is 0001.", "intro": ["Each hex digit becomes the four bits on its side of the gap.", "Type a 1 or a 0 under every column."], "items": [92, 233, 19], "questions": []}, {"kind": "convert", "nav": "H3", "label": "H3: hex to denary", "title": "Hex to denary", "bits": 8, "direction": "hex_to_den", "remember": "Write each hex digit as four bits. Then add the columns that have a 1.", "intro": ["Work on paper first: hex to binary, then binary to denary.", "Type the denary number for each one."], "items": [62, 180, 145, 219], "questions": []}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything."], "questions": [{"id": "e1", "label": "E1", "prompt": "word = \"Python\". Write the expression that gives the letter t."}, {"id": "e2", "label": "E2", "prompt": "What is the hex number 1A in denary?"}, {"id": "e3", "label": "E3", "prompt": "Why does int() go around input() when the program adds the answer to a number?"}]}]};</script>
+<script>window.HANDIN = {"url": "https://script.google.com/macros/s/AKfycbyP2LqOk-4DeaVfkEDzcYRsj1IouiyK8-ABjsfiKV0N5Q-bvcY4YrCqMQN4dsoWIBmc/exec", "word": true};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

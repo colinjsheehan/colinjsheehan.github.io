@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 8 Test practice | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Epsom College Malaysia &middot; Computer Science</div>
+    <h1>Year 8: Test practice</h1>
+  </div>
+  <span class="spacer"></span>
+  <label for="student-name">Name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name">
+  <button class="btn amber" id="handin">Download PDF for Google Classroom</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. When it is finished, download it for Google Classroom or send it to your teacher.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y8-r4-test-practice", "order": 13.7, "reviews": "Reviews the four sections of Cumulative Assessment 1.", "label": "R4", "review": true, "version": 1, "year": "Year 8", "slug": "test-practice", "folder": "y8", "unit": "programming", "title": "Test practice", "short": "Test practice", "objective": "Practise every section of the test: variables, asking the user, making decisions and tracing decisions.", "keywords": ["variable", "assignment", "input()", "int()", "condition", "boundary", "elif"], "steps": [{"kind": "questions", "nav": "R", "label": "Retrieval", "title": "Before you start", "intro": ["Answer all four. Do not run anything."], "questions": [{"id": "r1", "label": "R1", "prompt": "What is missing from the end of this line?", "code": "if size == 3"}, {"id": "r2", "label": "R2", "prompt": "What decides whether a line is inside the if?", "pick": [{"v": "the indent"}, {"v": "the colon"}, {"v": "the brackets"}]}, {"id": "r3", "label": "R3", "prompt": "What is in x after these three lines?", "code": "x = 5\nx = x + 2\nx = 9"}, {"id": "r4", "label": "R4", "prompt": "What does this print?", "code": "print(int(\"6\") + 6)"}]}, {"kind": "questions", "nav": "W", "label": "Words", "title": "Five words for today", "intro": ["Read each row. Say each word. Then answer W1 to W3."], "table": {"headers": ["Term", "What it means", "Example"], "code_cols": [2], "rows": [["assignment", "Storing a value in a variable with =.", "wall = 140"], ["input()", "Asks the user to type. It always gives text.", "input(\"Size? \")"], ["condition", "A test that is True or False.", "wall >= 200"], ["boundary value", "The value right on the edge of a test.", "200 in wall >= 200"], ["invalid value", "A value the program must refuse.", "5 on a menu of 1 to 3"]]}, "drill": "**=** stores a value. **==** compares two values.", "questions": [{"id": "w1", "label": "W1", "prompt": "In if choice == 2: what does == do?", "pick": [{"v": "compares"}, {"v": "stores"}]}, {"id": "w2", "label": "W2", "prompt": "A menu offers 1 to 4. Which value is a boundary value?", "pick": [{"v": "4"}, {"v": "2"}, {"v": "7"}]}, {"id": "w3", "label": "W3", "prompt": "A menu offers 1 to 4. Which value is an invalid value?", "pick": [{"v": "0"}, {"v": "1"}, {"v": "3"}]}]}, {"kind": "code", "nav": "1", "label": "A1: predict, then run", "title": "One value at a time", "turtle": true, "remember": "A new value replaces the old one. A variable holds one value at a time.", "intro": ["Answer 1a. Then press Run and answer 1b."], "code": "from turtle import *\npensize(3)\n\nwall = 60\nwall = 140\n\nforward(wall)\nright(90)\nforward(wall)\nright(90)\nforward(wall)\nright(90)\nforward(wall)\nright(90)\n\nprint(\"Wall:\", wall)\n", "predict_first": "s1a", "questions": [{"id": "s1a", "label": "1a", "prompt": "Predict the line it prints."}, {"id": "s1b", "label": "1b", "prompt": "wall is used in four places. Why is that better than typing 140 four times?"}], "expected_b64": "V2FsbDogMTQw"}, {"kind": "code", "nav": "2", "label": "A2: write one line", "title": "The door colour", "turtle": true, "remember": "A colour name is text, so it goes in quote marks.", "intro": ["Write the line that stores the colour orange in a variable called door_colour. Write it under the comment.", "Press Run. The door is orange."], "code": "from turtle import *\npensize(3)\n\n# store the colour orange in a variable called door_colour\n\n\nfillcolor(door_colour)\nbegin_fill()\nforward(40)\nleft(90)\nforward(80)\nleft(90)\nforward(40)\nleft(90)\nforward(80)\nleft(90)\nend_fill()\n\nprint(\"Door:\", door_colour)\n", "hint": "The variable name goes on the left of =. The colour goes on the right, in quote marks.", "questions": [{"id": "s2a", "label": "2a", "prompt": "Copy the line you wrote."}], "expected_b64": "RG9vcjogb3Jhbmdl", "req_b64": "WyJkb29yX2NvbG91ciA9ICJd"}, {"kind": "code", "nav": "3", "label": "B1: predict, then run", "title": "Text, not a number", "intro": ["When the program asks, you will type 3.", "Answer 3a. Then press Run, type 3 and answer 3b."], "code": "goals = input(\"Goals this season? \")\n\nprint(goals + goals)\n", "inputs": ["3"], "predict_first": "s3a", "questions": [{"id": "s3a", "label": "3a", "prompt": "Predict what it prints."}, {"id": "s3b", "label": "3b", "prompt": "Why does it not print 6?"}], "expected_b64": "MzM="}, {"kind": "code", "nav": "4", "label": "B2: find and fix", "title": "Text plus a number", "remember": "int() turns text such as \"20\" into the number 20.", "intro": ["Press Run and type 20. The program stops with an error. Answer 4a.", "Fix the first line. Run it again and type 20. It prints Total: 25."], "code": "price = input(\"Ticket price? \")\n\ntotal = price + 5\n\nprint(\"Total:\", total)\n", "inputs": ["20"], "hint": "Fix the line that asks, not the line that adds.", "questions": [{"id": "s4a", "label": "4a", "prompt": "What type of error is it?", "pick": [{"v": "TypeError"}, {"v": "NameError"}, {"v": "SyntaxError"}]}, {"id": "s4b", "label": "4b", "prompt": "Copy your fixed first line."}], "expected_b64": "VG90YWw6IDI1", "req_b64": "WyJ0b3RhbCA9IHByaWNlICsgNSJd"}, {"kind": "code", "nav": "5", "label": "C1: find and fix", "title": "Ten or more", "intro": ["An order of 10 or more gets a free drink. This order is exactly 10.", "Answer 5a. Then press Run.", "Fix the if line so it prints Free drink. Do not change the number."], "code": "order = 10\n\nif order > 10:\n    print(\"Free drink\")\nelse:\n    print(\"No free drink\")\n", "hint": "10 or more includes 10 itself.", "questions": [{"id": "s5a", "label": "5a", "prompt": "Before you run it: which line will it print?", "pick": [{"v": "Free drink"}, {"v": "No free drink"}]}, {"id": "s5b", "label": "5b", "prompt": "Copy your fixed if line."}], "expected_b64": "RnJlZSBkcmluaw==", "req_b64": "WyJvcmRlciA9IDEwIiwib3JkZXIgPj0gMTAiXQ=="}, {"kind": "code", "nav": "6", "label": "C2: find and fix", "title": "A branch that never runs", "intro": ["The program should store large for a wall of 250. Press Run.", "Change the order of the tests so it prints Size: large. Do not change any number."], "code": "wall = 250\n\nif wall >= 120:\n    size_name = \"medium\"\nelif wall >= 200:\n    size_name = \"large\"\nelse:\n    size_name = \"small\"\n\nprint(\"Size:\", size_name)\n", "hint": "Python stops at the first test that is True. Put the biggest test first.", "questions": [{"id": "s6a", "label": "6a", "prompt": "Why could the first version never store large?"}], "expected_b64": "U2l6ZTogbGFyZ2U=", "req_b64": "WyJ3YWxsID0gMjUwIiwiZWxpZiB3YWxsID49IDEyMDoiXQ=="}, {"kind": "code", "nav": "7", "label": "C3: predict, then run", "title": "and or or", "remember": "and needs both tests to be True. or needs one.", "intro": ["Answer 7a. Then press Run and answer 7b."], "code": "wall = 200\nroof = 70\n\nif wall >= 200 and roof >= 80:\n    print(\"Chimney\")\nelse:\n    print(\"No chimney\")\n", "questions": [{"id": "s7a", "label": "7a", "prompt": "Before you run it: which line will it print?", "pick": [{"v": "Chimney"}, {"v": "No chimney"}]}, {"id": "s7b", "label": "7b", "prompt": "and is changed to or. What would it print then?", "pick": [{"v": "Chimney"}, {"v": "No chimney"}]}], "expected_b64": "Tm8gY2hpbW5leQ=="}, {"kind": "questions", "nav": "8", "label": "D1: trace", "title": "Gold, silver or bronze", "intro": ["The first row is done. Complete 8a to 8d, then answer 8e. Do not run anything."], "readonly": "if score >= 80:\n    medal = \"gold\"\nelif score >= 50:\n    medal = \"silver\"\nelse:\n    medal = \"bronze\"", "table": {"headers": ["score", "medal"], "rows": [["95", "gold"], ["80", "8a"], ["79", "8b"], ["50", "8c"], ["49", "8d"]]}, "questions": [{"id": "s8a", "label": "8a", "prompt": "score = 80", "pick": [{"v": "gold"}, {"v": "silver"}, {"v": "bronze"}]}, {"id": "s8b", "label": "8b", "prompt": "score = 79", "pick": [{"v": "gold"}, {"v": "silver"}, {"v": "bronze"}]}, {"id": "s8c", "label": "8c", "prompt": "score = 50", "pick": [{"v": "gold"}, {"v": "silver"}, {"v": "bronze"}]}, {"id": "s8d", "label": "8d", "prompt": "score = 49", "pick": [{"v": "gold"}, {"v": "silver"}, {"v": "bronze"}]}, {"id": "s8e", "label": "8e", "prompt": "What is the lowest score that gets silver?"}]}, {"kind": "code", "nav": "9", "label": "D2: predict, then run", "title": "Not on the menu", "intro": ["When the program asks, you will type 5.", "Answer 9a. Then press Run, type 5 and answer 9b and 9c."], "code": "print(\"DRINK:  1 = water  2 = juice  3 = milk\")\nchoice = int(input(\"Which drink? \"))\n\nprice = 0\nif choice == 1:\n    price = 1\nelif choice == 2:\n    price = 3\nelif choice == 3:\n    price = 2\nelse:\n    print(\"That is not on the menu.\")\n\nprint(\"Price:\", price)\n", "inputs": ["5"], "predict_first": "s9a", "questions": [{"id": "s9a", "label": "9a", "prompt": "Predict the last line it prints."}, {"id": "s9b", "label": "9b", "prompt": "Which two numbers are the boundary tests for this menu?"}, {"id": "s9c", "label": "9c", "prompt": "The user types 2. What is the price?"}], "expected_b64": "RFJJTks6ICAxID0gd2F0ZXIgIDIgPSBqdWljZSAgMyA9IG1pbGsKVGhhdCBpcyBub3Qgb24gdGhlIG1lbnUuClByaWNlOiAw"}, {"kind": "code", "nav": "Make", "label": "Make: your own menu", "title": "A menu that refuses", "remember": "int(input()) gives a number. == compares it with each choice.", "make": {"task": "Write a menu program of your own with three choices. Run it and type 2.", "rules": ["Store the choice as a number with int(input()).", "Use if, elif and else. The else refuses anything not on the menu.", "Test it with a normal value, a boundary value and an invalid value."], "choose": ["drinks", "house sizes", "pizza sizes", "a ticket type"], "checkpoint": "the menu, the input line and the first if.", "homework": "a test table: value typed, expected, actual.", "watch": "A missing int() makes every choice go to the else."}, "code": "# 1. Print your menu: three choices, numbered 1 to 3.\n\n\n# 2. Ask for the choice and store it as a number.\n\n\n# 3. Use if, elif and else. Refuse anything not on the menu.\n\n\n# 4. Print the result with a label.\n", "inputs": ["2"], "hint": "Step 9 has the shape: print the menu, ask, then if, elif and else.", "questions": [{"id": "mk1", "label": "M1", "prompt": "Copy your input line and your if line."}, {"id": "mk2", "label": "M2", "prompt": "Write your test table: value typed, expected, actual."}]}, {"kind": "questions", "nav": "Exit", "label": "Exit check", "title": "Questions on today's lesson", "intro": ["Answer without running anything."], "questions": [{"id": "e1", "label": "E1", "prompt": "What does = do, and what does == do?"}, {"id": "e2", "label": "E2", "prompt": "level is 5. Is the condition True or False?", "code": "if level >= 5:", "pick": [{"v": "True"}, {"v": "False"}]}, {"id": "e3", "label": "E3", "prompt": "A menu offers 1 to 4. Write one normal value, one boundary value and one invalid value."}]}]};</script>
+<script>window.HANDIN = {"url": "https://script.google.com/macros/s/AKfycbyP2LqOk-4DeaVfkEDzcYRsj1IouiyK8-ABjsfiKV0N5Q-bvcY4YrCqMQN4dsoWIBmc/exec", "word": true};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

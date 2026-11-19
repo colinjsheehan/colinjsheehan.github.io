@@ -396,6 +396,143 @@ body[data-scene=free] #console{display:flex;flex-direction:column;flex:1 1 auto;
   body[data-scene=free] #console{min-height:40vh}
 }
 
+/* ---- cards into boxes ("kind": "drag"), ported from the site's lesson.css (3 Oct 2026) with
+   the type a size up for these pages. The colours are named --d-* so a theme can set them
+   without touching the engine's own colours. touch-action:none is on the card alone, so a
+   finger anywhere else still scrolls the part. */
+/* Stage 3 (19 Nov): the colours are the engine's own, which every year's card shares, so the
+   tasks match the rest of the part: teal for a card in hand and a filled box (the colour of
+   input), green for right, orange for wrong (the colour of output, softer than the error red). */
+.drag, .dcard.ghost{--d-teal:#0B7A6E;--d-amber:#C2410C;--d-green:var(--ok);--d-near:var(--ink);--d-panel:#F6F0E6;--d-grey:#DCD3C4;--d-lteal:var(--in-l);--d-lamber:var(--out-l)}
+.dcard.ok, .dcard.dok{color:var(--ink)}
+.dpics{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 12px}
+.dpics figure{margin:0;flex:0 1 auto;border:1px solid var(--line);border-radius:10px;padding:6px;background:#fff}
+.dpics figure.big{flex:1 1 100%}
+.dpics img{display:block;max-width:100%;max-height:220px;height:auto;margin:0 auto}
+.dpics figure.big img{max-height:460px}
+.dpics figcaption{font-size:17px;font-weight:700;margin-top:4px;text-align:center}
+.drag { margin:10px 0 0; }
+.drag .dhow { font-size:16px; color:#5A6567; margin:0 0 10px; max-width:34em; }
+
+.dcard { display:inline-flex; align-items:center; gap:6px; min-height:48px;
+         padding:10px 14px; font:inherit; font-size:18px; font-weight:700;
+         background:#fff; color:var(--d-near); border:2px solid var(--d-teal);
+         border-radius:8px; -webkit-appearance:none; cursor:pointer;
+         touch-action:none; user-select:none; -webkit-user-select:none;
+         -webkit-touch-callout:none; text-align:left;
+         /* a token with no spaces, such as fillcolor(wall_colour), has no place to
+            wrap, so it spilled out of its box (3 Nov 2026). The box now grows to
+            fit it (up to 60% of the row), and the token may break anywhere only
+            when it would still overflow. */
+         max-width:100%; min-width:0; overflow-wrap:anywhere; }
+.dcard.dpicked { background:var(--d-teal); color:#fff; }
+.dcard.dok  { border-color:var(--d-green); background:var(--ok-l); }
+.dcard.dbad { border-color:var(--d-amber); background:var(--out-l); }
+.dcard[disabled] { opacity:1; cursor:default; }
+.dcard:focus-visible { outline:3px solid var(--d-amber); outline-offset:2px; }
+.dcard.ghost { position:fixed; z-index:50; opacity:.95; pointer-events:none;
+               box-shadow:0 6px 18px rgba(0,0,0,.28); }
+.dans { font-size:15px; font-weight:700; color:var(--d-amber); white-space:nowrap; }
+
+.dslots { display:flex; flex-direction:column; gap:10px; }
+.dslot { display:flex; align-items:center; gap:10px; width:100%; min-height:52px;
+         padding:8px 10px; font:inherit; font-size:18px; text-align:left;
+         background:#fff; color:var(--d-near); border:2px dashed var(--d-grey);
+         border-radius:8px; -webkit-appearance:none; cursor:pointer; }
+.dslot .dwell { flex:none; width:auto; min-width:122px; max-width:60%; min-height:36px; display:flex;
+                align-items:center; justify-content:center; padding:4px 6px;
+                border-radius:6px; background:var(--d-panel); color:#6B7577;
+                font-size:18px; font-weight:700; min-width:0;
+                overflow-wrap:anywhere; text-align:center; }
+.dslot .dwell.dfull { background:var(--d-lteal); color:var(--d-near);
+                      border:1px solid var(--d-teal); }
+.dslot .dwhat { flex:1; }
+.dslot.dfilled { border-style:solid; border-color:var(--d-teal); }
+.dslot.dover { border-color:var(--d-teal); border-style:solid; background:var(--d-lteal); }
+.dslot.dok  { border-color:var(--d-green); border-style:solid; background:var(--ok-l); }
+.dslot.dok .dwell.dfull { background:var(--ok-l); border-color:var(--d-green); }
+.dslot.dbad { border-color:var(--d-amber); border-style:solid; background:var(--d-lamber); }
+.dslot.dbad .dwell.dfull { background:var(--out-l); border-color:var(--d-amber); }
+.dslot[disabled] { opacity:1; cursor:default; }
+.dslot:focus-visible { outline:3px solid var(--d-teal); outline-offset:2px; }
+
+/* TILES (6 Oct 2026). Eight match boxes as full width rows ran from about 475px
+   to 993px on a 1366x768 Chromebook, so the card tray started below the fold and
+   a student had to tap a card and then scroll back up to the box. Where every
+   label is short, the boxes become a grid: eight boxes land in two rows instead
+   of eight, and the tray comes back above the fold. The label sits above the
+   well with the CSS order property, so the markup is unchanged and the answer
+   line after marking still comes last. Below 700px this is off and the boxes are
+   one column again, which is what a phone needs. */
+@media (min-width:700px) {
+  .dslots.dtiles { display:grid; gap:10px; align-items:stretch;
+                   grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); }
+  .dslots.dtiles .dslot { flex-direction:column; align-items:stretch;
+                          justify-content:center; gap:6px; min-height:88px; }
+  .dslots.dtiles .dslot .dwhat { order:1; flex:none; font-weight:700; }
+  .dslots.dtiles .dslot .dwell { order:2; width:auto; }
+  .dslots.dtiles .dslot .dans  { order:3; white-space:normal; }
+}
+
+/* gapfill: the boxes sit in the sentence, so the line height has to carry them */
+.dsentence { font-size:20px; line-height:2.2; max-width:34em; }
+.dsentence .dslot { display:inline-flex; width:auto; min-width:128px;
+                    justify-content:center; vertical-align:middle; }
+.dsentence .dslot .dwell { width:auto; min-width:104px; }
+
+/* sort: the groups stack on a narrow screen and sit side by side on a wide one */
+.dgroups { display:grid; grid-template-columns:1fr; gap:10px; }
+@media (min-width:700px) { .dgroups { grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); } }
+.dgroup { border:2px dashed var(--d-grey); border-radius:8px; padding:8px; min-height:120px; }
+.dgroup.dover { border-color:var(--d-teal); border-style:solid; background:var(--d-lteal); }
+.dgroup h3 { font-size:14px; margin:0 0 8px; color:var(--d-teal);
+             text-transform:uppercase; letter-spacing:.03em; }
+.dgroup .dheld { display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
+.dgroup .dheld .dcard { width:100%; }
+/* a strip that never fills, so a group that is full of cards still has somewhere
+   safe to tap: without it a student aiming at the group hits a card and takes it
+   back out */
+.dzone { display:block; width:100%; min-height:48px; margin:8px 0 0; font:inherit;
+         font-size:14px; font-weight:700; color:#6B7577; background:#fff;
+         border:2px dashed var(--d-grey); border-radius:6px; -webkit-appearance:none;
+         cursor:pointer; }
+.dgroup.dover .dzone { border-color:var(--d-teal); color:var(--d-teal); }
+.dzone:focus-visible { outline:3px solid var(--d-teal); outline-offset:2px; }
+
+/* the bank sits in the page under its own step, never pinned to the bottom of
+   the screen, where it would cover the boxes being dropped into */
+.dbank { background:var(--d-panel); border:1px solid var(--d-grey); border-radius:8px;
+         padding:10px 12px; margin:12px 0 0; display:flex; flex-wrap:wrap;
+         gap:10px; align-items:center; }
+/* #card p caps prose at 34em for readability, and that is an id selector, so it
+   beats a class rule. The bank label has to out-specify it or it is squeezed to
+   34em and the cards are pushed along the same line instead of wrapping under. */
+#card .dbank .dbankname { flex:0 0 100%; max-width:none; margin:0; font-size:12px;
+                    font-weight:700;
+                    color:#6B7577; text-transform:uppercase; letter-spacing:.04em; }
+.dbank .dempty { margin:0; font-size:14px; color:#6B7577; }
+
+.drow { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:12px 0 0; }
+.drow .dtally { margin:0; font-size:17px; font-weight:700; color:var(--d-near); }
+.drow .dtally.all { color:var(--d-green); }
+.drow .dnote { margin:0; font-size:15px; color:#6B7577; }
+/* A wrong card in a sort group shows its answer on a line of its own, so the card's own words
+   keep the full width (19 Nov: "Control unit" broke mid-word next to "Answer: Inside the CPU"). */
+.dgroup .dheld .dcard{flex-wrap:wrap}
+.dgroup .dcard .dans{flex-basis:100%;white-space:normal}
+
+/* Layout stage 1 (Colin, 19 Nov 13:19; Year 8's 13:30 request). The stage shows only on parts
+   that run code: explainer, drag and exit parts hide it and take the full width, with the
+   reading kept to a comfortable line length. */
+body[data-kind=explainer] #right, body[data-kind=drag] #right, body[data-kind=exit] #right{display:none}
+body[data-kind=explainer] #app, body[data-kind=drag] #app, body[data-kind=exit] #app{grid-template-areas:"top" "left";grid-template-columns:1fr;grid-template-rows:auto 1fr}
+body[data-kind=explainer] #left, body[data-kind=drag] #left, body[data-kind=exit] #left{border-right:0}
+body[data-kind=explainer] #card > *, body[data-kind=drag] #card > *, body[data-kind=exit] #card > *{max-width:1040px;margin-left:auto;margin-right:auto}
+/* Word help is a small icon; the words stay for screen readers and in the tooltip. */
+#support{display:inline-flex;align-items:center;justify-content:center;gap:0;padding:6px 10px;min-width:44px}
+#support svg{width:24px;height:24px;display:block}
+#support .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
 /* Theme: the arcade (Year 9), moved out of the Year 9 engine.css on 18 Nov 2026. The written
    mark and the symbol bar now come from core.css (decided 16 Nov 06:00). */
 
@@ -481,7 +618,7 @@ body.retro #cabinet{border-color:#FACC15}
     <div id="brand"><small>Year 9, Unit 2, Lesson 1</small><b>Selection: if, elif and else</b></div>
     <nav id="journey" aria-label="Lesson parts"></nav>
     <div id="tools">
-      <button class="tog" id="support" aria-pressed="false">Word help</button>
+      <button class="tog" id="support" aria-pressed="false" title="Word help"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M9 8h7M9 11.5h5"/></svg><span class="vh">Word help</span></button>
     </div>
   </header>
   <section id="left">
@@ -2276,7 +2413,9 @@ const lastRun = {};
    (decided 16 Nov 06:00, item 6) */
 function tierWord(t){ return t === "core" ? "Everyone" : t === "open" ? "Open" : "Stretch"; }
 function tierBadge(t){ return `<span class="badge ${t}">${tierWord(t)}</span>`; }
-function kicker(i, tier){ return `<div class="kicker">Part ${i+1} of ${SCENES.length} ${tierBadge(tier || "core")}</div>`; }
+/* Layout stage 1: no "Part n of m" line (the step bar shows where the class is), and no badge
+   on core parts; an Open or Stretch part still says so. */
+function kicker(i, tier){ return tier && tier !== "core" ? `<div class="kicker">${tierBadge(tier)}</div>` : ""; }
 /* "Your code" (Dana, 18 Nov): a Python editor after the exit questions on every page, for
    extra tasks the teacher sets. It is a tab, not a numbered part, so "Part n of m" and the
    parts in the deck and the teacher reference do not change. No tasks or checks: the code is
@@ -2292,6 +2431,7 @@ function journey(){
 }
 function go(i){
   if (running) stopRun();
+  if (typeof dragAbort === "function"){ dragAbort(); picked = null; }
   S.scene = Math.max(0, Math.min(SCENES.length - (FREE ? 0 : 1), i)); save(); journey(); render(); card.scrollTop = 0; window.scrollTo(0, 0);
 }
 function isWritten(t){ return !!(t.check && t.check.explained); }
@@ -2405,9 +2545,13 @@ function render(){
   if (!SCENES[S.scene]) S.scene = 0;
   const sc = SCENES[S.scene];
   document.body.dataset.scene = sc.id;
+  /* Layout stage 1 (Colin, 19 Nov 13:19, Year 8's 13:30 request): the stage shows only on
+     parts that run code. Explainer, drag and exit parts take the full width (core.css). */
+  document.body.dataset.kind = sc.kind || "task";
   if (sc.kind === "explainer") return renderExplainer(sc);
   if (sc.kind === "puzzles") return renderPuzzles(sc);
   if (sc.kind === "exit") return renderExit(sc);
+  if (sc.kind === "drag") return renderDrag(sc);
   renderTaskScene(sc);
 }
 function afterRun(res, key, tasks){
@@ -2700,7 +2844,7 @@ function renderPuzzles(sc){
    input() and, if it fails, the error the way Python 3 prints it, all in the output pane.
    The 60-second limit, Stop, files and the code saved on the device work as in the lesson. */
 function renderFree(){
-  document.body.dataset.scene = "free";
+  document.body.dataset.scene = "free"; document.body.dataset.kind = "free";
   card.innerHTML = "";
   if (!$("#console")) $("#right").insertAdjacentHTML("beforeend",
     `<div id="console"><div class="ptitle">Output</div><pre id="conOut" aria-live="polite"></pre></div>`);
@@ -2762,6 +2906,321 @@ async function runPlain(src){
   } finally {
     running = false; $("#run").disabled = false; askReject = null;
   }
+}
+
+/* ---- cards into boxes ("kind": "drag"). Ported from the site's lesson.js (the DRAG section,
+   3 Oct 2026, used in Year 8 Unit 1 and Year 10) at Colin's request, 19 Nov 2026, so a lesson
+   can have the machine and these tasks on one page. The behaviour is lesson.js's, kept as it
+   was: tap a card, then tap where it goes, with drag as the second way; every card and box is a
+   real button, so it works from the keyboard and with VoiceOver; cards are shown in a fixed
+   shuffled order (render.py chooses the shuffle number so the shown order is never the answer
+   order); "check": "once" gives one Check button that turns on when every box is filled, writes
+   the answers down with the time, shuts the part, and only then shows right and wrong.
+   The answer key is never in the lesson as written: render.py turns "key" into key_b64.
+   Modes: match, gapfill, order, sort. Saved work is S.drag[part id]: put, first, moves, mark. */
+const DRAG_MOVED = 8, DRAG_SNAP = 20, DRAG_TILE_CHARS = 24;
+const DX = {
+  how: "Tap a card, then tap where it goes. You can drag instead if you prefer.",
+  drop: "drop here", bank: "Cards", empty: "Empty box", allPlaced: "Every card is placed.",
+  boxes: " boxes filled", groups: " groups filled", check: "Check my answers",
+  oneCheck: "You can check once everything is placed. You only get one check.",
+  putIn: "Put it in ", putHere: "Tap to put the picked card here.", takeBack: "Tap to take it back.",
+  right: "This is right.", answer: "Answer: ",
+  score: (n, of) => n + " out of " + of + " right",
+  recordedFirst: "Your answers were recorded before these were shown."
+};
+let dragging = null, picked = null;
+function dEl(tag, cls, text){ const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+function dragKey(sc){ if (!sc.key_b64) return null; try { return JSON.parse(decodeURIComponent(escape(atob(sc.key_b64)))); } catch (e){ return null; } }
+function dragSingle(sc){ return sc.mode !== "sort"; }
+function dragMarks(sc){ return (sc.check || "once") !== "never"; }
+function dragState(sc){
+  if (!S.drag) S.drag = {};
+  const s = S.drag[sc.id] || (S.drag[sc.id] = {});
+  if (!s.put) s.put = {}; if (!s.first) s.first = {}; if (!s.moves) s.moves = {};
+  return s;
+}
+function dragShut(sc){ return !!dragState(sc).mark; }
+function dragCard(sc, id){ return sc.cards.filter(c => c.id === id)[0]; }
+function dragTargetText(sc, id){ const t = sc.targets.filter(x => x.id === id)[0]; return (t && t.text) || id; }
+function dragCards(sc){
+  if (sc._shown) return sc._shown;
+  const seed = L.id + "|" + sc.nav + "|" + (sc.shuffle || 0); let h = 2166136261;
+  for (let k = 0; k < seed.length; k++){ h ^= seed.charCodeAt(k); h = Math.imul(h, 16777619) >>> 0; }
+  let a = h >>> 0;
+  const rnd = () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const out = sc.cards.slice();
+  for (let i = out.length - 1; i > 0; i--){ const j = Math.floor(rnd() * (i + 1)); const x = out[i]; out[i] = out[j]; out[j] = x; }
+  if (out.length > 1 && out.every((c, n) => c === sc.cards[n])) out.push(out.shift());
+  return (sc._shown = out);
+}
+function dragHeld(sc, tid){ const put = dragState(sc).put; return dragCards(sc).filter(c => put[c.id] === tid).map(c => c.id); }
+function dragProgress(sc){
+  return { done: sc.targets.filter(t => dragHeld(sc, t.id).length > 0).length, need: sc.targets.length, what: dragSingle(sc) ? DX.boxes : DX.groups };
+}
+/* A part counts as done when everything is placed; being right has nothing to do with it. */
+function dragDone(sc){ const p = dragProgress(sc); return p.done >= p.need; }
+function dragRedraw(sc){ if (SCENES[S.scene] === sc) renderDrag(sc); }
+function dragPlace(sc, cardId, targetId){
+  const s = dragState(sc);
+  if (dragShut(sc)) return;
+  if (targetId && dragSingle(sc)) Object.keys(s.put).forEach(k => { if (s.put[k] === targetId && k !== cardId) delete s.put[k]; });
+  if (targetId){
+    if (s.first[cardId] === undefined) s.first[cardId] = targetId;
+    else if (s.put[cardId] !== targetId) s.moves[cardId] = (s.moves[cardId] || 0) + 1;
+    s.put[cardId] = targetId;
+  } else delete s.put[cardId];
+  picked = null;
+  if ((sc.check || "once") === "always") dragMark(sc, true);
+  const was = !!S.done[sc.id];
+  S.done[sc.id] = dragDone(sc);
+  save();
+  if (was !== S.done[sc.id]) journey();
+  dragRedraw(sc);
+}
+/* The answers are written down first, with the time, and the key is read only after that. */
+function dragMark(sc, quiet){
+  const s = dragState(sc);
+  if (!dragMarks(sc)) return;
+  const answers = {};
+  sc.cards.forEach(c => { if (s.put[c.id]) answers[c.id] = s.put[c.id]; });
+  const key = dragKey(sc) || {};
+  const score = sc.cards.filter(c => key[c.id] === undefined ? !answers[c.id] : answers[c.id] === key[c.id]).length;
+  s.mark = { at: new Date().toISOString(), answers, score, of: sc.cards.length };
+  picked = null; save();
+  if (!quiet) dragRedraw(sc);
+}
+/* The drag is ended from the document, not from the card (lesson.js, 4 Oct 2026). */
+function dragSweep(){
+  document.querySelectorAll(".dcard.ghost").forEach(g => g.remove());
+  document.querySelectorAll(".dcard, .dslot").forEach(n => { if (n.style.opacity) n.style.opacity = ""; });
+}
+function dragEsc(e){ if (e.key === "Escape" || e.key === "Esc") dragAbort(); }
+function dragListen(on){
+  const f = on ? "addEventListener" : "removeEventListener";
+  document[f]("pointermove", dragMove, true); document[f]("pointerup", dragEnd, true);
+  document[f]("pointercancel", dragEnd, true); document[f]("keydown", dragEsc, true); window[f]("blur", dragAbort);
+}
+function dragAbort(){ if (!dragging) return; dragging = null; dragListen(false); dragSweep(); dragOver(null); }
+function dragMove(e){
+  if (!dragging || e.pointerId !== dragging.id) return;
+  const sc = dragging.sc, node = dragging.node;
+  if (!dragging.moved){
+    if (Math.abs(e.clientX - dragging.x) < DRAG_MOVED && Math.abs(e.clientY - dragging.y) < DRAG_MOVED) return;
+    dragging.moved = true;
+    const r = node.getBoundingClientRect(), w = Math.max(r.width, 110);
+    const g = dEl("div", "dcard ghost", dragCard(sc, dragging.card).text);
+    g.style.width = w + "px";
+    dragging.dx = Math.min(e.clientX - r.left, w / 2); dragging.dy = e.clientY - r.top;
+    dragging.ghost = g; document.body.appendChild(g); node.style.opacity = ".35";
+  }
+  dragging.ghost.style.left = (e.clientX - dragging.dx) + "px";
+  dragging.ghost.style.top = (e.clientY - dragging.dy) + "px";
+  dragOver(dragNearest(e.clientX, e.clientY, sc));
+}
+function dragEnd(e){
+  if (!dragging || e.pointerId !== dragging.id) return;
+  const sc = dragging.sc, node = dragging.node, moved = dragging.moved, held = dragging.card;
+  const hit = moved ? dragNearest(e.clientX, e.clientY, sc) : null;
+  dragging = null; dragListen(false); dragSweep(); dragOver(null);
+  if (!moved) return;                                   /* a tap: the click handler has it */
+  node.dataset.justDragged = "1";
+  setTimeout(() => { try { delete node.dataset.justDragged; } catch (x){} }, 400);
+  if (hit) dragPlace(sc, held, hit);
+  else if (dragState(sc).put[held]) dragPlace(sc, held, null);
+  else dragRedraw(sc);
+}
+function dragArm(node, whichCard, sc){
+  node.addEventListener("pointerdown", e => {
+    const id = whichCard();
+    if (dragging || !id || dragShut(sc)) return;
+    dragging = { id: e.pointerId, card: id, sc, x: e.clientX, y: e.clientY, moved: false, node, ghost: null };
+    dragListen(true);
+  });
+}
+function dragNearest(x, y, sc){
+  let best = null, bestD = Infinity;
+  sc.targets.forEach(t => {
+    const node = card.querySelector('[data-drop="' + t.id + '"]'); if (!node) return;
+    const r = node.getBoundingClientRect();
+    if (x < r.left - DRAG_SNAP || x > r.right + DRAG_SNAP || y < r.top - DRAG_SNAP || y > r.bottom + DRAG_SNAP) return;
+    const d = Math.pow(x - (r.left + r.right) / 2, 2) + Math.pow(y - (r.top + r.bottom) / 2, 2);
+    if (d < bestD){ bestD = d; best = t.id; }
+  });
+  return best;
+}
+function dragOver(tid){
+  document.querySelectorAll(".dover").forEach(n => n.classList.remove("dover"));
+  if (!tid) return;
+  const n = card.querySelector('[data-drop="' + tid + '"]'); if (n) n.classList.add("dover");
+}
+function dragCardEl(sc, c){
+  const b = dEl("button", "dcard", c.text); b.type = "button"; b.dataset.card = c.id;
+  const s = dragState(sc), mark = s.mark;
+  if (mark){
+    const key = dragKey(sc) || {}, right = key[c.id], where = s.put[c.id];
+    if (right !== undefined){
+      b.classList.add(where === right ? "dok" : "dbad");
+      if (where !== right && !dragSingle(sc)) b.appendChild(dEl("span", "dans", DX.answer + dragTargetText(sc, right)));
+    } else b.classList.add(where ? "dbad" : "dok");      /* a spare: right to leave it in the bank */
+    b.disabled = true;
+    return b;
+  }
+  const on = picked && picked.sc === sc.id && picked.card === c.id;
+  if (on) b.classList.add("dpicked");
+  b.setAttribute("aria-pressed", on ? "true" : "false");
+  b.addEventListener("click", () => {
+    if (b.dataset.justDragged){ delete b.dataset.justDragged; return; }
+    if (picked && picked.sc === sc.id && picked.card !== c.id && s.put[c.id]){ dragPlace(sc, picked.card, s.put[c.id]); return; }
+    if (s.put[c.id]){ dragPlace(sc, c.id, null); return; }
+    picked = on ? null : { sc: sc.id, card: c.id };
+    dragRedraw(sc);
+  });
+  dragArm(b, () => c.id, sc);
+  return b;
+}
+function dragSlot(sc, t, inner){
+  const b = dEl("button", "dslot"); b.type = "button"; b.dataset.drop = t.id;
+  const held = dragHeld(sc, t.id), s = dragState(sc);
+  b.appendChild(dEl("span", "dwell" + (held.length ? " dfull" : ""), held.length ? dragCard(sc, held[0]).text : DX.drop));
+  if (inner) b.appendChild(dEl("span", "dwhat", inner));
+  if (held.length) b.classList.add("dfilled");
+  if (s.mark){
+    const key = dragKey(sc) || {};
+    const wants = Object.keys(key).filter(cid => key[cid] === t.id)[0];
+    const ok = wants !== undefined && held[0] === wants;
+    b.classList.add(ok ? "dok" : "dbad");
+    if (!ok && wants !== undefined) b.appendChild(dEl("span", "dans", DX.answer + dragCard(sc, wants).text));
+    b.setAttribute("aria-label", (held.length ? dragCard(sc, held[0]).text + ". " : DX.empty + ". ") + (inner || "") +
+      (ok ? " " + DX.right : (wants !== undefined ? " " + DX.answer + dragCard(sc, wants).text : "")));
+    b.disabled = true;
+    return b;
+  }
+  b.setAttribute("aria-label", held.length ? dragCard(sc, held[0]).text + ". " + (inner || "") + " " + DX.takeBack
+                                           : DX.empty + ". " + (inner || "") + " " + DX.putHere);
+  b.addEventListener("click", () => {
+    if (b.dataset.justDragged){ delete b.dataset.justDragged; return; }
+    if (picked && picked.sc === sc.id){ dragPlace(sc, picked.card, t.id); return; }
+    if (held.length) dragPlace(sc, held[0], null);
+  });
+  dragArm(b, () => { const now = dragHeld(sc, t.id); return now.length ? now[0] : null; }, sc);
+  return b;
+}
+/* The hand-in PDF (stage 3): each box with the card placed in it, and right or wrong once the
+   part has been checked. A sort part lists each group with its cards. Written in plain words
+   because the PDF is read by the teacher, not the page. */
+function dragPdf(sc, text){
+  const s = (S.drag || {})[sc.id] || {}, put = s.put || {}, m = s.mark, key = m ? (dragKey(sc) || {}) : null;
+  const placed = Object.keys(put).length;
+  if (!placed && !m){ text("Not started.", 10, "normal", null, 4); return; }
+  if (m){
+    const at = new Date(m.at);
+    text("Checked at " + at.toLocaleTimeString("en-GB", {hour: "2-digit", minute: "2-digit", hour12: false}) + ": " + m.score + " out of " + m.of + " right.", 10, "bold", null, 4);
+  } else text("Not checked yet. " + placed + " of " + sc.cards.length + " cards placed.", 10, "normal", null, 4);
+  const cardText = id => (dragCard(sc, id) || {}).text || id;
+  const verdict = (cid, tid) => !key ? "" : (key[cid] === undefined ? (tid ? "  (not right: this card belongs nowhere)" : "")
+    : key[cid] === tid ? "  (right)" : "  (not right: " + (sc.mode === "sort" ? dragTargetText(sc, key[cid]) : "it goes in " + dragTargetText(sc, key[cid])) + ")");
+  if (sc.mode === "sort"){
+    sc.targets.forEach(t => {
+      const cs = sc.cards.filter(c => put[c.id] === t.id);
+      text(plainText(t.text || t.id) + ":", 10, "bold", null, 4);
+      if (!cs.length) text("(empty)", 10, "italic", null, 8);
+      cs.forEach(c => text(plainText(c.text) + verdict(c.id, t.id), 10, "normal", null, 8));
+    });
+  } else {
+    if (sc.mode === "gapfill") text(plainText(String(sc.sentence || "").replace(/\{([A-Za-z0-9_]+)\}/g, (x, g) => "[" + (sc.targets.findIndex(t => t.id === g) + 1) + "]")), 10, "italic", null, 4);
+    sc.targets.forEach((t, j) => {
+      const held = sc.cards.filter(c => put[c.id] === t.id)[0];
+      const label = sc.mode === "gapfill" ? "Gap " + (j + 1) : plainText(t.text || t.id);
+      let line = label + ": " + (held ? plainText(held.text) : "(empty)");
+      if (key){
+        const wants = Object.keys(key).filter(cid => key[cid] === t.id)[0];
+        line += held && wants === held.id ? "  (right)" : (wants !== undefined ? "  (not right: answer " + plainText(cardText(wants)) + ")" : "");
+      }
+      text(line, 10, "normal", null, 8);
+    });
+  }
+  const spare = sc.cards.filter(c => !put[c.id]);
+  if (spare.length) text("Left in the bank: " + spare.map(c => plainText(c.text) + (key && key[c.id] !== undefined ? " (not right)" : "")).join(", "), 10, "normal", null, 4);
+  const changed = Object.values(s.moves || {}).reduce((a, b) => a + b, 0);
+  if (changed) text("Cards moved after first placing: " + changed + ".", 9, "italic", null, 4);
+}
+function renderDrag(sc){
+  showEditor(false);
+  dragSweep();
+  card.innerHTML = kicker(S.scene, sc.tier) + `<h1>${md(sc.title || sc.nav)}</h1>` +
+    (sc.intro || []).map(p => `<p class="lead">${md(p)}</p>`).join("");
+  /* Pictures above the boxes (stage 3): the site's "images" list, {src, alt, label, big}.
+     render.py has already put each picture into the page as a data: address. */
+  if ((sc.images || []).length){
+    const row = dEl("div", "dpics");
+    sc.images.forEach(p => {
+      const f = dEl("figure", p.big ? "big" : ""), im = document.createElement("img");
+      im.src = p.src; im.alt = p.alt || p.label || ""; im.loading = "eager";
+      f.appendChild(im); if (p.label) f.appendChild(dEl("figcaption", "", p.label));
+      row.appendChild(f);
+    });
+    card.appendChild(row);
+  }
+  const s = dragState(sc), mode = sc.mode || "match";
+  const wrap = dEl("div", "drag drag-" + mode);
+  wrap.appendChild(dEl("p", "dhow", DX.how));
+  if (mode === "sort"){
+    const groups = dEl("div", "dgroups");
+    sc.targets.forEach(t => {
+      const box = dEl("div", "dgroup"); box.dataset.drop = t.id;
+      box.appendChild(dEl("h3", "", t.text || t.id));
+      const held = dEl("div", "dheld");
+      dragHeld(sc, t.id).forEach(cid => held.appendChild(dragCardEl(sc, dragCard(sc, cid))));
+      box.appendChild(held);
+      if (!s.mark){
+        const zone = dEl("button", "dzone", picked && picked.sc === sc.id ? DX.putIn + (t.text || t.id) : DX.drop);
+        zone.type = "button"; zone.setAttribute("aria-label", DX.putIn + (t.text || t.id));
+        box.appendChild(zone);
+        box.addEventListener("click", e => { if (e.target.closest(".dcard")) return; if (picked && picked.sc === sc.id) dragPlace(sc, picked.card, t.id); });
+      }
+      groups.appendChild(box);
+    });
+    wrap.appendChild(groups);
+  } else if (mode === "gapfill"){
+    const sent = dEl("p", "dsentence");
+    String(sc.sentence || "").split(/(\{[A-Za-z0-9_]+\})/).forEach(bit => {
+      const m = bit.match(/^\{([A-Za-z0-9_]+)\}$/);
+      if (!m){ sent.appendChild(document.createTextNode(bit)); return; }
+      const t = sc.targets.filter(x => x.id === m[1])[0];
+      if (t) sent.appendChild(dragSlot(sc, t, ""));
+    });
+    wrap.appendChild(sent);
+  } else {
+    const slots = dEl("div", "dslots");
+    if (mode === "match" && sc.targets.length >= 4 && sc.targets.every(t => String(t.text || t.id).length <= DRAG_TILE_CHARS)) slots.classList.add("dtiles");
+    sc.targets.forEach(t => slots.appendChild(dragSlot(sc, t, t.text || "")));
+    wrap.appendChild(slots);
+  }
+  const bank = dEl("div", "dbank"); bank.appendChild(dEl("p", "dbankname", DX.bank));
+  let loose = 0;
+  dragCards(sc).forEach(c => { if (s.put[c.id]) return; loose++; bank.appendChild(dragCardEl(sc, c)); });
+  if (!loose) bank.appendChild(dEl("p", "dempty", DX.allPlaced));
+  wrap.appendChild(bank);
+  const row = dEl("div", "drow");
+  if (s.mark){
+    row.appendChild(dEl("p", "dtally" + (s.mark.score === s.mark.of ? " all" : ""), DX.score(s.mark.score, s.mark.of)));
+    row.appendChild(dEl("p", "dnote", DX.recordedFirst));
+  } else {
+    const p = dragProgress(sc);
+    row.appendChild(dEl("p", "dtally" + (p.done === p.need ? " all" : ""), p.done + " of " + p.need + p.what));
+    if ((sc.check || "once") === "once"){
+      const btn = dEl("button", "btn", DX.check); btn.type = "button"; btn.dataset.check = sc.id;
+      btn.disabled = p.done < p.need; btn.addEventListener("click", () => dragMark(sc));
+      row.appendChild(btn);
+      if (btn.disabled) row.appendChild(dEl("p", "dnote", DX.oneCheck));
+    }
+  }
+  wrap.appendChild(row);
+  card.appendChild(wrap);
+  if (sc.next && (s.mark || !dragMarks(sc)) && dragDone(sc)) card.insertAdjacentHTML("beforeend", `<button class="btn next" data-next>Next: ${esc(sc.next)} →</button>`);
+  const nx = card.querySelector("[data-next]"); if (nx) nx.onclick = () => go(S.scene + 1);
+  bindCommon();
 }
 
 /* ---- exit questions */
@@ -2910,6 +3369,7 @@ function buildPdf(name){
     need(14); text("Part " + (i + 1) + ": " + plainText(sc.title || sc.nav), 12, "bold");
     const key = sc.id;
     if (sc.kind === "explainer"){ text(S.done[key] ? "Read." : "Not marked as read.", 10, "normal", null, 4); }
+    else if (sc.kind === "drag") dragPdf(sc, text);
     else if (sc.kind === "exit"){
       sc.questions.forEach((q, j) => {
         const a = S.exit[j];
@@ -3075,11 +3535,18 @@ window.__APP__ = {
   } catch(e){} }
 };
 /* Called by render.py after the theme's stage.js, which defines THEME. */
+/* The counter's label is the lesson's to set (Year 8 A1: "Trips round the cycle"). Without
+   "countLabel" it stays as the theme wrote it ("Lines carried out"). */
+function countLabel(){
+  const n = $("#cycn"); if (!L.countLabel || !n) return;
+  const t = n.previousSibling;
+  if (t && t.nodeType === 3) t.nodeValue = L.countLabel + ": "; else n.insertAdjacentText("beforebegin", L.countLabel + ": ");
+}
 function boot(){
   (THEME.norun || []).forEach(k => NORUN.add(k));
   if (!$("#condbox")) $("#side").insertAdjacentHTML("afterbegin", CONDBOX);
   $("#condbox").hidden = !HASCOND;
-  THEME.init();
+  THEME.init(); countLabel();
   memClear(); outClear(); journey(); render();
 }
 

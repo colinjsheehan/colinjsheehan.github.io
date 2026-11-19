@@ -2501,8 +2501,58 @@
     grp.className = "sendgrp";
     grp.appendChild(sendBtn);
     msgEl.parentNode.insertBefore(grp, msgEl);
+
+    /* THE CHOICE COMES FIRST (19 Nov 2026, Colin's 18 Nov 19:49 decision). The same
+       two-button choice as the hand-in panel on the Unit 2 pages: Download a PDF or
+       Send to my teacher. Until one is chosen the name box and both hand-in buttons
+       are hidden; after it only that way's boxes show. The choice is kept on the
+       device under the same key the Unit 2 pages use (epsom:handin-mode), so a
+       class that sends chooses once for the whole site. The ids #student-name,
+       #handin, #send and #send-word are unchanged. The wording is the same on a
+       simple page: it is the wording the Unit 2 pages use. */
+    var HM = { ask: "How does your teacher want your work?",
+               pdf: "Download a PDF", pdfSub: "Then attach it in Classroom",
+               send: "Send to my teacher", sendSub: "Needs the class word",
+               wordLab: "Class word" };
+    var MODEKEY = "epsom:handin-mode";
+    var hdr = document.querySelector("header");
+    hdr.className = (hdr.className ? hdr.className + " " : "") + "hand";
+    var choose = document.createElement("div");
+    choose.className = "hchoose";
+    var ask = document.createElement("span");
+    ask.className = "hask"; ask.textContent = HM.ask;
+    var modes = document.createElement("div");
+    modes.className = "hmodes"; modes.setAttribute("role", "group");
+    modes.setAttribute("aria-label", HM.ask);
+    [["pdf", HM.pdf, HM.pdfSub], ["send", HM.send, HM.sendSub]].forEach(function (m) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "hmode"; b.setAttribute("data-hm", m[0]);
+      b.setAttribute("aria-pressed", "false");
+      var t = document.createElement("b"); t.textContent = m[1];
+      var u = document.createElement("small"); u.textContent = m[2];
+      b.appendChild(t); b.appendChild(u); modes.appendChild(b);
+      b.addEventListener("click", function () { setMode(m[0], true); });
+    });
+    choose.appendChild(ask); choose.appendChild(modes);
+    hdr.insertBefore(choose, hdr.querySelector(".hname"));
+    function setMode(m, keep) {
+      hdr.setAttribute("data-hm", m);
+      Array.prototype.forEach.call(modes.children, function (b) {
+        b.setAttribute("aria-pressed", String(b.getAttribute("data-hm") === m));
+      });
+      msgEl.textContent = "";
+      if (keep) { try { localStorage.setItem(MODEKEY, m); } catch (e) {} }
+    }
+    try {
+      var savedMode = localStorage.getItem(MODEKEY);
+      if (savedMode === "pdf" || savedMode === "send") setMode(savedMode, false);
+    } catch (e) {}
+
     var wordEl = null;
     if (HANDIN.word) {
+      var wordLab = document.createElement("label");
+      wordLab.setAttribute("for", "send-word"); wordLab.textContent = HM.wordLab;
+      grp.insertBefore(wordLab, sendBtn);
       wordEl = document.createElement("input");
       wordEl.id = "send-word"; wordEl.placeholder = TX.sendWordPh;
       wordEl.setAttribute("autocomplete", "off"); wordEl.setAttribute("autocapitalize", "off");

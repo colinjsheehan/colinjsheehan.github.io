@@ -16,7 +16,6 @@
   --err:#D7263D; --err-l:#FFE3E6;
   --ok:#14834B; --ok-l:#DDF6E8;
   --sun:#FFC83D;
-  --pet:#B9B4C7;
   --font: ui-rounded, "SF Pro Rounded", "Nunito", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, "Roboto Mono", monospace;
 }
@@ -132,12 +131,15 @@ textarea.free{min-height:84px}
 .happened h3{margin:0 0 8px;font-size:15px;letter-spacing:1px;text-transform:uppercase;color:var(--ink2)}
 .happened ol{list-style:none;margin:0;padding:0}
 .happened li{display:flex;gap:10px;align-items:flex-start;margin:6px 0;font-size:18px}
+.happened li.more{color:var(--ink2);font-style:italic;padding-left:4px}
 .happened .ln{flex:none;font-family:var(--mono);font-size:14px;background:#EFE9DF;border-radius:8px;padding:2px 7px;margin-top:2px}
 .happened .dot{flex:none;width:14px;height:14px;border-radius:50%;margin-top:7px}
 .dot.in{background:var(--in)} .dot.var{background:var(--var)} .dot.out{background:var(--out)} .dot.pet{background:var(--sun)} .dot.err{background:var(--err)}
 .errbox{margin:16px 0 0;padding:14px 16px;border-radius:18px;background:var(--err-l);border:3px solid var(--err)}
 .errbox h3{margin:0 0 6px;font-size:21px}
 .errbox .py{font-family:var(--mono);font-size:16px;background:#fff;border-radius:10px;padding:8px 10px;margin:6px 0}
+/* the error as Python 3 prints it (Dana, 18 Nov) */
+.errbox .tb{font-family:var(--mono);font-size:15px;line-height:1.35;background:#fff;color:#8E1426;border-radius:10px;padding:8px 10px;margin:8px 0;white-space:pre-wrap;overflow-wrap:anywhere}
 .errbox ul{margin:6px 0 0 0;padding-left:22px}
 
 /* puzzle tabs */
@@ -193,12 +195,8 @@ textarea.free{min-height:84px}
 #run[disabled]{background:#9DB8A8;cursor:not-allowed}
 #stop{background:#fff;border:3px solid var(--ink2);border-radius:14px;padding:6px 14px;min-height:52px;font-weight:800}
 #reset{margin-left:auto;background:transparent;border:2px solid #C9C0B3;border-radius:12px;padding:6px 12px;min-height:44px;font-weight:700;font-size:15px}
-#keys{display:flex;flex-wrap:wrap;gap:5px;padding:6px 10px;background:#FAF6EF;border-bottom:2px solid var(--line)}
-#keys button{flex:none;min-width:40px;min-height:44px;padding:0 6px;border:2px solid var(--line);background:#fff;border-radius:10px;font-family:var(--mono);font-size:18px;font-weight:700}
-/* A device with a mouse or trackpad has a keyboard, so the symbol keys are left out there
-   and the code gets the room (KS3 Co-ord check, 14 Nov 2026). Touch screens keep them. */
-@media (hover:hover) and (pointer:fine){#keys{display:none}}
-#editorPane.ro #keys{display:none}
+#keys{display:flex;flex-wrap:wrap;gap:6px;padding:6px 10px;background:#FAF6EF;border-bottom:2px solid var(--line)}
+#keys button{flex:none;min-width:46px;min-height:44px;border:2px solid var(--line);background:#fff;border-radius:10px;font-family:var(--mono);font-size:19px;font-weight:700}
 .editor{position:relative;flex:1;display:flex;min-height:0;overflow:hidden}
 #gutter{flex:none;width:46px;padding:12px 0;text-align:right;font-family:var(--mono);font-size:20px;line-height:32px;color:#AFA595;background:#FCFAF6;overflow:hidden;user-select:none}
 #gutter div{padding-right:10px}
@@ -223,16 +221,9 @@ textarea.free{min-height:84px}
   radial-gradient(circle at 18% 22%,rgba(255,255,255,.7) 0 50px,transparent 52px),
   radial-gradient(circle at 82% 30%,rgba(255,255,255,.55) 0 34px,transparent 36px),
   linear-gradient(180deg,#9EDBFF 0%,#C9B8FF 64%,#FFD9A0 64%,#FFC97A 100%)}
-#petsvg{position:absolute;left:50%;bottom:4%;transform:translateX(-50%);height:76%;max-width:92%;overflow:visible}
 #speech{position:absolute;left:50%;top:5%;transform:translateX(-50%) scale(.6);opacity:0;max-width:86%;background:#fff;border:4px solid var(--out);border-radius:22px;padding:10px 18px;font-size:24px;font-weight:800;color:var(--ink);transition:transform .35s cubic-bezier(.3,1.6,.5,1),opacity .2s;text-align:center;white-space:pre-wrap;z-index:3}
 #speech.show{opacity:1;transform:translateX(-50%) scale(1)}
 #speech::after{content:"";position:absolute;left:50%;bottom:-17px;width:22px;height:22px;background:#fff;border-right:4px solid var(--out);border-bottom:4px solid var(--out);transform:translateX(-50%) rotate(45deg)}
-#think{position:absolute;right:16%;top:16%;font-size:46px;font-weight:900;color:var(--ink);background:#fff;border-radius:50%;width:70px;height:70px;display:grid;place-items:center;opacity:0;transition:opacity .3s;border:4px solid var(--ink)}
-#think.show{opacity:1}
-#stage:has(#think.show) #zzz{display:none}
-#zzz{position:absolute;left:61%;top:22%;font-weight:900;font-size:30px;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.15);display:none}
-.asleep #zzz{display:block;animation:zz 2.4s infinite}
-@keyframes zz{0%{transform:translate(0,10px);opacity:0}40%{opacity:1}100%{transform:translate(20px,-30px);opacity:0}}
 #ask{position:absolute;left:4%;right:4%;top:4%;background:#fff;border:4px solid var(--in);border-radius:22px;padding:12px 14px;box-shadow:0 12px 30px rgba(0,60,55,.25);z-index:4;display:none}
 #ask.show{display:block;animation:pop .3s cubic-bezier(.3,1.6,.5,1)}
 #ask label{display:flex;align-items:center;gap:8px;font-weight:800;font-size:20px;color:#08665B;margin-bottom:8px}
@@ -242,25 +233,6 @@ textarea.free{min-height:84px}
 #askGo{background:var(--in);color:#fff;border:0;border-radius:14px;padding:8px 18px;font-weight:900;font-size:20px;min-height:52px}
 @keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
 
-/* pet */
-.petfill{fill:var(--pet);transition:fill .6s}
-.petdark{fill:var(--pet);filter:brightness(.86);transition:fill .6s}
-#bob{animation:bob 2.6s ease-in-out infinite;transform-origin:160px 255px;transform-box:view-box}
-.asleep #bob{animation-duration:4.5s}
-@keyframes bob{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(-6px) scale(1.01,.99)}}
-#pet.jump #bob{animation:jump .6s cubic-bezier(.3,1.4,.5,1)}
-@keyframes jump{0%{transform:translateY(0) scale(1.08,.9)}40%{transform:translateY(-34px) scale(.95,1.06)}100%{transform:translateY(0)}}
-#pet.puzzled #bob{animation:none;transform:rotate(-7deg)}
-#pet.spin #bob{animation:spin 1s ease-in-out}
-@keyframes spin{to{transform:rotate(360deg)}}
-.eye{transform-box:fill-box;transform-origin:center;transition:transform .08s}
-.blink .eye{transform:scaleY(.08)}
-#pet.rainbow .petfill,#pet.rainbow .petdark{animation:rb 3s linear infinite}
-@keyframes rb{0%{fill:#FF4D6D}20%{fill:#FFB703}40%{fill:#3DDC97}60%{fill:#3A86FF}80%{fill:#9B5DE5}100%{fill:#FF4D6D}}
-#pet.talk #mouthOpen{animation:talk .22s 4 alternate}
-@keyframes talk{from{transform:scaleY(.3)}to{transform:scaleY(1)}}
-#mouthOpen{transform-box:fill-box;transform-origin:center}
-#pet.eat #mouthOpen{animation:talk .16s 8 alternate}
 .hidden{display:none}
 
 /* memory + output */
@@ -291,7 +263,6 @@ textarea.free{min-height:84px}
 @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}}
 
 /* added for the lesson engine */
-#scaler{transform:scale(var(--petscale,1));transform-origin:160px 262px;transform-box:view-box;transition:transform .6s cubic-bezier(.3,1.4,.5,1)}
 .vchip.t-int,.vchip.t-float{color:#185FA5;border-color:#185FA5;background:#EAF3FF}
 .xnode.num{background:#EAF3FF;border:3px solid #185FA5;color:#0E3F70}
 .xnode.cond{background:#EEEBFF;border:3px solid #534AB7;color:#2C2475}
@@ -300,11 +271,6 @@ textarea.free{min-height:84px}
 .xhtml{margin:14px 0}
 
 /* decisions */
-#condpill{position:absolute;left:4%;top:20%;z-index:5;background:#fff;border:4px solid var(--ok);border-radius:16px;padding:8px 14px;font-size:20px;font-weight:800;opacity:0;transform:translateY(10px) scale(.9);transition:opacity .25s,transform .3s cubic-bezier(.3,1.6,.5,1);max-width:70%}
-#condpill.f{border-color:var(--err)}
-#condpill.t b{color:var(--ok)} #condpill.f b{color:var(--err)}
-#condpill code{background:#F1EBFF;font-size:17px}
-#condpill.show{opacity:1;transform:none}
 .dot.ok{background:var(--ok)}
 .xcode .hot-yes{background:#14834B;color:#fff}
 .xcode .hot-no{background:#D7263D;color:#fff}
@@ -363,6 +329,230 @@ textarea.free{min-height:84px}
 .handin #hsend{margin-top:8px}
 .handin #hmsg{margin-top:10px;font-weight:800;min-height:1.4em}
 .handin .hsub{ font-size: 1rem; margin: 1.2em 0 .4em; }
+/* Hand in: the choice first, then only that way's boxes (Colin, 18 Nov) */
+.handin .hask{margin:10px 0 6px;font-weight:800}
+.hmodes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 10px}
+.hmode{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:64px;padding:10px 14px;border:3px solid var(--ink);border-radius:16px;background:#fff;color:var(--ink);text-align:left}
+.hmode b{font-size:18px;font-weight:900}
+.hmode small{font-size:14px;color:var(--ink2)}
+.hmode[aria-pressed="true"]{background:var(--ink);color:#fff}
+.hmode[aria-pressed="true"] small{color:#DCD6EC}
+.handin .hlab{display:block;margin:8px 0 0;font-weight:800;font-size:15px}
+.handin[data-mode=""] .hfields{display:none}
+.handin[data-mode="pdf"] .hsendp, .handin[data-mode="send"] .hpdf{display:none}
+.handin .hpdf #hdl{margin:8px 0 0}
+@media (max-width:600px){ .hmodes{grid-template-columns:1fr} }
+
+
+/* ---------- shared engine, 18 Nov 2026 ---------- */
+/* the symbol bar (Year 9's CSS, decided 16 Nov 06:00): hidden on devices with a mouse and keyboard */
+@media (hover:hover) and (pointer:fine){ #keys{display:none} }
+/* iPad landscape: keep the symbol bar on one row where it fits */
+@media (max-height:760px) and (orientation:landscape){ #keys{gap:4px;padding:5px 8px} #keys button{min-width:42px} }
+/* the program in memory is the machine's; hidden unless its theme shows it */
+#prog{display:none}
+/* the last condition checked (Year 9's box, decided 16 Nov 06:00). A theme that does not place it
+   in its stage gets it here, at the top of the side panel. */
+#condbox[hidden]{display:none !important}
+#side > #condbox{flex:0 0 auto;display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;padding:8px 14px;background:#fff;border-top:3px solid #EEEBFF;border-left:6px solid #C9C3DD;transition:box-shadow .2s}
+#side > #condbox small{font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#534AB7}
+#side > #condbox #condv{font-size:18px;font-weight:800;min-height:26px}
+#side > #condbox #condv code{background:#F1EBFF;font-size:16px}
+#side > #condbox.t{border-left-color:var(--ok)} #side > #condbox.t b{color:var(--ok)}
+#side > #condbox.f{border-left-color:var(--err)} #side > #condbox.f b{color:var(--err)}
+#side > #condbox.flash{box-shadow:inset 0 0 0 3px var(--sun)}
+@media (max-width:960px) and (orientation:portrait){ #side > #condbox{padding:6px 10px} #side > #condbox #condv{font-size:15px} }
+/* "Your code": a tab after the numbered parts (Dana, 18 Nov) */
+.stop.free{background:transparent;box-shadow:inset 0 0 0 2px #57506F}
+.stop.free .n{background:transparent;font-size:20px;font-weight:900}
+.stop.free.on{background:#fff;box-shadow:none}
+.stop.free.on .n{background:var(--sun)}
+
+/* "Your code": an editor and an output pane only (Colin, 18 Nov 21:35) */
+#console{display:none}
+body[data-scene=free] #card,
+body[data-scene=free] #splitter,
+body[data-scene=free] #roNote,
+body[data-scene=free] #right > :not(#console){display:none !important}
+body[data-scene=free] #editorPane{flex:1 1 auto !important;height:auto !important;border-top:0}
+body[data-scene=free] #app{grid-template-columns:1fr 30%}
+body[data-scene=free] #gutter,body[data-scene=free] #hl,body[data-scene=free] #code{font-size:16px;line-height:24px}
+body[data-scene=free] #gutter{width:40px}
+body[data-scene=free] #hl .row{min-height:24px}
+body[data-scene=free] #right{background:#fff}
+body[data-scene=free] #console{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;padding:10px 14px 14px}
+#console .ptitle{color:var(--out)}
+#conOut{flex:1 1 auto;min-height:0;overflow:auto;margin:6px 0 0;font-family:var(--mono);font-size:15px;line-height:1.45;white-space:pre-wrap;word-break:break-word;color:#1d1a2b}
+#conOut .err{color:#B3261E}
+#conOut .note{color:#6b6880}
+#conOut .in{font-weight:700;color:#08665B}
+#conOut .conIn{font:inherit;font-weight:700;color:#08665B;border:0;border-bottom:2px solid var(--in);outline:0;background:transparent;min-width:12ch;width:60%;padding:0}
+@media (max-width:960px) and (orientation:portrait){
+  body[data-scene=free] #app{grid-template-areas:"top" "left" "right";grid-template-columns:1fr;grid-template-rows:auto 1fr 28%}
+  body[data-scene=free] #right{border-bottom:0;border-top:2px solid var(--line)}
+}
+@media (max-width:600px){
+  body[data-scene=free] #editorPane{height:55vh !important;flex:none !important}
+  body[data-scene=free] #console{min-height:40vh}
+}
+
+/* ---- cards into boxes ("kind": "drag"), ported from the site's lesson.css (3 Oct 2026) with
+   the type a size up for these pages. The colours are named --d-* so a theme can set them
+   without touching the engine's own colours. touch-action:none is on the card alone, so a
+   finger anywhere else still scrolls the part. */
+/* Stage 3 (19 Nov): the colours are the engine's own, which every year's card shares, so the
+   tasks match the rest of the part: teal for a card in hand and a filled box (the colour of
+   input), green for right, orange for wrong (the colour of output, softer than the error red). */
+.drag, .dcard.ghost{--d-teal:#0B7A6E;--d-amber:#C2410C;--d-green:var(--ok);--d-near:var(--ink);--d-panel:#F6F0E6;--d-grey:#DCD3C4;--d-lteal:var(--in-l);--d-lamber:var(--out-l)}
+.dcard.ok, .dcard.dok{color:var(--ink)}
+.dpics{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 12px}
+.dpics figure{margin:0;flex:0 1 auto;border:1px solid var(--line);border-radius:10px;padding:6px;background:#fff}
+.dpics figure.big{flex:1 1 100%}
+.dpics img{display:block;max-width:100%;max-height:220px;height:auto;margin:0 auto}
+.dpics figure.big img{max-height:460px}
+.dpics figcaption{font-size:17px;font-weight:700;margin-top:4px;text-align:center}
+.drag { margin:10px 0 0; }
+.drag .dhow { font-size:16px; color:#5A6567; margin:0 0 10px; max-width:34em; }
+
+.dcard { display:inline-flex; align-items:center; gap:6px; min-height:48px;
+         padding:10px 14px; font:inherit; font-size:18px; font-weight:700;
+         background:#fff; color:var(--d-near); border:2px solid var(--d-teal);
+         border-radius:8px; -webkit-appearance:none; cursor:pointer;
+         touch-action:none; user-select:none; -webkit-user-select:none;
+         -webkit-touch-callout:none; text-align:left;
+         /* a token with no spaces, such as fillcolor(wall_colour), has no place to
+            wrap, so it spilled out of its box (3 Nov 2026). The box now grows to
+            fit it (up to 60% of the row), and the token may break anywhere only
+            when it would still overflow. */
+         max-width:100%; min-width:0; overflow-wrap:anywhere; }
+.dcard.dpicked { background:var(--d-teal); color:#fff; }
+.dcard.dok  { border-color:var(--d-green); background:var(--ok-l); }
+.dcard.dbad { border-color:var(--d-amber); background:var(--out-l); }
+.dcard[disabled] { opacity:1; cursor:default; }
+.dcard:focus-visible { outline:3px solid var(--d-amber); outline-offset:2px; }
+.dcard.ghost { position:fixed; z-index:50; opacity:.95; pointer-events:none;
+               box-shadow:0 6px 18px rgba(0,0,0,.28); }
+.dans { font-size:15px; font-weight:700; color:var(--d-amber); white-space:nowrap; }
+
+.dslots { display:flex; flex-direction:column; gap:10px; }
+.dslot { display:flex; align-items:center; gap:10px; width:100%; min-height:52px;
+         padding:8px 10px; font:inherit; font-size:18px; text-align:left;
+         background:#fff; color:var(--d-near); border:2px dashed var(--d-grey);
+         border-radius:8px; -webkit-appearance:none; cursor:pointer; }
+.dslot .dwell { flex:none; width:auto; min-width:122px; max-width:60%; min-height:36px; display:flex;
+                align-items:center; justify-content:center; padding:4px 6px;
+                border-radius:6px; background:var(--d-panel); color:#6B7577;
+                font-size:18px; font-weight:700; min-width:0;
+                overflow-wrap:anywhere; text-align:center; }
+.dslot .dwell.dfull { background:var(--d-lteal); color:var(--d-near);
+                      border:1px solid var(--d-teal); }
+.dslot .dwhat { flex:1; }
+.dslot.dfilled { border-style:solid; border-color:var(--d-teal); }
+.dslot.dover { border-color:var(--d-teal); border-style:solid; background:var(--d-lteal); }
+.dslot.dok  { border-color:var(--d-green); border-style:solid; background:var(--ok-l); }
+.dslot.dok .dwell.dfull { background:var(--ok-l); border-color:var(--d-green); }
+.dslot.dbad { border-color:var(--d-amber); border-style:solid; background:var(--d-lamber); }
+.dslot.dbad .dwell.dfull { background:var(--out-l); border-color:var(--d-amber); }
+.dslot[disabled] { opacity:1; cursor:default; }
+.dslot:focus-visible { outline:3px solid var(--d-teal); outline-offset:2px; }
+
+/* TILES (6 Oct 2026). Eight match boxes as full width rows ran from about 475px
+   to 993px on a 1366x768 Chromebook, so the card tray started below the fold and
+   a student had to tap a card and then scroll back up to the box. Where every
+   label is short, the boxes become a grid: eight boxes land in two rows instead
+   of eight, and the tray comes back above the fold. The label sits above the
+   well with the CSS order property, so the markup is unchanged and the answer
+   line after marking still comes last. Below 700px this is off and the boxes are
+   one column again, which is what a phone needs. */
+@media (min-width:700px) {
+  .dslots.dtiles { display:grid; gap:10px; align-items:stretch;
+                   grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); }
+  .dslots.dtiles .dslot { flex-direction:column; align-items:stretch;
+                          justify-content:center; gap:6px; min-height:88px; }
+  .dslots.dtiles .dslot .dwhat { order:1; flex:none; font-weight:700; }
+  .dslots.dtiles .dslot .dwell { order:2; width:auto; }
+  .dslots.dtiles .dslot .dans  { order:3; white-space:normal; }
+}
+
+/* gapfill: the boxes sit in the sentence, so the line height has to carry them */
+.dsentence { font-size:20px; line-height:2.2; max-width:34em; }
+.dsentence .dslot { display:inline-flex; width:auto; min-width:128px;
+                    justify-content:center; vertical-align:middle; }
+.dsentence .dslot .dwell { width:auto; min-width:104px; }
+
+/* sort: the groups stack on a narrow screen and sit side by side on a wide one */
+.dgroups { display:grid; grid-template-columns:1fr; gap:10px; }
+@media (min-width:700px) { .dgroups { grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); } }
+.dgroup { border:2px dashed var(--d-grey); border-radius:8px; padding:8px; min-height:120px; }
+.dgroup.dover { border-color:var(--d-teal); border-style:solid; background:var(--d-lteal); }
+.dgroup h3 { font-size:14px; margin:0 0 8px; color:var(--d-teal);
+             text-transform:uppercase; letter-spacing:.03em; }
+.dgroup .dheld { display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
+.dgroup .dheld .dcard { width:100%; }
+/* a strip that never fills, so a group that is full of cards still has somewhere
+   safe to tap: without it a student aiming at the group hits a card and takes it
+   back out */
+.dzone { display:block; width:100%; min-height:48px; margin:8px 0 0; font:inherit;
+         font-size:14px; font-weight:700; color:#6B7577; background:#fff;
+         border:2px dashed var(--d-grey); border-radius:6px; -webkit-appearance:none;
+         cursor:pointer; }
+.dgroup.dover .dzone { border-color:var(--d-teal); color:var(--d-teal); }
+.dzone:focus-visible { outline:3px solid var(--d-teal); outline-offset:2px; }
+
+/* the bank sits in the page under its own step, never pinned to the bottom of
+   the screen, where it would cover the boxes being dropped into */
+.dbank { background:var(--d-panel); border:1px solid var(--d-grey); border-radius:8px;
+         padding:10px 12px; margin:12px 0 0; display:flex; flex-wrap:wrap;
+         gap:10px; align-items:center; }
+/* #card p caps prose at 34em for readability, and that is an id selector, so it
+   beats a class rule. The bank label has to out-specify it or it is squeezed to
+   34em and the cards are pushed along the same line instead of wrapping under. */
+#card .dbank .dbankname { flex:0 0 100%; max-width:none; margin:0; font-size:12px;
+                    font-weight:700;
+                    color:#6B7577; text-transform:uppercase; letter-spacing:.04em; }
+.dbank .dempty { margin:0; font-size:14px; color:#6B7577; }
+
+.drow { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:12px 0 0; }
+.drow .dtally { margin:0; font-size:17px; font-weight:700; color:var(--d-near); }
+.drow .dtally.all { color:var(--d-green); }
+.drow .dnote { margin:0; font-size:15px; color:#6B7577; }
+/* A wrong card in a sort group shows its answer on a line of its own, so the card's own words
+   keep the full width (19 Nov: "Control unit" broke mid-word next to "Answer: Inside the CPU"). */
+.dgroup .dheld .dcard{flex-wrap:wrap}
+.dgroup .dcard .dans{flex-basis:100%;white-space:normal}
+
+/* Theme: the pet (Year 7), moved out of the Year 7 engine.css on 18 Nov 2026 without change. */
+:root{ --pet:#B9B4C7; }
+#petsvg{position:absolute;left:50%;bottom:4%;transform:translateX(-50%);height:76%;max-width:92%;overflow:visible}
+#think{position:absolute;right:16%;top:16%;font-size:46px;font-weight:900;color:var(--ink);background:#fff;border-radius:50%;width:70px;height:70px;display:grid;place-items:center;opacity:0;transition:opacity .3s;border:4px solid var(--ink)}
+#think.show{opacity:1}
+#stage:has(#think.show) #zzz{display:none}
+#zzz{position:absolute;left:61%;top:22%;font-weight:900;font-size:30px;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.15);display:none}
+.asleep #zzz{display:block;animation:zz 2.4s infinite}
+@keyframes zz{0%{transform:translate(0,10px);opacity:0}40%{opacity:1}100%{transform:translate(20px,-30px);opacity:0}}
+/* pet */
+.petfill{fill:var(--pet);transition:fill .6s}
+.petdark{fill:var(--pet);filter:brightness(.86);transition:fill .6s}
+#bob{animation:bob 2.6s ease-in-out infinite;transform-origin:160px 255px;transform-box:view-box}
+.asleep #bob{animation-duration:4.5s}
+@keyframes bob{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(-6px) scale(1.01,.99)}}
+#pet.jump #bob{animation:jump .6s cubic-bezier(.3,1.4,.5,1)}
+@keyframes jump{0%{transform:translateY(0) scale(1.08,.9)}40%{transform:translateY(-34px) scale(.95,1.06)}100%{transform:translateY(0)}}
+#pet.puzzled #bob{animation:none;transform:rotate(-7deg)}
+#pet.spin #bob{animation:spin 1s ease-in-out}
+@keyframes spin{to{transform:rotate(360deg)}}
+.eye{transform-box:fill-box;transform-origin:center;transition:transform .08s}
+.blink .eye{transform:scaleY(.08)}
+#pet.rainbow .petfill,#pet.rainbow .petdark{animation:rb 3s linear infinite}
+@keyframes rb{0%{fill:#FF4D6D}20%{fill:#FFB703}40%{fill:#3DDC97}60%{fill:#3A86FF}80%{fill:#9B5DE5}100%{fill:#FF4D6D}}
+#pet.talk #mouthOpen{animation:talk .22s 4 alternate}
+@keyframes talk{from{transform:scaleY(.3)}to{transform:scaleY(1)}}
+#mouthOpen{transform-box:fill-box;transform-origin:center}
+#pet.eat #mouthOpen{animation:talk .16s 8 alternate}
+#scaler{transform:scale(var(--petscale,1));transform-origin:160px 262px;transform-box:view-box;transition:transform .6s cubic-bezier(.3,1.4,.5,1)}
+/* Year 7 hides the symbol bar while the code is read-only (Predict). Kept for Year 7 only:
+   not in the decided list, question on the board 18 Nov. */
+#editorPane.ro #keys{display:none}
 
 </style>
 <script>window.HANDIN = {"url": "https://script.google.com/macros/s/AKfycbyP2LqOk-4DeaVfkEDzcYRsj1IouiyK8-ABjsfiKV0N5Q-bvcY4YrCqMQN4dsoWIBmc/exec", "word": true};</script>
@@ -441,7 +631,7 @@ textarea.free{min-height:84px}
       </svg>
     </div>
     <div id="side">
-    <div id="shelf"><div class="ptitle" style="color:var(--var)"><i style="background:var(--var)"></i>Memory: variables</div><div id="boxes"></div></div>
+    <div id="shelf"><div class="ptitle" style="color:var(--var)"><i style="background:var(--var)"></i><span id="memTitle">Memory: variables</span></div><div id="prog" aria-label="The program in memory"></div><div id="boxes"></div></div>
     <div id="outp"><div class="ptitle" style="color:var(--out)"><i style="background:var(--out)"></i>Output</div><div id="outlines"></div></div>
     </div>
   </section>
@@ -1519,9 +1709,13 @@ Sk.builtinFiles={"files":{"src/builtin/sys.js":"var $builtinmodule=function(){va
 <script>
 const SUPPORT_DEFAULT = false;
 "use strict";
-/* Interactive lesson engine. The lesson content arrives as JSON in #lesson;
-   everything below is shared by every lesson. Edit the lesson spec, not this file,
-   to change what a lesson says or asks. */
+/* Shared KS3 lesson-page engine (core). Merged on 18 Nov 2026 from the Year 7, Year 8 and
+   Year 9 Unit 2 engines (MERGE_PLAN.md). The lesson content arrives as JSON in #lesson.
+   Everything here is shared by every year. What sits on the right-hand stage (the pet, the
+   machine, the arcade) is a theme: themes/<name>/stage.js defines THEME, which this file
+   calls through the hooks listed in MERGE_PLAN.md. render.py puts this file first, then the
+   theme's stage.js, then the call to boot(). Edit the lesson spec, not this file, to change
+   what a lesson says or asks. */
 const L = JSON.parse(document.getElementById("lesson").textContent);
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
@@ -1531,10 +1725,10 @@ const store = {
   get(k, d, shared){ try{ const v = localStorage.getItem((shared ? "" : L.id + ".") + k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } },
   set(k, v, shared){ try{ localStorage.setItem((shared ? "" : L.id + ".") + k, JSON.stringify(v)); }catch(e){} }
 };
-/* the pet is shared between lessons, so a pet made in one lesson comes back in the next */
-const PETKEY = L.petKey || "pet";
-const PET = () => { const p = store.get(PETKEY, null, true); return p && p.name ? String(p.name.val) : (L.defaultPetName || "Rex"); };
-const tpl = s => String(s == null ? "" : s).replace(/\{pet\}/g, PET());
+/* The stage's name (the pet's, the machine's or the player's) is shared between lessons, so a
+   name given in one lesson comes back in the next. The theme says where it is kept. */
+const NAME = () => THEME.name();
+const tpl = s => String(s == null ? "" : s).replace(THEME.token, NAME());
 
 /* ------------------------------------------------------------------ icons */
 
@@ -1581,6 +1775,7 @@ function md(s){
    Conditions that need a successful run fail when the run stopped with an error,
    unless the check says allowError. */
 const NORUN = new Set(["explained", "secrets", "distinct", "allowError", "investigated", "table"]);
+/* checks a theme adds (the machine's poweredOff and translatorStopped) are in THEME.checks */
 function norm(s){ return String(s).toLowerCase().replace(/["']/g, "").replace(/\s+/g, " ").trim(); }
 function valOf(r, v){ return r.vars && r.vars[v] ? String(r.vars[v].val) : null; }
 function fillIn(t, r){ return String(t).replace(/\{in(\d+)\}/g, (m, i) => r.inputs[+i] ? r.inputs[+i].value : "\u0000"); }
@@ -1620,11 +1815,17 @@ function passes(c, r, key, code){
           && Object.entries(v.covers || {}).every(([k, outs]) => outs.every(o => rows.some(x => x.kind === k && x.exp === o)))
           && (!v.match || rows.every(x => x.exp === x.act));
         break; }
+      case "cycles": ok = r.cycles === v; break;
+      case "cyclesAtLeast": ok = (r.cycles || 0) >= v; break;
+      case "printCount": ok = Object.entries(v).every(([t, n]) => r.prints.filter(p => p.trim() === t).length === n); break;
+      case "condCount": ok = (r.conds || []).length === v; break;
       case "condWas": ok = (r.conds || []).some(e => e.value === v); break;
       case "secrets": ok = store.get("secrets", []).length >= v; break;
       case "distinct": ok = ((S.distinct || {})[key + "." + v.var] || []).length >= v.n; break;
       case "js": try { ok = !!(new Function("r", "S", "code", "return (" + v + ");"))(r, S, code); } catch(e){ ok = false; } break;
-      default: ok = false; console.warn("Unknown check", k);
+      default:
+        if (THEME.checks && THEME.checks[k]){ ok = !!THEME.checks[k](v, r, key); break; }
+        ok = false; console.warn("Unknown check", k);
     }
     if (!ok) return false;
   }
@@ -1633,7 +1834,7 @@ function passes(c, r, key, code){
 
 /* ------------------------------------------------------------------ state */
 const S = store.get("state", {scene:0, puzzle:0});
-["done","explained","predicted","exit","codes","ran","taskDone","hintsShown","distinct","exText","inv","chunkShown","table"].forEach(k => { if (!S[k]) S[k] = {}; });
+["done","explained","predicted","exit","codes","ran","taskDone","hintsShown","distinct","exText","inv","chunkShown","table","ranCode","files"].forEach(k => { if (!S[k]) S[k] = {}; });
 function save(){ store.set("state", S); }
 
 
@@ -1675,13 +1876,35 @@ function instrument(src){
     if (triple || before !== 0 || depth !== 0 || !t || t.endsWith(":") || t.endsWith("\\") || t.endsWith(";")) return raw;
     if (COMPOUND.test(t)) return raw;
     const m = t.match(ASSIGN);
-    let s = `${ind}__line(${n}); ${t}`;
-    if (m) m[1].split(",").map(x => x.trim()).forEach(v => { s += `; __mem("${v}", ${v}, ${n})`; });
+    /* A theme may rewrite the statement (the machine sends print() calculations through its
+       accumulator) and mark a store as the result of a calculation. */
+    const it = THEME.instrumentLine ? THEME.instrumentLine(t, m) : {stmt: t, calc: 0};
+    let s = `${ind}__line(${n}); ${it.stmt}`;
+    if (m) m[1].split(",").map(x => x.trim()).forEach(v => { s += THEME.instrumentLine ? `; __mem("${v}", ${v}, ${n}, ${it.calc})` : `; __mem("${v}", ${v}, ${n})`; });
     return s + (com ? "  " + com : "");
   }).join("\n");
 }
 let running = false, stopped = false, askReject = null, lastAskRect = null;
 const TEST = window.__TEST__ = {answers: []};   /* automated tests queue answers here */
+/* Fix 8 (Year 9 L14): files. open() for writing gave ExternalError ("haven't implemented
+   non-read opens"). A program can now write, append to and read back text files. They are
+   kept with the page's saved work (S.files), on this device only, and are not shared with other
+   lessons. Skulpt's own lookup of files by element id is switched off (Sk.inBrowser), so a
+   file name can never read part of the page. */
+function fsRead(x){
+  if (Object.prototype.hasOwnProperty.call(S.files, x)) return S.files[x];
+  if (Sk.builtinFiles && Sk.builtinFiles.files[x] !== undefined) return Sk.builtinFiles.files[x];
+  throw new Sk.builtin.IOError("[Errno 2] No such file or directory: '" + x + "'");
+}
+function fsOpen(){
+  Sk.inBrowser = false;
+  const open = Sk.builtin.open;
+  Sk.builtins.open = new Sk.builtin.func(function(file, mode, buffering){
+    const name = Sk.ffi.remapToJs(file), m = mode === undefined ? "r" : String(Sk.ffi.remapToJs(mode));
+    if (/^w/.test(m) || (/^a/.test(m) && !Object.prototype.hasOwnProperty.call(S.files, name))){ S.files[name] = ""; save(); }
+    return mode === undefined ? open(file) : buffering === undefined ? open(file, mode) : open(file, mode, buffering);
+  });
+}
 function builtinRead(x){
   if (Sk.builtinFiles === undefined || Sk.builtinFiles.files[x] === undefined) throw "File not found: '" + x + "'";
   return Sk.builtinFiles.files[x];
@@ -1690,11 +1913,12 @@ function askInput(prompt){
   return new Promise((res, rej) => {
     askReject = rej;
     const box = $("#ask"); $("#askPrompt").textContent = prompt.trim() || "Type an answer";
-    const f = $("#askField"); f.value = ""; box.classList.add("show"); speech("");
+    const f = $("#askField"); f.value = ""; box.classList.add("show"); THEME.speech("");
     const done = () => {
       const v = f.value; const r = f.getBoundingClientRect();
       lastAskRect = {left: r.left + 12, top: r.top + 6};
-      box.classList.remove("show"); $("#askGo").onclick = null; f.onkeydown = null; askReject = null; res(v);
+      box.classList.remove("show"); $("#askGo").onclick = null; f.onkeydown = null; askReject = null;
+      f.blur(); scrollHome(); res(v);
     };
     $("#askGo").onclick = done;
     f.onkeydown = e => { if (e.key === "Enter"){ e.preventDefault(); done(); } };
@@ -1702,54 +1926,127 @@ function askInput(prompt){
     else setTimeout(() => f.focus({preventScroll:true}), 50);
   });
 }
-/* Pace. There is no speed button (Watch removed 14 Nov 2026, Colin, to match Years 8 and 9).
-   Every run is shown line by line, and a long run speeds up by itself once FAST_AFTER lines
-   have run, so a loop or a long program does not take a minute. */
+/* Fix 2 (board 16 Nov 11:24): on an iPad the keyboard scrolls the whole page up to keep the
+   input box in view, the part tabs go off the top, and the page itself does not scroll, so
+   they could not be brought back. When the input closes, or the keyboard hides, the page goes
+   back to the top. The app is sized to the visible height (100dvh in core.css). Not on a
+   narrow phone layout, where the page scrolls normally. */
+function scrollHome(){
+  if (getComputedStyle(document.getElementById("app")).display === "block") return;
+  if (window.scrollX || window.scrollY) window.scrollTo(0, 0);
+}
+if (window.visualViewport){
+  visualViewport.addEventListener("resize", () => {
+    const a = document.activeElement, typing = a && (a.id === "askField" || a.tagName === "TEXTAREA" || a.tagName === "INPUT" || a.tagName === "SELECT");
+    if (!typing || visualViewport.height >= window.innerHeight - 1) scrollHome();
+  });
+}
+/* Fix 3 (board 16 Nov 09:56): a long run is not redrawn on every line. Once FAST_AFTER lines
+   have run, the highlighted line, the theme's panel, the memory boxes and the screen are
+   redrawn at most every PAINT_MS, stores are not animated, and the panel is brought up to date
+   when the run ends. Automated tests (TEST.instant) still see every line. */
+const PAINT_MS = 100;
+let lastPaint = 0, behind = false, painting = true;
+function longRun(){ return fastNow && !TEST.instant; }
+function paintDue(){
+  if (!longRun()) return true;
+  const n = performance.now();
+  if (n - lastPaint < PAINT_MS){ behind = true; return false; }
+  lastPaint = n;
+  return true;
+}
+function paintAll(r){
+  painting = true;
+  Object.entries(r.vars).forEach(([v, x]) => { boxFor(v).querySelector(".val").innerHTML = `<span class="vchip t-${x.t}">${esc(shown(x.val, x.t))}</span>`; });
+  const c = (r.conds || [])[(r.conds || []).length - 1]; if (c) showCond(c.text, c.value);
+  if (THEME.paintAll) THEME.paintAll(r);
+  behind = false;
+}
+/* Pace. There is no speed button (Watch removed 14 Nov 2026, Colin). Every run is shown line
+   by line, and a long run speeds up by itself once FAST_AFTER lines have run, so a loop or a
+   long program does not take a minute. The pause before each line is the theme's
+   (THEME.beforeLine): the pet pauses, the machine lights fetch, decode and execute. */
 const FAST_AFTER = 30;
 let runLines = 0;
-function speedMs(fast, slow){ return reduced || TEST.instant ? 0 : (runLines > FAST_AFTER ? fast : slow); }
+/* Colin, 18 Nov: a run also speeds up from the third time any line runs (the third time round a
+   loop), so the first two times round are watched and a long loop finishes. */
+let fastNow = false, lineRuns = {};
+function seen(n){ lineRuns[n] = (lineRuns[n] || 0) + 1; fastNow = runLines > FAST_AFTER || lineRuns[n] >= 3; }
+function speedMs(fast, slow){ return reduced || TEST.instant ? 0 : (fastNow ? fast : slow); }
+/* Printed lines reach the screen in the order they were printed (19 Nov). A line that flies
+   to the screen lands after its animation; once a loop is sped up (fix 3) later lines are put
+   straight on, so without this queue they could arrive before the earlier ones landed. A new
+   run drops whatever an earlier run still had queued. */
+let outQ = Promise.resolve(), outGen = 0;
+function outSeq(f){ const g = outGen; outQ = outQ.then(() => g === outGen ? f() : null).catch(() => {}); return outQ; }
 async function runCode(src){
   if (running) return null;
-  running = true; stopped = false; runLines = 0;
+  running = true; stopped = false; runLines = 0; fastNow = false; lineRuns = {}; outGen++; outQ = Promise.resolve();
   $("#run").disabled = true; markLine(null);
-  petReset(); memClear(); outClear();
-  const r = {inputs:[], mems:[], prints:[], vars:{}, events:[], error:null, ok:false};
+  THEME.reset(); memClear(); outClear(); condReset();
+  const r = {inputs:[], mems:[], prints:[], vars:{}, events:[], error:null, ok:false, cycles:0, lines:[]};
+  const srcLines = src.split("\n");
+  if (THEME.beforeRun) THEME.beforeRun(src, srcLines);
   let buf = "", lastIn = null, curLine = 0;
+  lastPaint = 0; behind = false; painting = true;
   Sk.builtins.__line = new Sk.builtin.func(function(n){
     if (stopped) throw new Sk.builtin.RuntimeError("stopped");
-    curLine = Sk.ffi.remapToJs(n); runLines++; markLine(curLine, "cur");
-    return Sk.misceval.promiseToSuspension(sleep(speedMs(40, 520)).then(() => Sk.builtin.none.none$));
+    curLine = Sk.ffi.remapToJs(n); runLines++;
+    const was = fastNow; seen(curLine); if (was && !fastNow && behind) paintAll(r);   /* out of a fast loop: bring the panel up to date */
+    painting = paintDue(); if (painting) markLine(curLine, "cur");
+    r.cycles++; r.lines.push(curLine);
+    return Sk.misceval.promiseToSuspension(THEME.beforeLine(curLine, (srcLines[curLine - 1] || "").trim(), r.cycles, !painting).then(() => Sk.builtin.none.none$));
   });
-  Sk.builtins.__mem = new Sk.builtin.func(function(nm, val, n){
+  Sk.builtins.__mem = new Sk.builtin.func(function(nm, val, n, calcFlag){
     const v = Sk.ffi.remapToJs(nm), line = Sk.ffi.remapToJs(n), t = Sk.abstr.typeName(val);
     let js; try { js = ["str","int","float","bool"].includes(t) ? Sk.ffi.remapToJs(val) : Sk.ffi.remapToJs(Sk.misceval.objectRepr(val)); } catch(e){ js = "?"; }
     const fromIn = !!(lastIn && !lastIn.used && t === "str" && js === lastIn.value);
     if (fromIn) lastIn.used = true;
+    const calc = !!(calcFlag && Sk.ffi.remapToJs(calcFlag));
     const had = Object.prototype.hasOwnProperty.call(r.vars, v), prev = had ? r.vars[v] : null;
-    if (had && prev.val === js && prev.t === t) return Sk.builtin.none.none$;   /* unchanged, e.g. a, b = a, c */
+    if (had && prev.val === js && prev.t === t){                              /* unchanged, e.g. a, b = a, c */
+      if (THEME.unchangedStore) THEME.unchangedStore(js, t, calc);
+      return Sk.builtin.none.none$;
+    }
     r.vars[v] = {val: js, t};
     const ev = {type:"mem", v, val: js, t, line, fromInput: fromIn, had, prev};
+    if (THEME.instrumentLine) ev.calc = calc;
     r.mems.push(ev); r.events.push(ev);
+    if (longRun()){
+      /* fix 3: in a long run a store is not animated, and its box is redrawn at most every
+         PAINT_MS; boxes left behind are brought up to date when the run ends (paintAll) */
+      if (THEME.beforeStore) THEME.beforeStore(js, t, calc, true);
+      if (painting){ const b = boxFor(v); b.querySelector(".val").innerHTML = `<span class="vchip t-${t}">${esc(shown(js, t))}</span>`; }
+      else behind = true;
+      const note = stageReads(v, js, t); if (note) r.events.push(Object.assign({type:"pet", line}, note));
+      return Sk.builtin.none.none$;
+    }
     const p = (async () => {
       const b = boxFor(v), slot = b.querySelector(".val"), old = slot.querySelector(".vchip");
       if (old) await dropOut(old);
-      const from = fromIn && lastAskRect ? lastAskRect : lineRect(line);
+      if (THEME.beforeStore) await THEME.beforeStore(js, t, calc);
+      const from = fromIn && lastAskRect ? lastAskRect : ((THEME.storeFrom && THEME.storeFrom(calc)) || lineRect(line));
       await fly(shown(js, t), "v", from, slot);
       slot.innerHTML = `<span class="vchip t-${t}">${esc(shown(js, t))}</span>`;
       b.classList.add("flash"); setTimeout(() => b.classList.remove("flash"), 500);
-      const note = petReads(v, js, t); if (note) r.events.push(Object.assign({type:"pet", line}, note));
+      const note = stageReads(v, js, t); if (note) r.events.push(Object.assign({type:"pet", line}, note));
       announce(`${v} now stores ${shown(js, t)}`);
       await sleep(speedMs(60, 380));
     })();
     return Sk.misceval.promiseToSuspension(p.then(() => Sk.builtin.none.none$));
   });
+  if (THEME.builtins) THEME.builtins();
+  fsOpen();
   Sk.builtins.__cond = new Sk.builtin.func(function(n, text, val){
     if (stopped) throw new Sk.builtin.RuntimeError("stopped");
     const line = Sk.ffi.remapToJs(n), src = Sk.ffi.remapToJs(text), v = Sk.misceval.isTrue(val);
-    curLine = line; markLine(line, "cur");
+    curLine = line; { const was = fastNow; seen(line); if (was && !fastNow && behind) paintAll(r); } painting = paintDue(); if (painting) markLine(line, "cur");
     const ev = {type:"cond", line, text: src, value: v};
-    r.events.push(ev); r.conds = (r.conds || []).concat([ev]);
-    showCond(src, v); announce(`${src} is ${v ? "True" : "False"}`);
+    r.events.push(ev); (r.conds = r.conds || []).push(ev);
+    if (THEME.onCondLine) THEME.onCondLine(line);
+    if (painting) showCond(src, v);
+    if (THEME.afterCond) THEME.afterCond(line, v);
+    if (painting) announce(`${src} is ${v ? "True" : "False"}`);
     return Sk.misceval.promiseToSuspension(sleep(speedMs(60, 900)).then(() => v ? Sk.builtin.bool.true$ : Sk.builtin.bool.false$));
   });
   Sk.configure({
@@ -1758,26 +2055,32 @@ async function runCode(src){
       while ((i = buf.indexOf("\n")) >= 0){
         const line = buf.slice(0, i); buf = buf.slice(i + 1);
         r.prints.push(line); r.events.push({type:"print", line: curLine, text: line});
-        fly(line, "o", lineRect(curLine), $("#speech")).then(() => { speech(line); pulse("talk", 900); $("#mouthOpen").classList.remove("hidden"); setTimeout(() => $("#mouthOpen").classList.add("hidden"), 900); });
-        addOut(line); petAwake(true); announce("Output: " + line);
+        if (longRun()){ THEME.onOutput(line, curLine, true); addOut(line); if (painting) announce("Output: " + line); }
+        else { THEME.onOutput(line, curLine); addOut(line); announce("Output: " + line); }
       }
     },
-    read: builtinRead,
-    inputfun: p => askInput(p).then(v => { lastIn = {value: v, used: false}; r.inputs.push({prompt: p, value: v}); r.events.push({type:"input", line: curLine, prompt: p, value: v}); return v; }),
+    read: fsRead,
+    nonreadopen: true,
+    filewrite: (f, text) => { const n = String(f.name); S.files[n] = (S.files[n] || "") + Sk.ffi.remapToJs(text); save(); },
+    /* Fix 1 (board 16 Nov 11:24): the 20-second limit must not count the time a student
+       spends typing, so the wait is added to the run's start time. */
+    inputfun: p => { const t0 = Date.now(); return askInput(p).then(v => { Sk.execStart += Date.now() - t0; lastIn = {value: v, used: false}; r.inputs.push({prompt: p, value: v}); r.events.push({type:"input", line: curLine, prompt: p, value: v}); return v; }); },
     inputfunTakesPrompt: true,
     __future__: Sk.python3,
-    execLimit: 20000,
+    execLimit: 60000,      /* Colin, 18 Nov: 60 seconds (was 20); time spent typing an answer does not count (fix 1) */
     yieldLimit: 100
   });
   try {
     await Sk.misceval.asyncToPromise(() => Sk.importMainWithBody("<stdin>", false, instrument(src), true));
     if (buf){ r.prints.push(buf); addOut(buf); }
     r.ok = true; markLine(null);
+    if (THEME.onEnd) THEME.onEnd();
   } catch (e){
     if (stopped){ r.error = {stopped: true}; markLine(null); }
-    else { r.error = parseError(e); r.error.src = r.error.line ? (src.split("\n")[r.error.line - 1] || "") : ""; markLine(r.error.line, "bad"); puzzled(2200); }
+    else { r.error = refineError(parseError(e), src); markLine(r.error.line, "bad"); THEME.onError(r); }
   } finally {
     running = false; $("#run").disabled = false; $("#ask").classList.remove("show");
+    if (behind) paintAll(r);
   }
   await sleep(speedMs(100, 700));
   return r;
@@ -1793,34 +2096,156 @@ function parseError(e){
   if (typeof e === "string") msg = e;
   return {name, msg: String(msg).replace(/^[A-Za-z]+Error: /, ""), line};
 }
+/* Richer errors (Dana, 18 Nov): the error box shows the program's error the way Python 3
+   prints it: the line, ^ marks under the part at fault where the page can tell, and the
+   error with "Did you mean" for a misspelt name. Skulpt says "bad input" for most syntax
+   errors and words a few messages differently from Python 3, so refineError() gives the
+   message Python 3 would give for the common cases, and the line it would point to. */
+const PY_BUILTINS = ["print", "input", "int", "float", "str", "bool", "len", "range", "round", "abs", "max", "min", "sum",
+  "list", "sorted", "type", "open", "True", "False", "None"];
+function refineError(err, src){
+  const lines = src.split("\n"), ind = l => (l.match(/^[ \t]*/) || [""])[0].length;
+  const at = n => lines[n - 1] || "";
+  err.src = err.line ? at(err.line) : "";
+  if (["SyntaxError", "TokenError", "ParseError", "IndentationError"].includes(err.name) && err.line){
+    /* an opening bracket that is never closed, on this line or above */
+    const st = {triple: null}; let open = [];
+    for (let n = 1; n <= Math.min(err.line, lines.length); n++){
+      const [code] = scanLine(at(n), st); let q = null;
+      for (let i = 0; i < code.length; i++){ const c = code[i];
+        if (q){ if (c === "\\") i++; else if (c === q) q = null; continue; }
+        if (c === '"' || c === "'"){ q = c; continue; }
+        if ("([{".includes(c)) open.push({c, n, i}); else if (")]}".includes(c)) open.pop(); }
+    }
+    const t = err.src.trim(), prevN = (() => { for (let n = err.line - 1; n > 0; n--) if (at(n).trim() && !at(n).trim().startsWith("#")) return n; return 0; })();
+    const prev = prevN ? at(prevN) : "", kw = (prev.trim().match(/^(if|elif|else|while|for|def|with|try|except)\b/) || [])[1];
+    if (open.length && open[0].n < err.line){
+      const o = open[0]; return Object.assign(err, {name: "SyntaxError", msg: `'${o.c}' was never closed`, line: o.n, src: at(o.n), col: o.i, len: 1});
+    }
+    if (/^(if|elif|while)\b/.test(t) && /[^=!<>]=[^=]/.test(t)){
+      const m = /[^=!<>](=)[^=]/.exec(err.src);
+      return Object.assign(err, {name: "SyntaxError", msg: "invalid syntax. Maybe you meant '==' or ':=' instead of '='?", col: m.index + 1, len: 1});
+    }
+    if (/^(if|elif|else|while|for|def)\b/.test(t) && !/:\s*(#.*)?$/.test(t))
+      return Object.assign(err, {name: "SyntaxError", msg: "expected ':'", col: err.src.replace(/\s*(#.*)?$/, "").length, len: 1});
+    if (prev && /:\s*(#.*)?$/.test(prev) && ind(err.src) <= ind(prev))
+      return Object.assign(err, {name: "IndentationError", msg: `expected an indented block after '${kw || "the"}' statement on line ${prevN}`, col: ind(err.src), len: 1});
+    if (prev && ind(err.src) > ind(prev) && !/:\s*(#.*)?$/.test(prev))
+      return Object.assign(err, {name: "IndentationError", msg: "unexpected indent", col: ind(err.src), len: 1});
+  }
+  if (err.name === "TypeError" && /cannot concatenate 'str' and '(\w+)' objects/.test(err.msg))
+    err.msg = `can only concatenate str (not "${err.msg.match(/and '(\w+)'/)[1]}") to str`;
+  if (err.name === "ZeroDivisionError" && /[^/]\/[^/]/.test(err.src)) err.msg = "division by zero";
+  if (err.name === "IOError" && /Errno 2/.test(err.msg)) err.name = "FileNotFoundError";
+  /* where on the line: the part at fault, where the page can tell */
+  const find = re => { const m = re.exec(err.src); return m ? {col: m.index, len: m[0].length} : null; };
+  let spot = null;
+  if (err.name === "NameError"){
+    const v = (err.msg.match(/'([^']+)'/) || [])[1];
+    if (v){
+      spot = find(new RegExp("\\b" + v.replace(/\W/g, "\\$&") + "\\b"));
+      const known = new Set(PY_BUILTINS); assignedNames(src).forEach(x => known.add(x));
+      lines.forEach(l => { const m = l.match(/^\s*def\s+([A-Za-z_]\w*)/); if (m) known.add(m[1]); });
+      known.delete(v);
+      const best = closestName(v, [...known]); if (best) err.hint = best;
+    }
+  } else if (err.name === "AttributeError"){
+    const a = (err.msg.match(/attribute '([^']+)'/) || [])[1]; if (a) spot = find(new RegExp("[\\w\\]\\)\"']+\\." + a + "\\b"));
+  } else if (err.name === "IndexError" || err.name === "KeyError"){
+    spot = find(/[A-Za-z_]\w*\[[^\]]*\]/);
+  } else if (err.name === "ZeroDivisionError"){
+    spot = find(/[\w.)\]]+\s*(\/\/|\/|%)\s*[\w.(]+/);
+  }
+  if (spot) Object.assign(err, spot);
+  return err;
+}
+/* Python 3's own rule for "Did you mean": the smallest edit distance, a change of case costing
+   half a letter, within (len(a) + len(b) + 3) / 3 letters. */
+function closestName(v, names){
+  const dist = (a, b) => {
+    let prev = Array.from({length: b.length + 1}, (_, j) => j * 2);
+    for (let i = 1; i <= a.length; i++){
+      const row = [i * 2];
+      for (let j = 1; j <= b.length; j++){
+        const sub = a[i - 1] === b[j - 1] ? 0 : (a[i - 1].toLowerCase() === b[j - 1].toLowerCase() ? 1 : 2);
+        row.push(Math.min(prev[j] + 2, row[j - 1] + 2, prev[j - 1] + sub));
+      }
+      prev = row;
+    }
+    return prev[b.length];
+  };
+  let best = null, bd = Infinity;
+  names.forEach(n => { const d = dist(v, n), max = Math.floor((v.length + n.length + 3) * 2 / 6); if (d <= max && d < bd){ bd = d; best = n; } });
+  return best;
+}
+/* The error as Python 3 prints it */
+function pyTraceback(err){
+  const line = String(err.src || "").replace(/\t/g, "    "), lead = (line.match(/^\s*/) || [""])[0].length, text = line.trim();
+  const col = err.col != null ? Math.max(0, err.col - lead) : 0, len = err.col != null ? Math.max(1, err.len || 1) : text.length;
+  const syntax = ["SyntaxError", "IndentationError"].includes(err.name);
+  const out = (syntax ? "" : "Traceback (most recent call last):\n") + `  File "program.py", line ${err.line || "?"}\n` +
+    (text ? `    ${text}\n    ${" ".repeat(col)}${"^".repeat(len)}\n` : "") +
+    `${err.name}: ${err.msg}${err.hint ? `. Did you mean: '${err.hint}'?` : ""}`;
+  return out;
+}
 function errorHelp(err){
   const m = err.msg || "";
   if (err.name === "NameError"){
     const v = (m.match(/'([^']+)'/) || [])[1] || "that name";
-    return {plain:`Python does not know a variable called ${v}.`, checks:[`Is ${v} spelt exactly the same where it is stored?`, "Capital letters matter: Name and name are different.", "Did you mean text? Text needs quote marks."]};
+    return {plain:`Python does not know a variable called ${v}.`, checks:(err.hint ? [`Python suggests ${err.hint}. Compare the two spellings.`] : [`Is ${v} spelt exactly the same where it is stored?`]).concat([ "Capital letters matter: Name and name are different.", "Did you mean text? Text needs quote marks."])};
   }
   if (err.name === "SyntaxError" && /^\s*(if|elif|while)\b/.test(err.src || "") && /[^=!<>]=[^=]/.test(err.src || ""))
     return {plain:"A condition compares two values with ==. A single = stores a value, so Python cannot read this line.", checks:["Change = to == in the condition.", "The line still needs its colon at the end."]};
-  if (["SyntaxError","TokenError","ParseError","IndentationError"].includes(err.name) && /^\s*(if|elif|else|while)\b/.test(err.src || "") && !/:\s*(#.*)?$/.test(err.src || ""))
-    return {plain:"An if, elif or else line must end with a colon.", checks:["Add : at the end of the line."]};
+  /* Year 8's missing-colon message, which covers for and while (decided 16 Nov 06:00, item 6) */
+  if (["SyntaxError","TokenError","ParseError","IndentationError"].includes(err.name) && /^\s*(if|elif|else|while|for)\b/.test(err.src || "") && !/:\s*(#.*)?$/.test(err.src || "")){
+    const w = (String(err.src).trim().match(/^(if|elif|else|while|for)\b/) || [])[1];
+    return {plain:`${/^(if|elif|else)$/.test(w) ? "An" : "A"} ${w} line must end with a colon.`, checks:["Add : at the end of the line."]};
+  }
+  if (err.name === "IndentationError" && /^expected an indented block/.test(m))
+    return {plain:"The line after a line that ends with a colon must be indented.", checks:["Put 4 spaces at the start of this line, so that it belongs to the line above."]};
+  if (err.name === "IndentationError" && /unexpected indent/.test(m))
+    return {plain:"This line is indented, but the line above does not end with a colon.", checks:["Start this line at the left edge, or line it up with the line above."]};
+  if (/was never closed/.test(m))
+    return {plain:"A bracket on this line is opened but never closed.", checks:["Every ( needs a ). Count the brackets on this line."]};
+  /* Year 7's "or the line above" wording */
   if (["SyntaxError","TokenError","ParseError","IndentationError"].includes(err.name))
     return {plain:"Python cannot read this line, or the line above.", checks:["Every opening quote mark needs a closing one.", "Every ( needs a ). A missing ) on the line above shows up on this line.", "Lines start at the left edge unless they belong to an if or a loop."]};
   if (err.name === "TypeError"){
     if (/str/.test(m) && /int/.test(m)) return {plain:"The line mixes text and a number.", checks:["input() always gives text, even when the user types digits.", "int() turns text such as \"20\" into the number 20."]};
     return {plain:"A value is the wrong type for what the line does with it.", checks:["Check each value on the line. Is it text or a number?"]};
   }
+  /* fix 3: the run went on past the time limit, which almost always means a loop that never stops */
+  if (err.name === "TimeLimitError")
+    return {plain:"The program ran for more than a minute, so it was stopped. A loop never stopped.", checks:["Check the loop's condition. When does it become False?", "Check what changes inside the loop. Something must change so that the condition can become False."]};
+  if (err.name === "IndexError")
+    return {plain:"The list has no item at that position.", checks:["Positions start at 0, so in a list of 5 items the last one is at position 4.", "len() gives the number of items in a list."]};
+  if (err.name === "ZeroDivisionError")
+    return {plain:"The line divides by zero.", checks:["Check the number after / or // or %. Print it on the line before to see its value."]};
+  if (err.name === "KeyError")
+    return {plain:"The dictionary has no item with that key.", checks:["Check the spelling of the key, and capital letters."]};
+  if (err.name === "AttributeError")
+    return {plain:"This kind of value has nothing with that name after the dot.", checks:["Check the spelling after the dot.", "Check what type the value is: text, a number or a list."]};
+  if (err.name === "IOError" || err.name === "FileNotFoundError")
+    return {plain:"There is no file with that name.", checks:["Check the spelling of the file name, including .txt.", "A file must be written with open(name, \"w\") before it can be read."]};
   if (err.name === "ValueError") return {plain:"A value could not be converted.", checks:["int() only works on whole numbers written in digits, such as \"20\"."]};
   return {plain:"The program stopped on this line.", checks:["Read the line slowly. Compare it with a line that works."]};
 }
 function announce(t){ $("#live").textContent = t; }
-function showCond(text, v){
-  let p = $("#condpill");
-  if (!p){ p = document.createElement("div"); p.id = "condpill"; $("#stage").appendChild(p); }
-  p.className = v ? "t" : "f";
-  p.innerHTML = `<code>${esc(text)}</code> <b>${v ? "✓ True" : "✗ False"}</b>`;
-  p.classList.remove("show"); void p.offsetWidth; p.classList.add("show");
-  clearTimeout(showCond.t); showCond.t = setTimeout(() => p.classList.remove("show"), reduced || TEST.instant ? 0 : 2200);
+/* True or False: Year 9's box, which stays until the next condition or run, shown only in
+   lessons that have a condition (decided 16 Nov 06:00, item 6). A theme places the box in its
+   stage (the arcade does); otherwise boot() puts it at the top of the side panel. */
+const CONDBOX = '<div id="condbox" aria-live="off"><small>Last condition checked</small><div id="condv">None yet</div></div>';
+const HASCOND = SCENES_CODE().some(c => /^[ \t]*(if|elif|while)\b/m.test(c));
+function SCENES_CODE(){
+  return L.scenes.flatMap(sc => [sc.code, sc.supportCode].concat((sc.puzzles || []).map(p => p.code))).filter(Boolean).map(String);
 }
+function showCond(text, v){
+  const box = $("#condbox"), cv = $("#condv"); if (!box || !cv) return;
+  box.className = v ? "t" : "f";
+  cv.innerHTML = `<code>${esc(text)}</code> <b>${v ? "✓ True" : "✗ False"}</b>`;
+  box.classList.remove("flash"); void box.offsetWidth; box.classList.add("flash");
+}
+function condReset(){ const cb = $("#condbox"); if (cb){ cb.className = ""; $("#condv").textContent = "None yet"; } }
 
 /* ------------------------------------------------------------------ editor */
 const ta = $("#code"), hl = $("#hl"), gut = $("#gutter");
@@ -1898,110 +2323,32 @@ function lineRect(n){
 }
 
 
-/* ------------------------------------------------------------------ stage: the pet */
-const pet = $("#pet"), stage = $("#stage");
-function blink(){ const e = $("#eyesOpen"); e.classList.add("blink"); setTimeout(() => e.classList.remove("blink"), 140); setTimeout(blink, 2500 + Math.random()*3000); }
-setTimeout(blink, 2000);
-function petClass(c, on){ const s = new Set((pet.getAttribute("class") || "").split(/\s+/).filter(Boolean)); on ? s.add(c) : s.delete(c); pet.setAttribute("class", [...s].join(" ")); }
-function hasClass(c){ return (pet.getAttribute("class") || "").split(/\s+/).includes(c); }
-function pulse(c, ms){ petClass(c, false); void pet.getBoundingClientRect(); petClass(c, true); setTimeout(() => petClass(c, false), ms); }
-function speech(t){ const s = $("#speech"); if (!t){ s.classList.remove("show"); return; } s.textContent = t; s.classList.remove("show"); void s.offsetWidth; s.classList.add("show"); }
-function think(on){ $("#think").classList.toggle("show", !!on); }
-function petAwake(on){
-  stage.classList.toggle("asleep", !on);
-  $("#eyesShut").classList.toggle("hidden", on);
-  if (!hasClass("robot")) $("#eyesOpen").classList.toggle("hidden", !on);
-}
-const MOUTH = {
-  happy: "M144 180 Q160 194 176 180", sad: "M144 190 Q160 176 176 190", angry: "M146 188 Q160 180 174 188",
-  surprised: null, sleepy: "M150 184 L170 184"
-};
-function setMood(m){
-  $("#brows").innerHTML = m === "angry" ? '<path d="M106 112 L146 124 M214 112 L174 124" stroke="#1F1B2E" stroke-width="6" stroke-linecap="round"/>' :
-                          m === "sad" ? '<path d="M108 122 L144 112 M212 122 L176 112" stroke="#1F1B2E" stroke-width="6" stroke-linecap="round"/>' : "";
-  if (m === "surprised"){ $("#mouth").classList.add("hidden"); $("#mouthO").classList.remove("hidden"); }
-  else { $("#mouthO").classList.add("hidden"); $("#mouth").classList.remove("hidden"); $("#mouth").setAttribute("d", MOUTH[m] || MOUTH.happy); }
-  if (m === "sleepy"){ $("#eyesOpen").classList.add("hidden"); $("#eyesShut").classList.remove("hidden"); }
-}
-function petReset(){
-  pet.setAttribute("class", "");
-  document.documentElement.style.setProperty("--pet", "#B9B4C7");
-  document.documentElement.style.setProperty("--petscale", "1");
-  $("#tagText").textContent = "?"; $("#bowl").classList.add("hidden"); $("#hat").innerHTML = "";
-  $("#antenna").classList.add("hidden"); $("#eyesRobot").classList.add("hidden");
-  setMood("happy"); petAwake(false); speech(""); think(false);
-}
-function puzzled(ms){ think(true); petClass("puzzled", true); setTimeout(() => { think(false); petClass("puzzled", false); }, ms || 1800); }
-
-const HATS = {
-  cap:'<path d="M104 86 Q160 18 216 86 Z" fill="#E63946"/><path d="M206 82 h52 q6 9 -6 12 h-46z" fill="#B71C2C"/><circle cx="160" cy="40" r="7" fill="#B71C2C"/>',
-  crown:'<path d="M112 80 L118 30 L140 56 L160 20 L180 56 L202 30 L208 80 Z" fill="#FFC83D" stroke="#C99400" stroke-width="4" stroke-linejoin="round"/><circle cx="160" cy="62" r="8" fill="#E63946"/><circle cx="133" cy="66" r="6" fill="#3A86FF"/><circle cx="187" cy="66" r="6" fill="#3A86FF"/>',
-  bow:'<path d="M196 70 l42 -26 v52 z M196 70 l-42 -26 v52 z" fill="#FF4D9D" stroke="#C2185B" stroke-width="4" stroke-linejoin="round" transform="translate(0 -6)"/><circle cx="196" cy="64" r="11" fill="#C2185B"/>',
-  wizard:'<path d="M108 84 L172 -26 L212 84 Z" fill="#5B3FD9"/><ellipse cx="160" cy="84" rx="66" ry="12" fill="#3D1FA8"/><circle cx="160" cy="30" r="6" fill="#FFE14D"/><circle cx="180" cy="56" r="4" fill="#FFE14D"/><circle cx="145" cy="62" r="4" fill="#FFE14D"/>',
-  party:'<path d="M128 82 L164 -2 L196 82 Z" fill="#3DDC97"/><path d="M140 56 L186 56 M150 32 L178 32" stroke="#FF4D9D" stroke-width="8"/><circle cx="164" cy="-6" r="12" fill="#FFC83D"/>'
-};
-
-/* What the pet does with each variable it reads. Every lesson gets all of these;
-   the lesson's manual tells students which ones to look for. Secrets come from the spec. */
+/* ------------------------------------------------------------------ the stage
+   The theme reads each stored variable by name (THEME.reads). Secrets come from the spec and
+   are the same in every year; what a secret does is the theme's (THEME.effects). */
 function foundSecret(id){ const s = store.get("secrets", []); if (!s.includes(id)){ s.push(id); store.set("secrets", s); } }
-function cssColour(v){ const s = new Option().style; s.color = v; return s.color !== "" ? v : null; }
-const EFFECTS = {
-  robot(){ petClass("robot", true); $("#antenna").classList.remove("hidden"); $("#eyesRobot").classList.remove("hidden"); $("#eyesOpen").classList.add("hidden"); $("#eyesShut").classList.add("hidden"); },
-  rainbow(){ petClass("rainbow", true); pulse("jump", 650); },
-  spin(){ pulse("spin", 1000); },
-  party(){ $("#hat").innerHTML = HATS.party; pulse("jump", 650); },
-  giant(){ document.documentElement.style.setProperty("--petscale", "1.35"); pulse("jump", 650); }
-};
-function petReads(v, val, t){
-  const sv = String(val).trim(), low = sv.toLowerCase();
-  let note = null;
-  if (v === "name"){
-    petAwake(true); pulse("jump", 650);
-    $("#tagText").textContent = sv.length > 9 ? sv.slice(0, 8) + "…" : (sv || " ");
-    petClass("robot", false); $("#antenna").classList.add("hidden"); $("#eyesRobot").classList.add("hidden"); $("#eyesOpen").classList.remove("hidden");
-    note = {text:"The pet reads name and puts it on its tag."};
-  } else if (v === "colour" || v === "color"){
-    petAwake(true); petClass("rainbow", false);
-    const c = cssColour(low.replace(/\s+/g, ""));
-    if (!c){ document.documentElement.style.setProperty("--pet", "#B9B4C7"); puzzled();
-      note = {warn:true, text:`The pet does not know a colour called "${sv}". It stays grey. Colour names such as red, blue, green, purple and pink work.`}; }
-    else { document.documentElement.style.setProperty("--pet", c); pulse("jump", 650); note = {text:`The pet reads colour and turns ${sv}.`}; }
-  } else if (v === "food"){
-    petAwake(true);
-    $("#bowl").classList.remove("hidden"); $("#bowlText").textContent = sv.length > 8 ? sv.slice(0,7) + "…" : (sv || " ");
-    pulse("eat", 1400); $("#mouthOpen").classList.remove("hidden"); setTimeout(() => $("#mouthOpen").classList.add("hidden"), 1400);
-    note = {text:"The pet reads food and eats it."};
-  } else if (v === "hat"){
-    petAwake(true);
-    if (HATS[low] && low !== "party"){ $("#hat").innerHTML = HATS[low]; pulse("jump", 650); note = {text:`The pet reads hat and puts on the ${low}.`}; }
-    else { $("#hat").innerHTML = ""; puzzled(1500); note = {warn:true, text:`The pet has no hat called "${sv}". It knows cap, crown, bow and wizard.`}; }
-  } else if (v === "size"){
-    petAwake(true);
-    if (t === "int" || t === "float"){
-      const k = Math.max(.35, Math.min(1.5, Number(val) / 150));
-      document.documentElement.style.setProperty("--petscale", String(k)); pulse("jump", 650);
-      note = {text:`The pet reads size, a number, and grows to size ${sv}.`};
-    } else { puzzled(); note = {warn:true, text:`size stores text ("${sv}"), not a number. The pet needs a number to change size.`}; }
-  } else if (v === "mood"){
-    petAwake(true);
-    if (MOUTH.hasOwnProperty(low)){ setMood(low); pulse("jump", 650); note = {text:`The pet reads mood and looks ${low}.`}; }
-    else { puzzled(); note = {warn:true, text:`The pet does not know the mood "${sv}". It knows happy, sad, angry, surprised and sleepy.`}; }
-  }
+function stageReads(v, val, t){
+  let note = THEME.reads(v, val, t);
   const sec = (L.secrets || []).find(s => s.var === v && norm(val) === norm(s.value));
-  if (sec){ foundSecret(sec.id); if (EFFECTS[sec.effect]) EFFECTS[sec.effect](); note = {secret:true, text:"Secret found: " + sec.label}; }
+  if (sec){ foundSecret(sec.id); if (THEME.effects[sec.effect]) THEME.effects[sec.effect](); note = {secret:true, text:"Secret found: " + sec.label}; }
   return note;
 }
 
+
 /* ------------------------------------------------------------------ memory boxes and output */
-function memClear(){ $("#boxes").innerHTML = '<span class="empty">Empty. Variables appear here when the code stores a value.</span>'; }
-function outClear(){ $("#outlines").innerHTML = '<div class="empty">Nothing printed yet.</div>'; speech(""); }
+function memClear(){
+  $("#boxes").innerHTML = '<span class="empty">Empty. Variables appear here when the code stores a value.</span>';
+  if (THEME.memClear) THEME.memClear();
+}
+function outClear(){ $("#outlines").innerHTML = '<div class="empty">Nothing printed yet.</div>'; THEME.speech(""); }
 function shown(val, t){ return t === "str" ? `"${val}"` : String(val); }
 function boxFor(v){
   let b = $("#boxes").querySelector(`.mbox[data-v="${CSS.escape(v)}"]`);
   if (!b){
     const e = $("#boxes").querySelector(".empty"); if (e) e.remove();
     b = document.createElement("div"); b.className = "mbox"; b.dataset.v = v;
-    b.innerHTML = `<span class="lab">${esc(v)}</span><div class="val"></div>`;
+    const n = $("#boxes").querySelectorAll(".mbox").length;
+    b.innerHTML = `<span class="lab">${esc(v)}</span>${THEME.boxExtra ? THEME.boxExtra(n) : ""}<div class="val"></div>`;
     $("#boxes").appendChild(b);
   }
   return b;
@@ -2034,16 +2381,28 @@ const SCENES = L.scenes;
 const card = $("#card");
 let runHandler = null;
 const lastRun = {};
-function tierBadge(t){ return `<span class="badge ${t}">${t === "core" ? "Core" : t === "stretch" ? "Stretch" : "Open"}</span>`; }
+/* Tier words: Everyone, Stretch and Open, on the part badges, the puzzle tabs and the PDF
+   (decided 16 Nov 06:00, item 6) */
+function tierWord(t){ return t === "core" ? "Everyone" : t === "open" ? "Open" : "Stretch"; }
+function tierBadge(t){ return `<span class="badge ${t}">${tierWord(t)}</span>`; }
 function kicker(i, tier){ return `<div class="kicker">Part ${i+1} of ${SCENES.length} ${tierBadge(tier || "core")}</div>`; }
+/* "Your code" (Dana, 18 Nov): a Python editor after the exit questions on every page, for
+   extra tasks the teacher sets. It is a tab, not a numbered part, so "Part n of m" and the
+   parts in the deck and the teacher reference do not change. No tasks or checks: the code is
+   saved like any part and printed in the hand-in PDF. A lesson can leave it out with
+   LESSON["free"] = False. */
+const FREE = L.free === false ? null : {id: "free", nav: "Your code"};
+const FREE_I = L.scenes.length;
 function journey(){
   $("#journey").innerHTML = SCENES.map((s, i) =>
-    `<button class="stop${i===S.scene?" on":""}${S.done[s.id]?" done":""}" data-i="${i}" title="${esc(s.nav)}" aria-label="${esc(s.nav)}"><span class="n"><span>${i+1}</span></span><span class="lab">${esc(s.nav)}</span></button>`).join("");
+    `<button class="stop${i===S.scene?" on":""}${S.done[s.id]?" done":""}" data-i="${i}" title="${esc(s.nav)}" aria-label="${esc(s.nav)}"><span class="n"><span>${i+1}</span></span><span class="lab">${esc(s.nav)}</span></button>`).join("") +
+    (FREE ? `<button class="stop free${S.scene===FREE_I?" on":""}" data-i="${FREE_I}" title="${FREE.nav}" aria-label="${FREE.nav}"><span class="n"><span>+</span></span><span class="lab">${FREE.nav}</span></button>` : "");
   $("#journey").querySelectorAll(".stop").forEach(b => b.onclick = () => go(+b.dataset.i));
 }
 function go(i){
   if (running) stopRun();
-  S.scene = Math.max(0, Math.min(SCENES.length - 1, i)); save(); journey(); render(); card.scrollTop = 0; window.scrollTo(0, 0);
+  if (typeof dragAbort === "function"){ dragAbort(); picked = null; }
+  S.scene = Math.max(0, Math.min(SCENES.length - (FREE ? 0 : 1), i)); save(); journey(); render(); card.scrollTop = 0; window.scrollTo(0, 0);
 }
 function isWritten(t){ return !!(t.check && t.check.explained); }
 function taskList(tasks, key){
@@ -2053,19 +2412,25 @@ function taskList(tasks, key){
     const hints = t.hints && hs ? `<ul class="hints">${t.hints.slice(0, hs).map(h => `<li>${md(h)}</li>`).join("")}</ul>` : "";
     // An Explain task is marked "written", not ticked: the page checks only that a full
     // sentence was written. The teacher reads the answer in the hand-in (Colin, 14 Nov 2026).
+    // Decided 16 Nov 06:00, item 6: Year 7's mark with its screen-reader text, plus Year 8's
+    // hover title.
     const written = isWritten(t);
     const cls = ok ? (written ? "ok written" : "ok") : "";
     const sr = ok ? `<span class="sr">${written ? "Written" : "Done"}</span>` : "";
-    return `<li class="${cls}" data-task="${id}"><span class="tick" aria-hidden="true"></span>${sr}<div style="flex:1">${md(t.t)}${hints}</div>${help}</li>`;
+    const title = ok && written ? ' title="Written. The teacher reads this in the hand-in."' : "";
+    return `<li class="${cls}" data-task="${id}"><span class="tick" aria-hidden="true"${title}></span>${sr}<div style="flex:1">${md(t.t)}${hints}</div>${help}</li>`;
   }).join("") + `</ul>`;
 }
 function bindHelp(rerender){
   card.querySelectorAll("[data-h]").forEach(b => b.onclick = () => { S.hintsShown[b.dataset.h] = (S.hintsShown[b.dataset.h] || 0) + 1; save(); rerender(); });
 }
+const HAPPENED_MAX = 50;
 function happened(r){
   if (!r) return "";
   if (r.error && r.error.stopped) return `<div class="happened"><h3>Stopped</h3>The program was stopped.</div>`;
-  const items = r.events.map(e => {
+  /* fix 3: the list stops after HAPPENED_MAX entries, so a long loop does not build thousands */
+  const shownEv = r.events.length > HAPPENED_MAX + 1 ? r.events.slice(0, HAPPENED_MAX) : r.events;
+  const items = shownEv.map(e => {
     const ln = `<span class="ln">line ${e.line || "?"}</span>`;
     if (e.type === "input") return `<li>${ln}<span class="dot in"></span><span><b style="color:var(--in)">input()</b> asked: ${esc(e.prompt.trim())} The user typed <b>${esc(e.value)}</b>.</span></li>`;
     if (e.type === "mem") return `<li>${ln}<span class="dot var"></span><span><b style="color:var(--var)">${esc(e.v)}</b> now stores <code>${esc(shown(e.val, e.t))}</code>${e.had ? `. It stored <code>${esc(shown(e.prev.val, e.prev.t))}</code> before, and that value is gone` : ""}.</span></li>`;
@@ -2073,14 +2438,16 @@ function happened(r){
     if (e.type === "pet") return `<li>${ln}<span class="dot pet"></span><span>${esc(e.text)}</span></li>`;
     if (e.type === "cond") return `<li>${ln}<span class="dot ${e.value ? "ok" : "err"}"></span><span>The condition <code>${esc(e.text)}</code> is <b>${e.value ? "True" : "False"}</b>, so ${e.value ? "the indented lines under it run" : "Python skips the indented lines under it"}.</span></li>`;
     return "";
-  }).join("");
+  }).join("") + (shownEv.length < r.events.length ? `<li class="more">and ${r.events.length - shownEv.length} more lines</li>` : "");
   let err = "";
   if (r.error){
     const h = errorHelp(r.error);
     err = `<div class="errbox" role="alert"><h3>⚠ The program stopped on line ${r.error.line || "?"}</h3>${esc(h.plain)}
-      <div class="py">${esc(r.error.name)}: ${esc(r.error.msg)}</div><b>Check:</b><ul>${h.checks.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>`;
+      <pre class="tb">${esc(pyTraceback(r.error))}</pre><b>Check:</b><ul>${h.checks.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>`;
   }
-  return `<div class="happened"><h3>What happened, line by line</h3><ol>${items || "<li>Nothing ran.</li>"}</ol></div>` + err;
+  const lead = THEME.happenedLead ? THEME.happenedLead(r) : "";
+  if (THEME.happenedErr) err = THEME.happenedErr(r, err);
+  return `<div class="happened"><h3>What happened, line by line</h3>${lead}<ol>${items || "<li>Nothing ran.</li>"}</ol></div>` + err;
 }
 function recordDistinct(tasks, key, r){
   tasks.forEach(t => { const d = t.check && t.check.distinct; if (d && r && r.ok && r.vars[d.var]){
@@ -2098,38 +2465,65 @@ function showEditor(on, key, code, ro){
     setCode(key, S.codes[key] != null ? S.codes[key] : code, code);
     ta.readOnly = !!ro; $("#roNote").classList.toggle("show", !!ro); $("#editorPane").classList.toggle("ro", !!ro);
     $("#roNote").textContent = ro ? "Predict first. The code unlocks after you run it." : "";
-    requestAnimationFrame(fitEditor);
+    requestAnimationFrame(() => fitEditor(ta.value));
   }
 }
-/* The code area opens tall enough for the whole starting program, up to just over half the
-   column, so the task list and the predictions keep their room (KS3 Co-ord check, 14 Nov 2026: on a Chromebook the default split
-   showed one line of a three-line program). A size the student has dragged to wins. */
-function fitEditor(){
-  const pane = $("#editorPane"), left = $("#left"), ed = pane.querySelector(".editor");
-  if (pane.hidden || S.edH || window.innerWidth <= 600 || !ed) return;
-  pane.style.flex = ""; pane.style.height = "";
-  const lh = left.getBoundingClientRect().height, now = pane.getBoundingClientRect().height;
-  const chrome = now - ed.getBoundingClientRect().height;
-  const lines = Math.max(3, ta.value.replace(/\n+$/, "").split("\n").length);
-  const want = Math.ceil(chrome + lines * 32 + 30);
-  const v = Math.max(now, Math.min(want, lh * 0.55));
-  if (v > now + 2){ pane.style.flex = "0 0 " + v + "px"; pane.style.height = v + "px"; }
+/* The code area is sized to the program on screen, and resized when the student moves to
+   another part (decided 16 Nov 06:00, item 6). This is Year 9's measure: tall enough for the
+   whole program, at least half the column (Colin, 18 Nov; Year 9 had 40%), leaving the
+   instructions at least 150px; then
+   whatever is still hidden is measured and added, within that cap. A height the student set
+   by dragging the bar wins. */
+function fitEditor(code){
+  if (S.edH) return;
+  const pane = $("#editorPane"), left = $("#left"); if (!pane || !left || pane.hidden) return;
+  if (getComputedStyle(document.getElementById("app")).display === "block") return;
+  const lh = parseFloat(getComputedStyle(ta).lineHeight) || 26;
+  const lines = String(code || "").replace(/\n+$/, "").split("\n").length;
+  const chrome = ["#splitter", "#edbar", "#roNote", "#keys"].reduce((t, s) => t + ($(s) ? $(s).offsetHeight : 0), 0);
+  const want = chrome + lines * lh + 30;
+  const max = left.getBoundingClientRect().height - 150;
+  const h = Math.max(170, Math.min(max, Math.max(want, left.getBoundingClientRect().height * 0.5)));   /* Colin, 18 Nov: at least half the column (was 40%) */
+  pane.style.flex = "0 0 " + h + "px"; pane.style.height = h + "px";
+  const short = ta.scrollHeight - ta.clientHeight;
+  if (short > 0){ const h2 = Math.min(max, h + short + 2); pane.style.flex = "0 0 " + h2 + "px"; pane.style.height = h2 + "px"; }
+  fitPredict();
+}
+/* Fix 7 (board 16 Nov 10:30), changed by Colin 18 Nov ("bigger code area"): on a Predict
+   part, before the run, the code area may give up the room it has beyond the whole starting
+   program, so that the questions show; it never shrinks below the whole program (or the
+   largest size that fits). Where both cannot fit, the code wins and the card scrolls. */
+function fitPredict(){
+  if (!ta.readOnly || S.edH) return;
+  const marks = card.querySelectorAll(".pick, [data-pt], .lock"); if (!marks.length) return;
+  const pane = $("#editorPane"), left = $("#left");
+  const last = marks[marks.length - 1], cr = card.getBoundingClientRect();
+  const need = last.getBoundingClientRect().bottom - cr.top + card.scrollTop + 16;
+  const room = left.getBoundingClientRect().height - need;
+  const now = pane.getBoundingClientRect().height;
+  const lh = parseFloat(getComputedStyle(ta).lineHeight) || 26;
+  const lines = ta.value.replace(/\n+$/, "").split("\n").length;
+  const fullProg = now - ta.clientHeight + lines * lh + 26;   /* the height that still shows every line */
+  if (room < now){ const h = Math.max(fullProg, room); if (h < now){ pane.style.flex = "0 0 " + h + "px"; pane.style.height = h + "px"; } }
 }
 function bindCommon(){
   card.querySelectorAll(".kw").forEach(k => { k.onclick = () => showWord(k.dataset.k, k); k.onkeydown = ev => { if (ev.key === "Enter") showWord(k.dataset.k, k); }; });
 }
 function scrollToErr(){ const e = card.querySelector(".errbox"); if (e) setTimeout(() => e.scrollIntoView({block:"center"}), 50); }
 function render(){
+  if (FREE && S.scene === FREE_I) return renderFree();
+  if (!SCENES[S.scene]) S.scene = 0;
   const sc = SCENES[S.scene];
   document.body.dataset.scene = sc.id;
   if (sc.kind === "explainer") return renderExplainer(sc);
   if (sc.kind === "puzzles") return renderPuzzles(sc);
   if (sc.kind === "exit") return renderExit(sc);
+  if (sc.kind === "drag") return renderDrag(sc);
   renderTaskScene(sc);
 }
 function afterRun(res, key, tasks){
-  lastRun[key] = res; S.ran[key] = true;
-  if (res.ok){ const keep = Object.assign({}, store.get(PETKEY, {}, true)); ["name","colour","food","hat","size","mood"].forEach(v => { if (res.vars[v]) keep[v] = res.vars[v]; }); store.set(PETKEY, keep, true); }
+  lastRun[key] = res; S.ran[key] = true; S.ranCode[key] = ta.value;   /* fix 5: the code as it was run */
+  THEME.saveAfterRun(res);
   recordDistinct(tasks, key, res);
   evalTasks(tasks, key, res, ta.value);
 }
@@ -2149,9 +2543,9 @@ function renderTaskScene(sc){
   if (sc.predict){
     h += sc.predict.map((p, j) => {
       const sel = predicted[j];
-      return `<div class="q">${j+1}. ${md(p.q)}</div><div class="pick">${p.options.map(o => {
+      return `<div class="q">${j+1}. ${md(p.q)}</div><div class="pick">${p.options.map((o, k) => {
         let cls = ""; if (ranOnce && sel === o) cls = o === p.a ? " right" : " wrong"; else if (ranOnce && o === p.a) cls = " right";
-        return `<button class="chip${cls}" data-p="${j}" aria-pressed="${sel===o}" ${ranOnce?"disabled":""}>${esc(o)}</button>`; }).join("")}</div>` +
+        return `<button class="chip${cls}" data-p="${j}" data-o="${k}" aria-pressed="${sel===o}" ${ranOnce?"disabled":""}>${esc(o)}</button>`; }).join("")}</div>` +
         (ranOnce ? `<div class="why ${sel===p.a?"right":"wrong"}">${sel===p.a?"✓ Correct. ":"✗ Not this time. "}${md(p.why)}</div>` : "");
     }).join("");
     if (!predDone) h += `<div class="lock">Run unlocks when every question has an answer.</div>`;
@@ -2160,9 +2554,9 @@ function renderTaskScene(sc){
     const inv = S.inv[key] || {};
     h += `<h2>Investigate</h2>` + sc.investigate.map((q, j) => {
       const sel = inv[j], right = sel === q.a;
-      return `<div class="q">${md(q.q)}</div><div class="pick">${q.options.map(o => {
+      return `<div class="q">${md(q.q)}</div><div class="pick">${q.options.map((o, k) => {
         const cls = sel === o ? (right ? " right" : " wrong") : "";
-        return `<button class="chip${cls}" data-inv="${j}" ${right ? "disabled" : ""}>${esc(o)}</button>`; }).join("")}</div>` +
+        return `<button class="chip${cls}" data-inv="${j}" data-o="${k}" ${right ? "disabled" : ""}>${esc(o)}</button>`; }).join("")}</div>` +
         (sel != null ? `<div class="why ${right ? "right" : "wrong"}">${right ? "✓ " + md(q.why) : "✗ " + md(q.retry || "Not this one. Look at the code again.")}</div>` : "");
     }).join("");
   }
@@ -2178,10 +2572,10 @@ function renderTaskScene(sc){
   $("#run").disabled = !predDone || hide;
   const ch = card.querySelector("[data-chunk]"); if (ch) ch.onclick = () => { S.chunkShown[key] = true; save(); renderTaskScene(sc); };
   card.querySelectorAll("[data-inv]").forEach(b => b.onclick = () => {
-    S.inv[key] = S.inv[key] || {}; S.inv[key][b.dataset.inv] = b.textContent;
+    S.inv[key] = S.inv[key] || {}; S.inv[key][b.dataset.inv] = sc.investigate[+b.dataset.inv].options[+b.dataset.o];
     evalTasks(sc.tasks, key, lastRun[key], S.codes[key] || sc0); if (allDone(sc.tasks, key)) S.done[key] = true;
     save(); journey(); renderTaskScene(sc); });
-  card.querySelectorAll("[data-p]").forEach(b => b.onclick = () => { S.predicted[key] = S.predicted[key] || {}; S.predicted[key][b.dataset.p] = b.textContent; save(); renderTaskScene(sc); });
+  card.querySelectorAll("[data-p]").forEach(b => b.onclick = () => { S.predicted[key] = S.predicted[key] || {}; S.predicted[key][b.dataset.p] = sc.predict[+b.dataset.p].options[+b.dataset.o]; save(); renderTaskScene(sc); });
   const nx = card.querySelector("[data-next]"); if (nx) nx.onclick = () => go(S.scene + 1);
   bindHelp(() => renderTaskScene(sc)); bindCommon(); bindTable(sc);
   runHandler = async () => {
@@ -2240,7 +2634,7 @@ function manualHTML(){
   const found = store.get("secrets", []);
   const rows = (L.manual || []).map(([v, d]) => `<div class="mitem"><b>${esc(v)}</b><br>${esc(d)}</div>`).join("");
   const secrets = (L.secrets || []).map(s => found.includes(s.id) ? `<div class="mitem found">★ <b>${esc(s.var)} = "${esc(s.value)}"</b></div>` : `<div class="mitem secret">? Secret: ${esc(s.hint)}</div>`).join("");
-  return `<h2>The pet reads</h2><div class="manual">${rows}${secrets}</div>`;
+  return `<h2>${THEME.manualHeading()}</h2><div class="manual">${rows}${secrets}</div>`;
 }
 
 /* ---- explainer: frames of code, diagram and caption */
@@ -2366,7 +2760,7 @@ function animBranch(fr){
 function renderPuzzles(sc){
   const P = sc.puzzles, i = Math.min(S.puzzle || 0, P.length - 1), pz = P[i], key = pz.id, r = lastRun[key];
   let h = kicker(S.scene, sc.tier) + `<div class="ptabs">${P.map((p, j) =>
-      `<button class="ptab${j===i?" on":""}${allDone(p.tasks,p.id)?" ok":""}" data-pz="${j}">${esc(p.name)}<small>${p.tier === "core" ? "Everyone" : "Stretch"}</small></button>`).join("")}</div>`;
+      `<button class="ptab${j===i?" on":""}${allDone(p.tasks,p.id)?" ok":""}" data-pz="${j}">${esc(p.name)}<small>${tierWord(p.tier)}</small></button>`).join("")}</div>`;
   h += `<h1>${md(pz.title)}</h1><div><p class="lead">${md(pz.lead)}</p></div>`;
   const pv = S.predicted[key] || {};
   if (pz.predictText){
@@ -2410,32 +2804,414 @@ function renderPuzzles(sc){
   };
 }
 
+/* ---- your code: a free editor (Dana, 18 Nov) */
+/* "Your code" (Dana, 18 Nov; Colin 18 Nov 21:35): an editor and an output pane and nothing
+   else, the way an online Python editor looks. The program runs as written, with no line by
+   line animation, no memory boxes and no help box: what it prints, the answers typed to
+   input() and, if it fails, the error the way Python 3 prints it, all in the output pane.
+   The 60-second limit, Stop, files and the code saved on the device work as in the lesson. */
+function renderFree(){
+  document.body.dataset.scene = "free";
+  card.innerHTML = "";
+  if (!$("#console")) $("#right").insertAdjacentHTML("beforeend",
+    `<div id="console"><div class="ptitle">Output</div><pre id="conOut" aria-live="polite"></pre></div>`);
+  showEditor(true, "free", "");
+  $("#run").disabled = running;
+  runHandler = () => runPlain(ta.value);
+}
+function conWrite(t, cls){
+  const o = $("#conOut"); if (!o) return;
+  if (cls){ const s = document.createElement("span"); s.className = cls; s.textContent = t; o.appendChild(s); }
+  else o.appendChild(document.createTextNode(t));
+  o.scrollTop = o.scrollHeight;
+}
+function conInput(prompt){
+  return new Promise((res, rej) => {
+    conWrite(prompt);
+    const f = document.createElement("input");
+    f.className = "conIn"; f.setAttribute("aria-label", prompt.trim() || "Type an answer");
+    ["autocomplete", "autocapitalize", "autocorrect"].forEach(a => f.setAttribute(a, "off")); f.spellcheck = false;
+    $("#conOut").appendChild(f);
+    askReject = e => { f.disabled = true; rej(e); };
+    const done = () => {
+      const v = f.value; askReject = null;
+      const s = document.createElement("span"); s.className = "in"; s.textContent = v; f.replaceWith(s);
+      conWrite("\n"); f.blur(); scrollHome(); res(v);
+    };
+    f.onkeydown = e => { if (e.key === "Enter"){ e.preventDefault(); done(); } };
+    if (TEST.answers.length){ f.value = TEST.answers.shift(); setTimeout(done, 30); }
+    else setTimeout(() => f.focus({preventScroll: true}), 50);
+  });
+}
+async function runPlain(src){
+  if (running) return;
+  running = true; stopped = false; $("#run").disabled = true; markLine(null);
+  $("#conOut").textContent = "";
+  fsOpen();
+  Sk.configure({
+    output: t => conWrite(t),
+    read: fsRead,
+    nonreadopen: true,
+    filewrite: (f, text) => { const n = String(f.name); S.files[n] = (S.files[n] || "") + Sk.ffi.remapToJs(text); save(); },
+    inputfun: p => { const t0 = Date.now(); return conInput(p).then(v => { Sk.execStart += Date.now() - t0; return v; }); },
+    inputfunTakesPrompt: true,
+    __future__: Sk.python3,
+    execLimit: 60000,
+    yieldLimit: 100
+  });
+  const end = () => { const o = $("#conOut"); return !o.textContent || o.textContent.endsWith("\n") ? "" : "\n"; };
+  try {
+    await Sk.misceval.asyncToPromise(() => Sk.importMainWithBody("<stdin>", false, src, true),
+      {"*": () => { if (stopped) throw new Error("stopped"); }});
+  } catch (e){
+    if (stopped) conWrite(end() + "Stopped.\n", "note");
+    else {
+      const err = refineError(parseError(e), src);
+      if (err.name === "TimeLimitError") conWrite(end() + "The program ran for more than a minute, so it was stopped.\n", "err");
+      else { conWrite(end() + pyTraceback(err) + "\n", "err"); markLine(err.line, "bad"); }
+    }
+  } finally {
+    running = false; $("#run").disabled = false; askReject = null;
+  }
+}
+
+/* ---- cards into boxes ("kind": "drag"). Ported from the site's lesson.js (the DRAG section,
+   3 Oct 2026, used in Year 8 Unit 1 and Year 10) at Colin's request, 19 Nov 2026, so a lesson
+   can have the machine and these tasks on one page. The behaviour is lesson.js's, kept as it
+   was: tap a card, then tap where it goes, with drag as the second way; every card and box is a
+   real button, so it works from the keyboard and with VoiceOver; cards are shown in a fixed
+   shuffled order (render.py chooses the shuffle number so the shown order is never the answer
+   order); "check": "once" gives one Check button that turns on when every box is filled, writes
+   the answers down with the time, shuts the part, and only then shows right and wrong.
+   The answer key is never in the lesson as written: render.py turns "key" into key_b64.
+   Modes: match, gapfill, order, sort. Saved work is S.drag[part id]: put, first, moves, mark. */
+const DRAG_MOVED = 8, DRAG_SNAP = 20, DRAG_TILE_CHARS = 24;
+const DX = {
+  how: "Tap a card, then tap where it goes. You can drag instead if you prefer.",
+  drop: "drop here", bank: "Cards", empty: "Empty box", allPlaced: "Every card is placed.",
+  boxes: " boxes filled", groups: " groups filled", check: "Check my answers",
+  oneCheck: "You can check once everything is placed. You only get one check.",
+  putIn: "Put it in ", putHere: "Tap to put the picked card here.", takeBack: "Tap to take it back.",
+  right: "This is right.", answer: "Answer: ",
+  score: (n, of) => n + " out of " + of + " right",
+  recordedFirst: "Your answers were recorded before these were shown."
+};
+let dragging = null, picked = null;
+function dEl(tag, cls, text){ const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+function dragKey(sc){ if (!sc.key_b64) return null; try { return JSON.parse(decodeURIComponent(escape(atob(sc.key_b64)))); } catch (e){ return null; } }
+function dragSingle(sc){ return sc.mode !== "sort"; }
+function dragMarks(sc){ return (sc.check || "once") !== "never"; }
+function dragState(sc){
+  if (!S.drag) S.drag = {};
+  const s = S.drag[sc.id] || (S.drag[sc.id] = {});
+  if (!s.put) s.put = {}; if (!s.first) s.first = {}; if (!s.moves) s.moves = {};
+  return s;
+}
+function dragShut(sc){ return !!dragState(sc).mark; }
+function dragCard(sc, id){ return sc.cards.filter(c => c.id === id)[0]; }
+function dragTargetText(sc, id){ const t = sc.targets.filter(x => x.id === id)[0]; return (t && t.text) || id; }
+function dragCards(sc){
+  if (sc._shown) return sc._shown;
+  const seed = L.id + "|" + sc.nav + "|" + (sc.shuffle || 0); let h = 2166136261;
+  for (let k = 0; k < seed.length; k++){ h ^= seed.charCodeAt(k); h = Math.imul(h, 16777619) >>> 0; }
+  let a = h >>> 0;
+  const rnd = () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const out = sc.cards.slice();
+  for (let i = out.length - 1; i > 0; i--){ const j = Math.floor(rnd() * (i + 1)); const x = out[i]; out[i] = out[j]; out[j] = x; }
+  if (out.length > 1 && out.every((c, n) => c === sc.cards[n])) out.push(out.shift());
+  return (sc._shown = out);
+}
+function dragHeld(sc, tid){ const put = dragState(sc).put; return dragCards(sc).filter(c => put[c.id] === tid).map(c => c.id); }
+function dragProgress(sc){
+  return { done: sc.targets.filter(t => dragHeld(sc, t.id).length > 0).length, need: sc.targets.length, what: dragSingle(sc) ? DX.boxes : DX.groups };
+}
+/* A part counts as done when everything is placed; being right has nothing to do with it. */
+function dragDone(sc){ const p = dragProgress(sc); return p.done >= p.need; }
+function dragRedraw(sc){ if (SCENES[S.scene] === sc) renderDrag(sc); }
+function dragPlace(sc, cardId, targetId){
+  const s = dragState(sc);
+  if (dragShut(sc)) return;
+  if (targetId && dragSingle(sc)) Object.keys(s.put).forEach(k => { if (s.put[k] === targetId && k !== cardId) delete s.put[k]; });
+  if (targetId){
+    if (s.first[cardId] === undefined) s.first[cardId] = targetId;
+    else if (s.put[cardId] !== targetId) s.moves[cardId] = (s.moves[cardId] || 0) + 1;
+    s.put[cardId] = targetId;
+  } else delete s.put[cardId];
+  picked = null;
+  if ((sc.check || "once") === "always") dragMark(sc, true);
+  const was = !!S.done[sc.id];
+  S.done[sc.id] = dragDone(sc);
+  save();
+  if (was !== S.done[sc.id]) journey();
+  dragRedraw(sc);
+}
+/* The answers are written down first, with the time, and the key is read only after that. */
+function dragMark(sc, quiet){
+  const s = dragState(sc);
+  if (!dragMarks(sc)) return;
+  const answers = {};
+  sc.cards.forEach(c => { if (s.put[c.id]) answers[c.id] = s.put[c.id]; });
+  const key = dragKey(sc) || {};
+  const score = sc.cards.filter(c => key[c.id] === undefined ? !answers[c.id] : answers[c.id] === key[c.id]).length;
+  s.mark = { at: new Date().toISOString(), answers, score, of: sc.cards.length };
+  picked = null; save();
+  if (!quiet) dragRedraw(sc);
+}
+/* The drag is ended from the document, not from the card (lesson.js, 4 Oct 2026). */
+function dragSweep(){
+  document.querySelectorAll(".dcard.ghost").forEach(g => g.remove());
+  document.querySelectorAll(".dcard, .dslot").forEach(n => { if (n.style.opacity) n.style.opacity = ""; });
+}
+function dragEsc(e){ if (e.key === "Escape" || e.key === "Esc") dragAbort(); }
+function dragListen(on){
+  const f = on ? "addEventListener" : "removeEventListener";
+  document[f]("pointermove", dragMove, true); document[f]("pointerup", dragEnd, true);
+  document[f]("pointercancel", dragEnd, true); document[f]("keydown", dragEsc, true); window[f]("blur", dragAbort);
+}
+function dragAbort(){ if (!dragging) return; dragging = null; dragListen(false); dragSweep(); dragOver(null); }
+function dragMove(e){
+  if (!dragging || e.pointerId !== dragging.id) return;
+  const sc = dragging.sc, node = dragging.node;
+  if (!dragging.moved){
+    if (Math.abs(e.clientX - dragging.x) < DRAG_MOVED && Math.abs(e.clientY - dragging.y) < DRAG_MOVED) return;
+    dragging.moved = true;
+    const r = node.getBoundingClientRect(), w = Math.max(r.width, 110);
+    const g = dEl("div", "dcard ghost", dragCard(sc, dragging.card).text);
+    g.style.width = w + "px";
+    dragging.dx = Math.min(e.clientX - r.left, w / 2); dragging.dy = e.clientY - r.top;
+    dragging.ghost = g; document.body.appendChild(g); node.style.opacity = ".35";
+  }
+  dragging.ghost.style.left = (e.clientX - dragging.dx) + "px";
+  dragging.ghost.style.top = (e.clientY - dragging.dy) + "px";
+  dragOver(dragNearest(e.clientX, e.clientY, sc));
+}
+function dragEnd(e){
+  if (!dragging || e.pointerId !== dragging.id) return;
+  const sc = dragging.sc, node = dragging.node, moved = dragging.moved, held = dragging.card;
+  const hit = moved ? dragNearest(e.clientX, e.clientY, sc) : null;
+  dragging = null; dragListen(false); dragSweep(); dragOver(null);
+  if (!moved) return;                                   /* a tap: the click handler has it */
+  node.dataset.justDragged = "1";
+  setTimeout(() => { try { delete node.dataset.justDragged; } catch (x){} }, 400);
+  if (hit) dragPlace(sc, held, hit);
+  else if (dragState(sc).put[held]) dragPlace(sc, held, null);
+  else dragRedraw(sc);
+}
+function dragArm(node, whichCard, sc){
+  node.addEventListener("pointerdown", e => {
+    const id = whichCard();
+    if (dragging || !id || dragShut(sc)) return;
+    dragging = { id: e.pointerId, card: id, sc, x: e.clientX, y: e.clientY, moved: false, node, ghost: null };
+    dragListen(true);
+  });
+}
+function dragNearest(x, y, sc){
+  let best = null, bestD = Infinity;
+  sc.targets.forEach(t => {
+    const node = card.querySelector('[data-drop="' + t.id + '"]'); if (!node) return;
+    const r = node.getBoundingClientRect();
+    if (x < r.left - DRAG_SNAP || x > r.right + DRAG_SNAP || y < r.top - DRAG_SNAP || y > r.bottom + DRAG_SNAP) return;
+    const d = Math.pow(x - (r.left + r.right) / 2, 2) + Math.pow(y - (r.top + r.bottom) / 2, 2);
+    if (d < bestD){ bestD = d; best = t.id; }
+  });
+  return best;
+}
+function dragOver(tid){
+  document.querySelectorAll(".dover").forEach(n => n.classList.remove("dover"));
+  if (!tid) return;
+  const n = card.querySelector('[data-drop="' + tid + '"]'); if (n) n.classList.add("dover");
+}
+function dragCardEl(sc, c){
+  const b = dEl("button", "dcard", c.text); b.type = "button"; b.dataset.card = c.id;
+  const s = dragState(sc), mark = s.mark;
+  if (mark){
+    const key = dragKey(sc) || {}, right = key[c.id], where = s.put[c.id];
+    if (right !== undefined){
+      b.classList.add(where === right ? "dok" : "dbad");
+      if (where !== right && !dragSingle(sc)) b.appendChild(dEl("span", "dans", DX.answer + dragTargetText(sc, right)));
+    } else b.classList.add(where ? "dbad" : "dok");      /* a spare: right to leave it in the bank */
+    b.disabled = true;
+    return b;
+  }
+  const on = picked && picked.sc === sc.id && picked.card === c.id;
+  if (on) b.classList.add("dpicked");
+  b.setAttribute("aria-pressed", on ? "true" : "false");
+  b.addEventListener("click", () => {
+    if (b.dataset.justDragged){ delete b.dataset.justDragged; return; }
+    if (picked && picked.sc === sc.id && picked.card !== c.id && s.put[c.id]){ dragPlace(sc, picked.card, s.put[c.id]); return; }
+    if (s.put[c.id]){ dragPlace(sc, c.id, null); return; }
+    picked = on ? null : { sc: sc.id, card: c.id };
+    dragRedraw(sc);
+  });
+  dragArm(b, () => c.id, sc);
+  return b;
+}
+function dragSlot(sc, t, inner){
+  const b = dEl("button", "dslot"); b.type = "button"; b.dataset.drop = t.id;
+  const held = dragHeld(sc, t.id), s = dragState(sc);
+  b.appendChild(dEl("span", "dwell" + (held.length ? " dfull" : ""), held.length ? dragCard(sc, held[0]).text : DX.drop));
+  if (inner) b.appendChild(dEl("span", "dwhat", inner));
+  if (held.length) b.classList.add("dfilled");
+  if (s.mark){
+    const key = dragKey(sc) || {};
+    const wants = Object.keys(key).filter(cid => key[cid] === t.id)[0];
+    const ok = wants !== undefined && held[0] === wants;
+    b.classList.add(ok ? "dok" : "dbad");
+    if (!ok && wants !== undefined) b.appendChild(dEl("span", "dans", DX.answer + dragCard(sc, wants).text));
+    b.setAttribute("aria-label", (held.length ? dragCard(sc, held[0]).text + ". " : DX.empty + ". ") + (inner || "") +
+      (ok ? " " + DX.right : (wants !== undefined ? " " + DX.answer + dragCard(sc, wants).text : "")));
+    b.disabled = true;
+    return b;
+  }
+  b.setAttribute("aria-label", held.length ? dragCard(sc, held[0]).text + ". " + (inner || "") + " " + DX.takeBack
+                                           : DX.empty + ". " + (inner || "") + " " + DX.putHere);
+  b.addEventListener("click", () => {
+    if (b.dataset.justDragged){ delete b.dataset.justDragged; return; }
+    if (picked && picked.sc === sc.id){ dragPlace(sc, picked.card, t.id); return; }
+    if (held.length) dragPlace(sc, held[0], null);
+  });
+  dragArm(b, () => { const now = dragHeld(sc, t.id); return now.length ? now[0] : null; }, sc);
+  return b;
+}
+/* The hand-in PDF (stage 3): each box with the card placed in it, and right or wrong once the
+   part has been checked. A sort part lists each group with its cards. Written in plain words
+   because the PDF is read by the teacher, not the page. */
+function dragPdf(sc, text){
+  const s = (S.drag || {})[sc.id] || {}, put = s.put || {}, m = s.mark, key = m ? (dragKey(sc) || {}) : null;
+  const placed = Object.keys(put).length;
+  if (!placed && !m){ text("Not started.", 10, "normal", null, 4); return; }
+  if (m){
+    const at = new Date(m.at);
+    text("Checked at " + at.toLocaleTimeString("en-GB", {hour: "2-digit", minute: "2-digit", hour12: false}) + ": " + m.score + " out of " + m.of + " right.", 10, "bold", null, 4);
+  } else text("Not checked yet. " + placed + " of " + sc.cards.length + " cards placed.", 10, "normal", null, 4);
+  const cardText = id => (dragCard(sc, id) || {}).text || id;
+  const verdict = (cid, tid) => !key ? "" : (key[cid] === undefined ? (tid ? "  (not right: this card belongs nowhere)" : "")
+    : key[cid] === tid ? "  (right)" : "  (not right: " + (sc.mode === "sort" ? dragTargetText(sc, key[cid]) : "it goes in " + dragTargetText(sc, key[cid])) + ")");
+  if (sc.mode === "sort"){
+    sc.targets.forEach(t => {
+      const cs = sc.cards.filter(c => put[c.id] === t.id);
+      text(plainText(t.text || t.id) + ":", 10, "bold", null, 4);
+      if (!cs.length) text("(empty)", 10, "italic", null, 8);
+      cs.forEach(c => text(plainText(c.text) + verdict(c.id, t.id), 10, "normal", null, 8));
+    });
+  } else {
+    if (sc.mode === "gapfill") text(plainText(String(sc.sentence || "").replace(/\{([A-Za-z0-9_]+)\}/g, (x, g) => "[" + (sc.targets.findIndex(t => t.id === g) + 1) + "]")), 10, "italic", null, 4);
+    sc.targets.forEach((t, j) => {
+      const held = sc.cards.filter(c => put[c.id] === t.id)[0];
+      const label = sc.mode === "gapfill" ? "Gap " + (j + 1) : plainText(t.text || t.id);
+      let line = label + ": " + (held ? plainText(held.text) : "(empty)");
+      if (key){
+        const wants = Object.keys(key).filter(cid => key[cid] === t.id)[0];
+        line += held && wants === held.id ? "  (right)" : (wants !== undefined ? "  (not right: answer " + plainText(cardText(wants)) + ")" : "");
+      }
+      text(line, 10, "normal", null, 8);
+    });
+  }
+  const spare = sc.cards.filter(c => !put[c.id]);
+  if (spare.length) text("Left in the bank: " + spare.map(c => plainText(c.text) + (key && key[c.id] !== undefined ? " (not right)" : "")).join(", "), 10, "normal", null, 4);
+  const changed = Object.values(s.moves || {}).reduce((a, b) => a + b, 0);
+  if (changed) text("Cards moved after first placing: " + changed + ".", 9, "italic", null, 4);
+}
+function renderDrag(sc){
+  showEditor(false);
+  dragSweep();
+  card.innerHTML = kicker(S.scene, sc.tier) + `<h1>${md(sc.title || sc.nav)}</h1>` +
+    (sc.intro || []).map(p => `<p class="lead">${md(p)}</p>`).join("");
+  /* Pictures above the boxes (stage 3): the site's "images" list, {src, alt, label, big}.
+     render.py has already put each picture into the page as a data: address. */
+  if ((sc.images || []).length){
+    const row = dEl("div", "dpics");
+    sc.images.forEach(p => {
+      const f = dEl("figure", p.big ? "big" : ""), im = document.createElement("img");
+      im.src = p.src; im.alt = p.alt || p.label || ""; im.loading = "eager";
+      f.appendChild(im); if (p.label) f.appendChild(dEl("figcaption", "", p.label));
+      row.appendChild(f);
+    });
+    card.appendChild(row);
+  }
+  const s = dragState(sc), mode = sc.mode || "match";
+  const wrap = dEl("div", "drag drag-" + mode);
+  wrap.appendChild(dEl("p", "dhow", DX.how));
+  if (mode === "sort"){
+    const groups = dEl("div", "dgroups");
+    sc.targets.forEach(t => {
+      const box = dEl("div", "dgroup"); box.dataset.drop = t.id;
+      box.appendChild(dEl("h3", "", t.text || t.id));
+      const held = dEl("div", "dheld");
+      dragHeld(sc, t.id).forEach(cid => held.appendChild(dragCardEl(sc, dragCard(sc, cid))));
+      box.appendChild(held);
+      if (!s.mark){
+        const zone = dEl("button", "dzone", picked && picked.sc === sc.id ? DX.putIn + (t.text || t.id) : DX.drop);
+        zone.type = "button"; zone.setAttribute("aria-label", DX.putIn + (t.text || t.id));
+        box.appendChild(zone);
+        box.addEventListener("click", e => { if (e.target.closest(".dcard")) return; if (picked && picked.sc === sc.id) dragPlace(sc, picked.card, t.id); });
+      }
+      groups.appendChild(box);
+    });
+    wrap.appendChild(groups);
+  } else if (mode === "gapfill"){
+    const sent = dEl("p", "dsentence");
+    String(sc.sentence || "").split(/(\{[A-Za-z0-9_]+\})/).forEach(bit => {
+      const m = bit.match(/^\{([A-Za-z0-9_]+)\}$/);
+      if (!m){ sent.appendChild(document.createTextNode(bit)); return; }
+      const t = sc.targets.filter(x => x.id === m[1])[0];
+      if (t) sent.appendChild(dragSlot(sc, t, ""));
+    });
+    wrap.appendChild(sent);
+  } else {
+    const slots = dEl("div", "dslots");
+    if (mode === "match" && sc.targets.length >= 4 && sc.targets.every(t => String(t.text || t.id).length <= DRAG_TILE_CHARS)) slots.classList.add("dtiles");
+    sc.targets.forEach(t => slots.appendChild(dragSlot(sc, t, t.text || "")));
+    wrap.appendChild(slots);
+  }
+  const bank = dEl("div", "dbank"); bank.appendChild(dEl("p", "dbankname", DX.bank));
+  let loose = 0;
+  dragCards(sc).forEach(c => { if (s.put[c.id]) return; loose++; bank.appendChild(dragCardEl(sc, c)); });
+  if (!loose) bank.appendChild(dEl("p", "dempty", DX.allPlaced));
+  wrap.appendChild(bank);
+  const row = dEl("div", "drow");
+  if (s.mark){
+    row.appendChild(dEl("p", "dtally" + (s.mark.score === s.mark.of ? " all" : ""), DX.score(s.mark.score, s.mark.of)));
+    row.appendChild(dEl("p", "dnote", DX.recordedFirst));
+  } else {
+    const p = dragProgress(sc);
+    row.appendChild(dEl("p", "dtally" + (p.done === p.need ? " all" : ""), p.done + " of " + p.need + p.what));
+    if ((sc.check || "once") === "once"){
+      const btn = dEl("button", "btn", DX.check); btn.type = "button"; btn.dataset.check = sc.id;
+      btn.disabled = p.done < p.need; btn.addEventListener("click", () => dragMark(sc));
+      row.appendChild(btn);
+      if (btn.disabled) row.appendChild(dEl("p", "dnote", DX.oneCheck));
+    }
+  }
+  wrap.appendChild(row);
+  card.appendChild(wrap);
+  if (sc.next && (s.mark || !dragMarks(sc)) && dragDone(sc)) card.insertAdjacentHTML("beforeend", `<button class="btn next" data-next>Next: ${esc(sc.next)} →</button>`);
+  const nx = card.querySelector("[data-next]"); if (nx) nx.onclick = () => go(S.scene + 1);
+  bindCommon();
+}
+
 /* ---- exit questions */
 function renderExit(sc){
   showEditor(false);
   let h = kicker(S.scene, sc.tier) + `<h1>${md(sc.title || "Exit questions")}</h1><p class="lead">Answer without running anything.</p>`;
   h += sc.questions.map((q, j) => {
     const sel = S.exit[j];
-    return `<div class="q">${j+1}. ${md(q.q)}</div>${q.code ? `<div class="qcode">${esc(q.code)}</div>` : ""}<div class="pick">${q.options.map(o => {
+    return `<div class="q">${j+1}. ${md(q.q)}</div>${q.code ? `<div class="qcode">${esc(q.code)}</div>` : ""}<div class="pick">${q.options.map((o, k) => {
       const cls = sel != null ? (o === q.a ? " right" : (o === sel ? " wrong" : "")) : "";
-      return `<button class="chip${cls}" data-e="${j}" ${sel!=null?"disabled":""}>${esc(o)}</button>`; }).join("")}</div>` +
+      return `<button class="chip${cls}" data-e="${j}" data-o="${k}" ${sel!=null?"disabled":""}>${esc(o)}</button>`; }).join("")}</div>` +
       (sel != null ? `<div class="why ${sel===q.a?"right":"wrong"}">${sel===q.a?"✓ ":"✗ "}${md(q.why)}</div>` : "");
   }).join("");
   if (Object.keys(S.exit).length >= sc.questions.length){
     S.done[sc.id] = true; save(); journey();
-    const n = sc.questions.filter((q, j) => S.exit[j] === q.a).length, p = store.get(PETKEY, {}, true);
-    const bits = [p.colour && esc(p.colour.val), p.food && "eats " + esc(p.food.val), p.hat && "wears a " + esc(p.hat.val)].filter(Boolean);
-    h += `<div class="reveal"><b>${n} of ${sc.questions.length} correct.</b><br>Your pet: ${p.name ? esc(p.name.val) : "no name yet"}${bits.length ? ", " + bits.join(", ") : ""}.${sc.after ? " " + md(sc.after) : ""}</div>`;
+    const n = sc.questions.filter((q, j) => S.exit[j] === q.a).length;
+    h += `<div class="reveal"><b>${n} of ${sc.questions.length} correct.</b>${THEME.exitReveal ? THEME.exitReveal() : ""}${sc.after ? " " + md(sc.after) : ""}</div>`;
   }
   h += handinHTML();
   card.innerHTML = h; bindCommon(); bindHandin();
-  card.querySelectorAll("[data-e]").forEach(b => b.onclick = () => { S.exit[b.dataset.e] = b.textContent; save(); renderExit(sc); });
-  showSavedPet();
-}
-function showSavedPet(){
-  const p = store.get(PETKEY, null, true); petReset(); memClear(); outClear();
-  if (!p) return;
-  Object.keys(p).forEach(v => { const b = boxFor(v); b.querySelector(".val").innerHTML = `<span class="vchip">${esc(shown(p[v].val, p[v].t))}</span>`; petReads(v, p[v].val, p[v].t); });
+  /* fix 4 (board 17 Nov 06:10): a choice button saves its option by index (data-o), never the
+     button's text, so a page changed by browser translation still marks correctly */
+  card.querySelectorAll("[data-e]").forEach(b => b.onclick = () => { S.exit[b.dataset.e] = sc.questions[+b.dataset.e].options[+b.dataset.o]; save(); renderExit(sc); });
+  condReset(); THEME.onExit();
 }
 
 /* ------------------------------------------------------------------ send to my teacher
@@ -2455,11 +3231,18 @@ const WORDKEY = "epsom:handin-word";
 const SEND_MAX = 4 * 1024 * 1024;
 const HX = {
   label: "Hand in", send: "Send to my teacher",
-  dl: "Download PDF for Google Classroom",
+  dl: "Download PDF",
   dlDone: t => "Saved at " + t + ". Attach the PDF to the lesson's Classroom assignment.",
   dlFail: "The PDF could not be made. Reload the page and try again.",
   namePh: "Your name", wordPh: "Class word", sending: "Sending...",
-  note: "Your work is saved in this browser on this device. When it is finished, download it for Google Classroom or send it to your teacher.",
+  /* Colin, 18 Nov: the panel was too long, and students must not put work in the wrong
+     place. One short line; then the choice, as two large buttons; then only that way's boxes,
+     each with a visible label. Nothing shows until a way is chosen; the choice is remembered. */
+  note: "Your work is saved on this device.",
+  ask: "How does your teacher want your work?",
+  modePdf: "Download a PDF", modePdfSub: "Then attach it in Classroom",
+  modeSend: "Send to my teacher", modeSendSub: "Needs the class word",
+  nameLab: "Your name", wordLab: "Class word",
   sent: t => "Sent to your teacher at " + t + ".",
   noName: "Type your name first.", noWord: "Type the class word first.",
   noPdf: "The PDF tool did not load. Reload the page and try again.",
@@ -2472,14 +3255,23 @@ if (HANDIN && !(window.jspdf && window.jspdf.jsPDF)){
   const js = document.createElement("script"); js.src = "/assets/jspdf.umd.min.js"; document.head.appendChild(js);
 }
 function wordGet(){ try { return localStorage.getItem(WORDKEY) || ""; } catch(e){ return ""; } }
+const MODEKEY = "epsom:handin-mode";
+function modeGet(){ try { const m = localStorage.getItem(MODEKEY); return m === "send" || m === "pdf" ? m : ""; } catch(e){ return ""; } }
 function handinHTML(){
   if (!HANDIN) return "";
-  return `<div class="handin" id="handin"><h2>${HX.label}</h2><p class="lead">${HX.note}</p>
-    <input class="free" id="hname" placeholder="${HX.namePh}" maxlength="120" autocomplete="off" value="${esc(S.name || "")}">
-    <button class="btn next" id="hdl" type="button">${HX.dl}</button>
-    <h3 class="hsub">${HX.send}</h3>
-    ${HANDIN.word ? `<input class="free" id="hword" placeholder="${HX.wordPh}" autocomplete="off" autocapitalize="off" value="${esc(wordGet())}">` : ""}
-    <button class="btn" id="hsend" type="button">${HX.send}</button>
+  const m = modeGet();
+  const card = (k, t, sub) => `<button type="button" class="hmode" data-hm="${k}" aria-pressed="${m === k}"><b>${t}</b><small>${sub}</small></button>`;
+  return `<div class="handin" id="handin" data-mode="${m}"><h2>${HX.label}</h2><p class="lead">${HX.note}</p>
+    <p class="hask">${HX.ask}</p>
+    <div class="hmodes" role="group" aria-label="${HX.ask}">${card("pdf", HX.modePdf, HX.modePdfSub)}${card("send", HX.modeSend, HX.modeSendSub)}</div>
+    <div class="hfields">
+      <label class="hlab" for="hname">${HX.nameLab}</label>
+      <input class="free" id="hname" placeholder="${HX.namePh}" maxlength="120" autocomplete="off" value="${esc(S.name || "")}">
+      <div class="hpane hpdf"><button class="btn next" id="hdl" type="button">${HX.dl}</button></div>
+      <div class="hpane hsendp">
+      ${HANDIN.word ? `<label class="hlab" for="hword">${HX.wordLab}</label><input class="free" id="hword" placeholder="${HX.wordPh}" autocomplete="off" autocapitalize="off" value="${esc(wordGet())}">` : ""}
+      <button class="btn" id="hsend" type="button">${HX.send}</button></div>
+    </div>
     <div id="hmsg" role="status"></div></div>`;
 }
 function plainText(x){
@@ -2509,9 +3301,13 @@ function buildPdf(name){
   }
   const gap = hh => { y += hh; };
   const rule = () => { need(3); doc.setDrawColor(190); doc.line(M, y, M + W, y); y += 3; };
-  const codeBlock = (code, start) => {
+  /* fix 5 (board 17 Nov 06:10, item 2): the code is marked when it no longer matches the code
+     that last ran, so an output beside it is not read as a run of this code */
+  const codeBlock = (code, start, key) => {
     const changed = code != null && code !== start;
-    text(changed ? "Code:" : "Code (the starting code, not changed):", 10, "bold");
+    const now = code != null ? code : start, ran = S.ranCode[key];
+    const stale = ran != null && ran !== now ? " (changed since it was last run)" : "";
+    text((changed ? "Code" + stale : stale ? "Code (the starting code again," + stale.slice(1) : "Code (the starting code, not changed)") + ":", 10, "bold");
     text(changed ? code : start, 9, "normal", "courier", 4);
   };
   const taskLines = (tasks, key) => (tasks || []).forEach((t, j) => {
@@ -2526,8 +3322,11 @@ function buildPdf(name){
   text("Epsom College Malaysia  |  Computer Science", 9, "bold");
   text(document.title, 15, "bold"); gap(1);
   text("Name: " + name, 11, "bold");
-  text("Handed in: " + when, 10);
-  text("Pet: " + PET(), 10);
+  /* fix 6 (17 Nov note, item 4): the time comes from the device's clock, which can be wrong
+     (one 8ICOM1 device was an hour ahead), so the PDF says so. The receiver's own time is on
+     the file name in Drive. */
+  text("Handed in: " + when + " (this device's clock)", 10);
+  text(THEME.pdfLabel + ": " + NAME(), 10);
   text("Lesson page: " + location.origin + location.pathname, 9); gap(2);
   text("Parts done: " + SCENES.filter(x => S.done[x.id]).length + " of " + SCENES.length +
     (exitSc ? "     Exit questions correct: " + exitN + " of " + exitSc.questions.length +
@@ -2537,6 +3336,7 @@ function buildPdf(name){
     need(14); text("Part " + (i + 1) + ": " + plainText(sc.title || sc.nav), 12, "bold");
     const key = sc.id;
     if (sc.kind === "explainer"){ text(S.done[key] ? "Read." : "Not marked as read.", 10, "normal", null, 4); }
+    else if (sc.kind === "drag") dragPdf(sc, text);
     else if (sc.kind === "exit"){
       sc.questions.forEach((q, j) => {
         const a = S.exit[j];
@@ -2548,13 +3348,13 @@ function buildPdf(name){
       sc.puzzles.forEach(pz => {
         const k = pz.id, pv = S.predicted[k] || {};
         const touched = S.ran[k] || S.codes[k] != null || Object.keys(pv).length || S.exText[k];
-        need(10); text(plainText(pz.name) + " (" + (pz.tier === "core" ? "everyone" : "stretch") + ")" + (touched ? "" : ": not started"), 11, "bold", null, 4);
+        need(10); text(plainText(pz.name) + " (" + tierWord(pz.tier).toLowerCase() + ")" + (touched ? "" : ": not started"), 11, "bold", null, 4);
         if (!touched) return;
         (pz.predictText || []).forEach((p, j) => text("Prediction: " + plainText(p.q) + "  " + (pv[j] || "(blank)") +
-          (S.ran[k] ? (norm(pv[j] || "") === norm(p.a) ? "  (correct)" : "  (it printed " + p.a + ")") : ""), 10, "normal", null, 8));
+          (S.ran[k] ? (norm(pv[j] || "") === norm(p.a) ? "  (correct)" : "  (not correct: the starting code prints " + p.a + ")") : ""), 10, "normal", null, 8));
         taskLines(pz.tasks, k);
         if (S.exText[k]) text("Explanation: " + S.exText[k], 10, "italic", null, 8);
-        codeBlock(S.codes[k], pz.code);
+        codeBlock(S.codes[k], pz.code, k);
       });
     } else {
       const pr = S.predicted[key] || {}, inv = S.inv[key] || {};
@@ -2569,10 +3369,14 @@ function buildPdf(name){
           rows.forEach(r => text(String(r.v) + "  |  " + (r.kind || "(no reason)") + "  |  expected " + (r.exp || "(blank)") +
             "  |  actual " + (r.act == null ? "(not run)" : r.act) + (r.act != null && r.exp ? (r.act === r.exp ? "  (matches)" : "  (does not match)") : ""), 10, "normal", null, 8)); }
       }
-      if (S.ran[key] || S.codes[key] != null) codeBlock(S.codes[key], startCode(sc)); else text("Not run.", 10, "normal", null, 4);
+      if (S.ran[key] || S.codes[key] != null) codeBlock(S.codes[key], startCode(sc), key); else text("Not run.", 10, "normal", null, 4);
     }
     gap(2);
   });
+  if (FREE && S.codes.free && S.codes.free.trim()){
+    need(14); text(FREE.nav, 12, "bold");
+    codeBlock(S.codes.free, "", "free");
+  }
   return doc;
 }
 function bindHandin(){
@@ -2582,6 +3386,11 @@ function bindHandin(){
   if (wordEl) wordEl.oninput = () => { try { localStorage.setItem(WORDKEY, wordEl.value); } catch(e){} };
   const clock = () => { const d = new Date(), p = n => (n < 10 ? "0" : "") + n; return p(d.getHours()) + ":" + p(d.getMinutes()); };
   const done = t => { msg.textContent = t; btn.disabled = false; };
+  $("#handin").querySelectorAll("[data-hm]").forEach(b => b.onclick = () => {
+    const m = b.dataset.hm; try { localStorage.setItem(MODEKEY, m); } catch(e){}
+    $("#handin").dataset.mode = m; msg.textContent = "";
+    $("#handin").querySelectorAll("[data-hm]").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.hm === m)));
+  });
   const dl = $("#hdl");
   dl.onclick = () => {
     const name = nameEl.value.trim();
@@ -2663,8 +3472,8 @@ $("#stage").insertAdjacentHTML("beforeend", `<div id="ask" role="dialog" aria-la
   sp.addEventListener("pointerup", end); sp.addEventListener("pointercancel", end);
   sp.addEventListener("keydown", e => { if (e.key === "ArrowUp" || e.key === "ArrowDown"){ e.preventDefault();
     S.edH = apply(pane.getBoundingClientRect().height + (e.key === "ArrowUp" ? 40 : -40)); save(); } });
-  sp.addEventListener("dblclick", () => { pane.style.flex = ""; pane.style.height = ""; delete S.edH; save(); fitEditor(); });
-  window.addEventListener("resize", () => { if (S.edH) apply(S.edH); else fitEditor(); });
+  sp.addEventListener("dblclick", () => { pane.style.flex = ""; pane.style.height = ""; delete S.edH; save(); fitEditor(ta.value); });
+  window.addEventListener("resize", () => { if (S.edH) apply(S.edH); else fitEditor(ta.value); });
 })();
 
 /* hooks for automated tests only */
@@ -2685,15 +3494,157 @@ window.__APP__ = {
       Object.assign(cur[i], {v: rows[i][0], kind: rows[i][1], exp: rows[i][2], act: null}); await tableRun(sc, i); }
     TEST.instant = false; },
   // Test hook. Removes only this page's saved work (keys starting with its own id) and the
-  // shared pet key. Every page on the lesson site shares one origin, so it never empties
+  // shared key of the stage's name. Every page on the lesson site shares one origin, so it never empties
   // localStorage as a whole (the site's checker fails a page that does).
   pdfText(name){ return buildPdf(name || "Test").output("datauristring"); },
-  reset(){ try { const mine = k => k === PETKEY || k.indexOf(L.id + ".") === 0;
+  reset(){ try { const mine = k => k === THEME.key() || k.indexOf(L.id + ".") === 0;
     for (let i = localStorage.length - 1; i >= 0; i--){ const k = localStorage.key(i); if (k != null && mine(k)) localStorage.removeItem(k); }
   } catch(e){} }
 };
-memClear(); outClear(); journey(); render();
+/* Called by render.py after the theme's stage.js, which defines THEME. */
+function boot(){
+  (THEME.norun || []).forEach(k => NORUN.add(k));
+  if (!$("#condbox")) $("#side").insertAdjacentHTML("afterbegin", CONDBOX);
+  $("#condbox").hidden = !HASCOND;
+  THEME.init();
+  memClear(); outClear(); journey(); render();
+}
 
+/* Theme: the pet (Year 7). Moved out of the Year 7 Unit 2 engine on 18 Nov 2026 without
+   change. The pet reads name, colour, food, hat, size and mood; it is kept between lessons
+   (key L.petKey), and the exit page shows the saved pet. */
+const THEME = (() => {
+  const pet = $("#pet"), stage = $("#stage");
+  function blink(){ const e = $("#eyesOpen"); e.classList.add("blink"); setTimeout(() => e.classList.remove("blink"), 140); setTimeout(blink, 2500 + Math.random()*3000); }
+  setTimeout(blink, 2000);
+  function petClass(c, on){ const s = new Set((pet.getAttribute("class") || "").split(/\s+/).filter(Boolean)); on ? s.add(c) : s.delete(c); pet.setAttribute("class", [...s].join(" ")); }
+  function hasClass(c){ return (pet.getAttribute("class") || "").split(/\s+/).includes(c); }
+  function pulse(c, ms){ petClass(c, false); void pet.getBoundingClientRect(); petClass(c, true); setTimeout(() => petClass(c, false), ms); }
+  function speech(t){ const s = $("#speech"); if (!t){ s.classList.remove("show"); return; } s.textContent = t; s.classList.remove("show"); void s.offsetWidth; s.classList.add("show"); }
+  function think(on){ $("#think").classList.toggle("show", !!on); }
+  function petAwake(on){
+    stage.classList.toggle("asleep", !on);
+    $("#eyesShut").classList.toggle("hidden", on);
+    if (!hasClass("robot")) $("#eyesOpen").classList.toggle("hidden", !on);
+  }
+  const MOUTH = {
+    happy: "M144 180 Q160 194 176 180", sad: "M144 190 Q160 176 176 190", angry: "M146 188 Q160 180 174 188",
+    surprised: null, sleepy: "M150 184 L170 184"
+  };
+  function setMood(m){
+    $("#brows").innerHTML = m === "angry" ? '<path d="M106 112 L146 124 M214 112 L174 124" stroke="#1F1B2E" stroke-width="6" stroke-linecap="round"/>' :
+                            m === "sad" ? '<path d="M108 122 L144 112 M212 122 L176 112" stroke="#1F1B2E" stroke-width="6" stroke-linecap="round"/>' : "";
+    if (m === "surprised"){ $("#mouth").classList.add("hidden"); $("#mouthO").classList.remove("hidden"); }
+    else { $("#mouthO").classList.add("hidden"); $("#mouth").classList.remove("hidden"); $("#mouth").setAttribute("d", MOUTH[m] || MOUTH.happy); }
+    if (m === "sleepy"){ $("#eyesOpen").classList.add("hidden"); $("#eyesShut").classList.remove("hidden"); }
+  }
+  function petReset(){
+    pet.setAttribute("class", "");
+    document.documentElement.style.setProperty("--pet", "#B9B4C7");
+    document.documentElement.style.setProperty("--petscale", "1");
+    $("#tagText").textContent = "?"; $("#bowl").classList.add("hidden"); $("#hat").innerHTML = "";
+    $("#antenna").classList.add("hidden"); $("#eyesRobot").classList.add("hidden");
+    setMood("happy"); petAwake(false); speech(""); think(false);
+  }
+  function puzzled(ms){ think(true); petClass("puzzled", true); setTimeout(() => { think(false); petClass("puzzled", false); }, ms || 1800); }
+
+  const HATS = {
+    cap:'<path d="M104 86 Q160 18 216 86 Z" fill="#E63946"/><path d="M206 82 h52 q6 9 -6 12 h-46z" fill="#B71C2C"/><circle cx="160" cy="40" r="7" fill="#B71C2C"/>',
+    crown:'<path d="M112 80 L118 30 L140 56 L160 20 L180 56 L202 30 L208 80 Z" fill="#FFC83D" stroke="#C99400" stroke-width="4" stroke-linejoin="round"/><circle cx="160" cy="62" r="8" fill="#E63946"/><circle cx="133" cy="66" r="6" fill="#3A86FF"/><circle cx="187" cy="66" r="6" fill="#3A86FF"/>',
+    bow:'<path d="M196 70 l42 -26 v52 z M196 70 l-42 -26 v52 z" fill="#FF4D9D" stroke="#C2185B" stroke-width="4" stroke-linejoin="round" transform="translate(0 -6)"/><circle cx="196" cy="64" r="11" fill="#C2185B"/>',
+    wizard:'<path d="M108 84 L172 -26 L212 84 Z" fill="#5B3FD9"/><ellipse cx="160" cy="84" rx="66" ry="12" fill="#3D1FA8"/><circle cx="160" cy="30" r="6" fill="#FFE14D"/><circle cx="180" cy="56" r="4" fill="#FFE14D"/><circle cx="145" cy="62" r="4" fill="#FFE14D"/>',
+    party:'<path d="M128 82 L164 -2 L196 82 Z" fill="#3DDC97"/><path d="M140 56 L186 56 M150 32 L178 32" stroke="#FF4D9D" stroke-width="8"/><circle cx="164" cy="-6" r="12" fill="#FFC83D"/>'
+  };
+
+  /* What the pet does with each variable it reads. Every lesson gets all of these;
+     the lesson's manual tells students which ones to look for. Secrets come from the spec. */
+  function cssColour(v){ const s = new Option().style; s.color = v; return s.color !== "" ? v : null; }
+  const EFFECTS = {
+    robot(){ petClass("robot", true); $("#antenna").classList.remove("hidden"); $("#eyesRobot").classList.remove("hidden"); $("#eyesOpen").classList.add("hidden"); $("#eyesShut").classList.add("hidden"); },
+    rainbow(){ petClass("rainbow", true); pulse("jump", 650); },
+    spin(){ pulse("spin", 1000); },
+    party(){ $("#hat").innerHTML = HATS.party; pulse("jump", 650); },
+    giant(){ document.documentElement.style.setProperty("--petscale", "1.35"); pulse("jump", 650); }
+  };
+  function petReads(v, val, t){
+    const sv = String(val).trim(), low = sv.toLowerCase();
+    let note = null;
+    if (v === "name"){
+      petAwake(true); pulse("jump", 650);
+      $("#tagText").textContent = sv.length > 9 ? sv.slice(0, 8) + "…" : (sv || " ");
+      petClass("robot", false); $("#antenna").classList.add("hidden"); $("#eyesRobot").classList.add("hidden"); $("#eyesOpen").classList.remove("hidden");
+      note = {text:"The pet reads name and puts it on its tag."};
+    } else if (v === "colour" || v === "color"){
+      petAwake(true); petClass("rainbow", false);
+      const c = cssColour(low.replace(/\s+/g, ""));
+      if (!c){ document.documentElement.style.setProperty("--pet", "#B9B4C7"); puzzled();
+        note = {warn:true, text:`The pet does not know a colour called "${sv}". It stays grey. Colour names such as red, blue, green, purple and pink work.`}; }
+      else { document.documentElement.style.setProperty("--pet", c); pulse("jump", 650); note = {text:`The pet reads colour and turns ${sv}.`}; }
+    } else if (v === "food"){
+      petAwake(true);
+      $("#bowl").classList.remove("hidden"); $("#bowlText").textContent = sv.length > 8 ? sv.slice(0,7) + "…" : (sv || " ");
+      pulse("eat", 1400); $("#mouthOpen").classList.remove("hidden"); setTimeout(() => $("#mouthOpen").classList.add("hidden"), 1400);
+      note = {text:"The pet reads food and eats it."};
+    } else if (v === "hat"){
+      petAwake(true);
+      if (HATS[low] && low !== "party"){ $("#hat").innerHTML = HATS[low]; pulse("jump", 650); note = {text:`The pet reads hat and puts on the ${low}.`}; }
+      else { $("#hat").innerHTML = ""; puzzled(1500); note = {warn:true, text:`The pet has no hat called "${sv}". It knows cap, crown, bow and wizard.`}; }
+    } else if (v === "size"){
+      petAwake(true);
+      if (t === "int" || t === "float"){
+        const k = Math.max(.35, Math.min(1.5, Number(val) / 150));
+        document.documentElement.style.setProperty("--petscale", String(k)); pulse("jump", 650);
+        note = {text:`The pet reads size, a number, and grows to size ${sv}.`};
+      } else { puzzled(); note = {warn:true, text:`size stores text ("${sv}"), not a number. The pet needs a number to change size.`}; }
+    } else if (v === "mood"){
+      petAwake(true);
+      if (MOUTH.hasOwnProperty(low)){ setMood(low); pulse("jump", 650); note = {text:`The pet reads mood and looks ${low}.`}; }
+      else { puzzled(); note = {warn:true, text:`The pet does not know the mood "${sv}". It knows happy, sad, angry, surprised and sleepy.`}; }
+    }
+    return note;
+  }
+
+  const KEY = L.petKey || "pet";
+  let last = null;
+  /* the pet is shared between lessons, so a pet made in one lesson comes back in the next */
+  function showSavedPet(){
+    const p = store.get(KEY, null, true); petReset(); memClear(); outClear();
+    if (!p) return;
+    Object.keys(p).forEach(v => { const b = boxFor(v); b.querySelector(".val").innerHTML = `<span class="vchip">${esc(shown(p[v].val, p[v].t))}</span>`; stageReads(v, p[v].val, p[v].t); });
+  }
+  return {
+    key: () => KEY,
+    name(){ const p = store.get(KEY, null, true); return p && p.name ? String(p.name.val) : (L.defaultPetName || "Rex"); },
+    token: /\{pet\}/g,
+    pdfLabel: "Pet",
+    manualHeading: () => "The pet reads",
+    effects: EFFECTS,
+    speech,
+    reset: petReset,
+    beforeLine: () => sleep(speedMs(40, 520)),
+    reads: petReads,
+    onOutput(line, curLine, quiet){
+      if (quiet){ const p = painting; outSeq(() => { if (p) speech(line); }); last = line; return; }     /* fix 3: a long run */
+      const r = lineRect(curLine);
+      outSeq(() => fly(line, "o", r, $("#speech")).then(() => { speech(line); pulse("talk", 900); $("#mouthOpen").classList.remove("hidden"); setTimeout(() => $("#mouthOpen").classList.add("hidden"), 900); }));
+      petAwake(true);
+    },
+    onError(){ puzzled(2200); },
+    saveAfterRun(res){
+      if (res.ok){ const keep = Object.assign({}, store.get(KEY, {}, true)); ["name","colour","food","hat","size","mood"].forEach(v => { if (res.vars[v]) keep[v] = res.vars[v]; }); store.set(KEY, keep, true); }
+    },
+    exitReveal(){
+      const p = store.get(KEY, {}, true);
+      const bits = [p.colour && esc(p.colour.val), p.food && "eats " + esc(p.food.val), p.hat && "wears a " + esc(p.hat.val)].filter(Boolean);
+      return `<br>Your pet: ${p.name ? esc(p.name.val) : "no name yet"}${bits.length ? ", " + bits.join(", ") : ""}.`;
+    },
+    onExit: showSavedPet,
+    paintAll(){ if (last != null){ const l = last; outSeq(() => speech(l)); } last = null; },
+    init(){}
+  };
+})();
+
+boot();
 </script>
 </body>
 </html>

@@ -30,6 +30,24 @@ header label { font-size:13px; opacity:.9; }
 #send-word { font-size:16px; padding:6px 8px; border-radius:5px; border:0; width:120px; }
 #handin-msg { font-size:13px; color:#FFD9A0; font-weight:600; }
 .sendgrp { display:inline-flex; align-items:center; gap:10px; }
+.hname { display:inline-flex; align-items:center; gap:10px; }
+/* The choice comes first (19 Nov 2026): the same two buttons as the Unit 2 hand-in
+   panel. Nothing else of the hand-in shows until one is chosen. */
+.hchoose { display:flex; flex-direction:column; gap:3px; }
+.hask { font-size:12px; opacity:.9; }
+.hmodes { display:flex; gap:8px; flex-wrap:wrap; }
+.hmode { display:flex; flex-direction:column; align-items:flex-start; padding:4px 12px;
+         border:2px solid rgba(255,255,255,.75); border-radius:8px; background:transparent;
+         color:#fff; text-align:left; cursor:pointer; font:inherit; }
+.hmode b { font-size:14px; font-weight:800; }
+.hmode small { font-size:11px; opacity:.85; }
+.hmode[aria-pressed="true"] { background:#fff; color:var(--near); }
+.hmode[aria-pressed="true"] small { opacity:1; }
+header.hand:not([data-hm]) .hname,
+header.hand:not([data-hm]) #handin,
+header.hand:not([data-hm]) .sendgrp,
+header.hand[data-hm="pdf"] .sendgrp,
+header.hand[data-hm="send"] #handin { display:none; }
 
 /* ---------------------------------------------------------------- step nav */
 nav { flex:none; display:flex; gap:6px; padding:7px 10px; background:var(--panel);

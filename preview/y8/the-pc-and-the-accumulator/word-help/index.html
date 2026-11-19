@@ -375,16 +375,20 @@ body[data-scene=free] #splitter,
 body[data-scene=free] #roNote,
 body[data-scene=free] #right > :not(#console){display:none !important}
 body[data-scene=free] #editorPane{flex:1 1 auto !important;height:auto !important;border-top:0}
+body[data-scene=free] #app{grid-template-columns:1fr 30%}
+body[data-scene=free] #gutter,body[data-scene=free] #hl,body[data-scene=free] #code{font-size:16px;line-height:24px}
+body[data-scene=free] #gutter{width:40px}
+body[data-scene=free] #hl .row{min-height:24px}
 body[data-scene=free] #right{background:#fff}
 body[data-scene=free] #console{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;padding:10px 14px 14px}
 #console .ptitle{color:var(--out)}
-#conOut{flex:1 1 auto;min-height:0;overflow:auto;margin:6px 0 0;font-family:var(--mono);font-size:18px;line-height:1.45;white-space:pre-wrap;word-break:break-word;color:#1d1a2b}
+#conOut{flex:1 1 auto;min-height:0;overflow:auto;margin:6px 0 0;font-family:var(--mono);font-size:15px;line-height:1.45;white-space:pre-wrap;word-break:break-word;color:#1d1a2b}
 #conOut .err{color:#B3261E}
 #conOut .note{color:#6b6880}
 #conOut .in{font-weight:700;color:#08665B}
 #conOut .conIn{font:inherit;font-weight:700;color:#08665B;border:0;border-bottom:2px solid var(--in);outline:0;background:transparent;min-width:12ch;width:60%;padding:0}
 @media (max-width:960px) and (orientation:portrait){
-  body[data-scene=free] #app{grid-template-areas:"top" "left" "right";grid-template-rows:auto 1fr 40%}
+  body[data-scene=free] #app{grid-template-areas:"top" "left" "right";grid-template-columns:1fr;grid-template-rows:auto 1fr 28%}
   body[data-scene=free] #right{border-bottom:0;border-top:2px solid var(--line)}
 }
 @media (max-width:600px){

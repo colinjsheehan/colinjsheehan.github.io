@@ -368,6 +368,30 @@ textarea.free{min-height:84px}
 .stop.free.on{background:#fff;box-shadow:none}
 .stop.free.on .n{background:var(--sun)}
 
+/* "Your code": an editor and an output pane only (Colin, 18 Nov 21:35) */
+#console{display:none}
+body[data-scene=free] #card,
+body[data-scene=free] #splitter,
+body[data-scene=free] #roNote,
+body[data-scene=free] #right > :not(#console){display:none !important}
+body[data-scene=free] #editorPane{flex:1 1 auto !important;height:auto !important;border-top:0}
+body[data-scene=free] #right{background:#fff}
+body[data-scene=free] #console{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;padding:10px 14px 14px}
+#console .ptitle{color:var(--out)}
+#conOut{flex:1 1 auto;min-height:0;overflow:auto;margin:6px 0 0;font-family:var(--mono);font-size:18px;line-height:1.45;white-space:pre-wrap;word-break:break-word;color:#1d1a2b}
+#conOut .err{color:#B3261E}
+#conOut .note{color:#6b6880}
+#conOut .in{font-weight:700;color:#08665B}
+#conOut .conIn{font:inherit;font-weight:700;color:#08665B;border:0;border-bottom:2px solid var(--in);outline:0;background:transparent;min-width:12ch;width:60%;padding:0}
+@media (max-width:960px) and (orientation:portrait){
+  body[data-scene=free] #app{grid-template-areas:"top" "left" "right";grid-template-rows:auto 1fr 40%}
+  body[data-scene=free] #right{border-bottom:0;border-top:2px solid var(--line)}
+}
+@media (max-width:600px){
+  body[data-scene=free] #editorPane{height:55vh !important;flex:none !important}
+  body[data-scene=free] #console{min-height:40vh}
+}
+
 /* Theme: the pet (Year 7), moved out of the Year 7 engine.css on 18 Nov 2026 without change. */
 :root{ --pet:#B9B4C7; }
 #petsvg{position:absolute;left:50%;bottom:4%;transform:translateX(-50%);height:76%;max-width:92%;overflow:visible}
@@ -1820,9 +1844,15 @@ let runLines = 0;
 let fastNow = false, lineRuns = {};
 function seen(n){ lineRuns[n] = (lineRuns[n] || 0) + 1; fastNow = runLines > FAST_AFTER || lineRuns[n] >= 3; }
 function speedMs(fast, slow){ return reduced || TEST.instant ? 0 : (fastNow ? fast : slow); }
+/* Printed lines reach the screen in the order they were printed (19 Nov). A line that flies
+   to the screen lands after its animation; once a loop is sped up (fix 3) later lines are put
+   straight on, so without this queue they could arrive before the earlier ones landed. A new
+   run drops whatever an earlier run still had queued. */
+let outQ = Promise.resolve(), outGen = 0;
+function outSeq(f){ const g = outGen; outQ = outQ.then(() => g === outGen ? f() : null).catch(() => {}); return outQ; }
 async function runCode(src){
   if (running) return null;
-  running = true; stopped = false; runLines = 0; fastNow = false; lineRuns = {};
+  running = true; stopped = false; runLines = 0; fastNow = false; lineRuns = {}; outGen++; outQ = Promise.resolve();
   $("#run").disabled = true; markLine(null);
   THEME.reset(); memClear(); outClear(); condReset();
   const r = {inputs:[], mems:[], prints:[], vars:{}, events:[], error:null, ok:false, cycles:0, lines:[]};
@@ -2644,17 +2674,74 @@ function renderPuzzles(sc){
 }
 
 /* ---- your code: a free editor (Dana, 18 Nov) */
+/* "Your code" (Dana, 18 Nov; Colin 18 Nov 21:35): an editor and an output pane and nothing
+   else, the way an online Python editor looks. The program runs as written, with no line by
+   line animation, no memory boxes and no help box: what it prints, the answers typed to
+   input() and, if it fails, the error the way Python 3 prints it, all in the output pane.
+   The 60-second limit, Stop, files and the code saved on the device work as in the lesson. */
 function renderFree(){
-  const key = "free", r = lastRun[key];
-  document.body.dataset.scene = key;
-  card.innerHTML = `<div class="kicker">${FREE.nav}</div><h1>${FREE.nav}</h1><p class="lead">Write and run your own Python here.</p>` + happened(r);
-  scrollToErr(); bindCommon();
-  showEditor(true, key, "");
-  $("#run").disabled = false;
-  runHandler = async () => {
-    const res = await runCode(ta.value); if (!res) return;
-    afterRun(res, key, []); save(); renderFree();
-  };
+  document.body.dataset.scene = "free";
+  card.innerHTML = "";
+  if (!$("#console")) $("#right").insertAdjacentHTML("beforeend",
+    `<div id="console"><div class="ptitle">Output</div><pre id="conOut" aria-live="polite"></pre></div>`);
+  showEditor(true, "free", "");
+  $("#run").disabled = running;
+  runHandler = () => runPlain(ta.value);
+}
+function conWrite(t, cls){
+  const o = $("#conOut"); if (!o) return;
+  if (cls){ const s = document.createElement("span"); s.className = cls; s.textContent = t; o.appendChild(s); }
+  else o.appendChild(document.createTextNode(t));
+  o.scrollTop = o.scrollHeight;
+}
+function conInput(prompt){
+  return new Promise((res, rej) => {
+    conWrite(prompt);
+    const f = document.createElement("input");
+    f.className = "conIn"; f.setAttribute("aria-label", prompt.trim() || "Type an answer");
+    ["autocomplete", "autocapitalize", "autocorrect"].forEach(a => f.setAttribute(a, "off")); f.spellcheck = false;
+    $("#conOut").appendChild(f);
+    askReject = e => { f.disabled = true; rej(e); };
+    const done = () => {
+      const v = f.value; askReject = null;
+      const s = document.createElement("span"); s.className = "in"; s.textContent = v; f.replaceWith(s);
+      conWrite("\n"); f.blur(); scrollHome(); res(v);
+    };
+    f.onkeydown = e => { if (e.key === "Enter"){ e.preventDefault(); done(); } };
+    if (TEST.answers.length){ f.value = TEST.answers.shift(); setTimeout(done, 30); }
+    else setTimeout(() => f.focus({preventScroll: true}), 50);
+  });
+}
+async function runPlain(src){
+  if (running) return;
+  running = true; stopped = false; $("#run").disabled = true; markLine(null);
+  $("#conOut").textContent = "";
+  fsOpen();
+  Sk.configure({
+    output: t => conWrite(t),
+    read: fsRead,
+    nonreadopen: true,
+    filewrite: (f, text) => { const n = String(f.name); S.files[n] = (S.files[n] || "") + Sk.ffi.remapToJs(text); save(); },
+    inputfun: p => { const t0 = Date.now(); return conInput(p).then(v => { Sk.execStart += Date.now() - t0; return v; }); },
+    inputfunTakesPrompt: true,
+    __future__: Sk.python3,
+    execLimit: 60000,
+    yieldLimit: 100
+  });
+  const end = () => { const o = $("#conOut"); return !o.textContent || o.textContent.endsWith("\n") ? "" : "\n"; };
+  try {
+    await Sk.misceval.asyncToPromise(() => Sk.importMainWithBody("<stdin>", false, src, true),
+      {"*": () => { if (stopped) throw new Error("stopped"); }});
+  } catch (e){
+    if (stopped) conWrite(end() + "Stopped.\n", "note");
+    else {
+      const err = refineError(parseError(e), src);
+      if (err.name === "TimeLimitError") conWrite(end() + "The program ran for more than a minute, so it was stopped.\n", "err");
+      else { conWrite(end() + pyTraceback(err) + "\n", "err"); markLine(err.line, "bad"); }
+    }
+  } finally {
+    running = false; $("#run").disabled = false; askReject = null;
+  }
 }
 
 /* ---- exit questions */
@@ -3090,8 +3177,9 @@ const THEME = (() => {
     beforeLine: () => sleep(speedMs(40, 520)),
     reads: petReads,
     onOutput(line, curLine, quiet){
-      if (quiet){ if (painting) speech(line); last = line; return; }     /* fix 3: a long run */
-      fly(line, "o", lineRect(curLine), $("#speech")).then(() => { speech(line); pulse("talk", 900); $("#mouthOpen").classList.remove("hidden"); setTimeout(() => $("#mouthOpen").classList.add("hidden"), 900); });
+      if (quiet){ const p = painting; outSeq(() => { if (p) speech(line); }); last = line; return; }     /* fix 3: a long run */
+      const r = lineRect(curLine);
+      outSeq(() => fly(line, "o", r, $("#speech")).then(() => { speech(line); pulse("talk", 900); $("#mouthOpen").classList.remove("hidden"); setTimeout(() => $("#mouthOpen").classList.add("hidden"), 900); }));
       petAwake(true);
     },
     onError(){ puzzled(2200); },
@@ -3104,7 +3192,7 @@ const THEME = (() => {
       return `<br>Your pet: ${p.name ? esc(p.name.val) : "no name yet"}${bits.length ? ", " + bits.join(", ") : ""}.`;
     },
     onExit: showSavedPet,
-    paintAll(){ if (last != null) speech(last); last = null; },
+    paintAll(){ if (last != null){ const l = last; outSeq(() => speech(l)); } last = null; },
     init(){}
   };
 })();

@@ -143,6 +143,16 @@
     qRecordedFirst: "Your answers were recorded before these were shown.",
     qRight: "Right", qWrong: "Not right", qRightAnswer: "The right answer",
     qModel: "Model answer",
+    /* A paper question ("paper": true): worked on paper, then opened and marked
+       by the student. See paperEl(). */
+    paperFinish: "I've finished on paper",
+    paperFinishNote: "Work it out on paper first. Tapping the button records the time and shows the model answer.",
+    paperModel: "Model answer",
+    paperPoints: "Mark points",
+    paperPointsNote: "Tick each mark point that your paper answer earned. Mark it as an examiner would.",
+    paperSubmit: "Submit my mark",
+    paperSubmitNote: "Once you submit, the ticks are locked.",
+    paperMark: function (n, of) { return "Your mark: " + n + " / " + of; },
     shut: function (label) {
       return label + " is closed while you answer this step. Check your answers "
         + "to open it again.";
@@ -561,6 +571,37 @@
     return out + esc(line.slice(last));
   }
 
+  /* PSEUDOCODE (20 Nov 2026). The model answer of a paper question is Cambridge
+     pseudocode, not Python. Keywords are capitals, so the lists are case-sensitive
+     and an identifier such as Total or Count is never coloured. The arrow is
+     coloured with the keywords. Comments start with two slashes. */
+  var PKEYS = {}, PFNS = {};
+  ("IF THEN ELSE ELSEIF ENDIF FOR TO STEP NEXT WHILE DO ENDWHILE REPEAT UNTIL INPUT OUTPUT " +
+   "CONSTANT DECLARE AND OR NOT DIV MOD FUNCTION ENDFUNCTION PROCEDURE ENDPROCEDURE CALL " +
+   "RETURN RETURNS CASE OF OTHERWISE ENDCASE TRUE FALSE ARRAY INTEGER REAL STRING CHAR BOOLEAN " +
+   "BYVAL BYREF").split(" ").forEach(function (k) { PKEYS[k] = 1; });
+  ("ROUND INT LENGTH LCASE UCASE SUBSTRING LEFT RIGHT MID RAND").split(" ")
+    .forEach(function (k) { PFNS[k] = 1; });
+  var PTOKEN = /(\/\/.*$)|("(?:[^"\\]|\\.)*"?)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_]\w*)|(\u2190)/g;
+  function pseudoLine(line) {
+    var out = "", last = 0, m;
+    PTOKEN.lastIndex = 0;
+    while ((m = PTOKEN.exec(line)) !== null) {
+      if (m.index === PTOKEN.lastIndex) PTOKEN.lastIndex++;
+      out += esc(line.slice(last, m.index));
+      var t = m[0], cls = "";
+      if (m[1]) cls = "tk-com";
+      else if (m[2]) cls = "tk-str";
+      else if (m[3]) cls = "tk-num";
+      else if (m[5]) cls = "tk-key";
+      else if (PKEYS[t]) cls = "tk-key";
+      else if (PFNS[t]) cls = "tk-fn";
+      out += cls ? '<span class="' + cls + '">' + esc(t) + "</span>" : esc(t);
+      last = m.index + t.length;
+    }
+    return out + esc(line.slice(last));
+  }
+
   function syncScroll() {
     hl.scrollTop = codeEl.scrollTop;
     hl.scrollLeft = codeEl.scrollLeft;
@@ -591,6 +632,7 @@
   var state = load();
   if (!(state.current >= 0 && state.current < L.steps.length)) state.current = 0;
   if (!state.locked) state.locked = {};
+  if (!state.paper) state.paper = {};   // paper questions: { fin, ticks, sub, score, marks }
 
   function flag(text) {
     statusEl.innerHTML = '<span class="saved">' + (text || "saved") + "</span>";
@@ -657,7 +699,17 @@
       .map(function (l) { return l.replace(/\s+$/, ""); }).join("\n")
       .replace(/^\n+/, "").replace(/\n+$/, "");
   }
-  function answered(q) { return !!(state.answers[q.id] || "").trim(); }
+  /* PAPER QUESTIONS (20 Nov 2026). "paper": true on a question in a normal page.
+     No answer box is drawn: the work is on paper. A paper question counts as
+     answered once the mark has been submitted. */
+  function isPaper(q) { return !SIMPLE && q.paper === true; }
+  function hasPaper(step) { return (step.questions || []).some(isPaper); }
+  function paperOf(q) { return (state.paper && state.paper[q.id]) || null; }
+  function paperTime(iso) { return String(iso || "").slice(11, 16); }
+  function answered(q) {
+    if (isPaper(q)) { var pp = paperOf(q); return !!(pp && pp.sub); }
+    return !!(state.answers[q.id] || "").trim();
+  }
 
   /* REQUIRED LINES (4 Oct 2026). Two Year 10 students reached the expected output
      of a debugging step without touching either error: one printed the answers,
@@ -867,6 +919,11 @@
       if (q.code) box.appendChild(el("pre", "show", q.code));
       if (q.image) box.appendChild(pics([{ src: q.image }]));
       if (q.images) box.appendChild(pics(q.images));
+      if (isPaper(q)) {
+        box.appendChild(paperEl(q, i));
+        cardEl.appendChild(box);
+        return;
+      }
       if (q.pick) {
         box.appendChild(pickEl(q, qm ? { chosen: qm.picks[q.id], right: qkey[q.id] } : null));
         if (state.locked[q.id] && !chk) box.appendChild(el("p", "locknote", TX.locked));
@@ -899,7 +956,7 @@
       if (qm && q.reveal) box.appendChild(revealEl(q));
       cardEl.appendChild(box);
     });
-    if (chk) cardEl.appendChild(qCheckRow(step, i));
+    if (chk && (!hasPaper(step) || qProgress(step).need > 0)) cardEl.appendChild(qCheckRow(step, i));
 
     /* DRILL: "drill": "A while loop needs ...". The key sentence of the lesson,
        said aloud together (choral drill). Last thing on the card.
@@ -1691,7 +1748,7 @@
     return !SIMPLE && step.kind === "questions" && step.check === "once";
   }
   function qProgress(step) {
-    var qs = step.questions || [];
+    var qs = (step.questions || []).filter(function (q) { return !isPaper(q); });
     return { done: qs.filter(answered).length, need: qs.length };
   }
   function qCheckRow(step, i) {
@@ -1744,6 +1801,7 @@
     keepFirstAnswers(i);
     var picks = {}, hasReveal = 0;
     step.questions.forEach(function (q) {
+      if (isPaper(q)) return;
       state.locked[q.id] = true;
       if (q.pick) picks[q.id] = state.answers[q.id];
       else if (q.reveal) hasReveal++;
@@ -1765,6 +1823,87 @@
     d.appendChild(el("b", "", TX.qModel));
     d.appendChild(rich(el("p"), q.reveal));
     return d;
+  }
+
+  /* A PAPER QUESTION. Before the tap the card holds the prompt and one button; the
+     model answer and the mark points are in the page's data but not in the
+     document. The tap records the time and shows the model answer as pseudocode,
+     then the mark points as tick boxes. "Submit my mark" locks the ticks and
+     records score = ticks, capped at the marks. Both locks are saved, so a reload
+     keeps the question where it was. */
+  function paperEl(q, i) {
+    var wrap = el("div", "paper");
+    var p = paperOf(q);
+    if (!p || !p.fin) {
+      var go1 = el("button", "btn", TX.paperFinish);
+      go1.type = "button";
+      go1.id = "pf-" + q.id;
+      go1.addEventListener("click", function () {
+        if (paperOf(q)) return;
+        state.paper[q.id] = { fin: new Date().toISOString(), ticks: [] };
+        save();
+        renderCard(i);
+        renderNavSoon();
+      });
+      wrap.appendChild(go1);
+      wrap.appendChild(el("p", "dnote", TX.paperFinishNote));
+      return wrap;
+    }
+    var done = !!p.sub;
+    var model = el("div", "reveal pmodel");
+    model.appendChild(el("b", "", TX.paperModel));
+    var pre = el("pre", "show pcode");
+    pre.innerHTML = String(q.reveal || "").replace(/\r/g, "").split("\n").map(pseudoLine).join("\n");
+    model.appendChild(pre);
+    wrap.appendChild(model);
+
+    var pts = el("div", "reveal pmarks");
+    pts.appendChild(el("b", "", TX.paperPoints));
+    if (!done) pts.appendChild(el("p", "dnote", TX.paperPointsNote));
+    var list = el("div", "ptlist");
+    (q.points || []).forEach(function (t, k) {
+      var lab = el("label", "pt" + (p.ticks.indexOf(k) !== -1 ? " on" : "") + (done ? " shut" : ""));
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = p.ticks.indexOf(k) !== -1;
+      cb.disabled = done;
+      cb.addEventListener("change", function () {
+        var cur = paperOf(q);
+        if (!cur || cur.sub) { cb.checked = !cb.checked; return; }
+        var at = cur.ticks.indexOf(k);
+        if (cb.checked && at === -1) cur.ticks.push(k);
+        if (!cb.checked && at !== -1) cur.ticks.splice(at, 1);
+        cur.ticks.sort(function (a, b) { return a - b; });
+        lab.classList.toggle("on", cb.checked);
+        save();
+      });
+      lab.appendChild(cb);
+      lab.appendChild(rich(el("span", "pttext"), t));
+      list.appendChild(lab);
+    });
+    pts.appendChild(list);
+    wrap.appendChild(pts);
+
+    if (done) {
+      wrap.appendChild(el("p", "pmark" + (p.score === p.marks ? " all" : ""), TX.paperMark(p.score, p.marks)));
+    } else {
+      var sub = el("button", "btn", TX.paperSubmit);
+      sub.type = "button";
+      sub.id = "ps-" + q.id;
+      sub.addEventListener("click", function () {
+        var cur = paperOf(q);
+        if (!cur || cur.sub) return;
+        cur.sub = new Date().toISOString();
+        cur.marks = q.marks;
+        cur.score = Math.min(cur.ticks.length, q.marks);
+        save();
+        renderCard(i);
+        renderNavSoon();
+      });
+      wrap.appendChild(sub);
+      wrap.appendChild(el("p", "dnote", TX.paperSubmitNote));
+    }
+    return wrap;
   }
 
   function lockEl(e) {
@@ -2296,7 +2435,7 @@
          time is the one taken at the check, before any mark or model answer was
          on screen. Written answers are not scored; the line says so. */
       var pq = qCheckOn(step) ? s.qmark : null, pkey = pq ? (dragKey(step) || {}) : null;
-      if (qCheckOn(step)) {
+      if (qCheckOn(step) && (!hasPaper(step) || qProgress(step).need > 0)) {
         if (pq) {
           var nm = pq.models || 0;
           text("Checked at " + pq.at.slice(11, 16) + "." + (pq.of ? "  " + pq.score + " out of "
@@ -2309,6 +2448,17 @@
         gap(1);
         text(q.label + "  " + unmark(q.prompt), 10, "bold");
         if (q.code) text(q.code, 9, "normal", "courier", 4);
+        if (isPaper(q)) {
+          var pp = paperOf(q);
+          text(!pp || !pp.fin ? "Worked on paper: not finished."
+               : "Finished on paper at " + paperTime(pp.fin) + " UTC."
+                 + (pp.sub ? "  Mark submitted at " + paperTime(pp.sub) + " UTC.  Mark: " + pp.score
+                             + " out of " + pp.marks + ".  Points ticked (numbered from 1): "
+                             + (pp.ticks.length ? pp.ticks.map(function (k) { return k + 1; }).join(", ") : "none") + "."
+                           : "  Mark not submitted."),
+               10, "normal", "helvetica", 4);
+          return;
+        }
         var a = (state.answers[q.id] || "").trim();
         var tagged = state.locked[q.id] && !qCheckOn(step)
           ? "  (prediction, locked before the code was run)" : "";
@@ -2418,7 +2568,7 @@
                      checked: dm2 ? dm2.at : null,
                      score: dm2 ? dm2.score : null, of: dm2 ? dm2.of : null };
       }
-      if (qCheckOn(step)) {
+      if (qCheckOn(step) && (!hasPaper(step) || qProgress(step).need > 0)) {
         var qm2 = s.qmark;
         row.qcheck = { checked: qm2 ? qm2.at : null, score: qm2 ? qm2.score : null,
                        of: qm2 ? qm2.of : null, models: qm2 ? (qm2.models || 0) : 0 };
@@ -2429,6 +2579,13 @@
           var a = (state.answers[q.id] || "").trim();
           var f0 = ((state.first || {})[q.id] || "").trim();
           var o = { id: q.id, label: q.label, a: a };
+          if (isPaper(q)) {
+            var pd = paperOf(q);
+            o.paper = { fin: pd ? pd.fin : null, sub: pd ? (pd.sub || null) : null,
+                        ticks: pd ? pd.ticks : [], score: pd && pd.sub ? pd.score : null,
+                        marks: q.marks };
+            return o;
+          }
           if (f0 && f0 !== a) { o.first = f0; o.edits = (state.edits || {})[q.id] || 1; }
           if (state.locked[q.id]) o.locked = true;
           if (dkey2 && q.pick) o.right = (s.qmark.picks[q.id] === dkey2[q.id]);

@@ -509,3 +509,22 @@ ul.wordlist b { color:var(--teal); }
 .drow .dtally { margin:0; font-size:14px; font-weight:700; color:var(--near); }
 .drow .dtally.all { color:var(--green); }
 .drow .dnote { margin:0; font-size:13.5px; color:#6B7577; }
+
+/* ------------------------------------------------ paper questions (20 Nov 2026)
+   "paper": true on a question. Work on paper, tap to open the model answer and
+   mark points, tick what was earned, submit. */
+.paper { margin:8px 0 4px; max-width:40em; }
+.paper .btn { margin:2px 0 4px; }
+.paper .dnote { margin:2px 0 0; font-size:13.5px; color:#6B7577; }
+.paper .reveal { margin:10px 0 0; }
+.paper .reveal.pmarks { padding-bottom:10px; }
+.paper pre.show.pcode { background:#fff; margin:4px 0 2px; font-size:14.5px; }
+.paper .ptlist { display:flex; flex-direction:column; gap:5px; margin:6px 0 2px; }
+.paper label.pt { display:flex; align-items:flex-start; gap:10px; background:#fff;
+     border:1px solid #C9D2D3; border-radius:5px; padding:7px 10px; font-size:15px;
+     line-height:1.4; cursor:pointer; }
+.paper label.pt.on { border-color:var(--teal); background:#F1F9F8; }
+.paper label.pt.shut { cursor:default; }
+.paper label.pt input { flex:none; width:22px; height:22px; margin:0; accent-color:var(--teal); }
+.paper .pmark { margin:10px 0 0; font-size:17px; font-weight:800; color:var(--near); }
+.paper .pmark.all { color:var(--green); }

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 10 Lesson 10 | Epsom Computer Science</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/lesson.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/guide-look.css">
+</head>
+<body class="look-guide">
+<header>
+  <div>
+    <div class="brand">Year 10 &middot; Lesson 10</div>
+    <h1>Writing algorithms</h1>
+  </div>
+  <span class="spacer"></span>
+  <span class="hname"><label for="student-name">Your name</label>
+  <input id="student-name" autocomplete="name" placeholder="First and last name"></span>
+  <button class="btn amber" id="handin">Download PDF</button>
+  <span id="handin-msg"></span>
+</header>
+<nav id="steps" aria-label="Lesson steps"></nav>
+<main id="main">
+  <section class="pane left">
+    <div id="card"></div>
+    <div id="editor-block">
+      <div class="toolbar">
+        <button class="btn" id="run">Run</button>
+        <button class="btn grey" id="stop">Stop</button>
+        <span class="spacer"></span>
+        <button class="btn small grey" id="reset">Reset this step</button>
+      </div>
+      <div id="symbols"></div>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off"
+                autocomplete="off" wrap="off" aria-label="Your code"></textarea>
+    </div>
+  </section>
+  <section class="pane right">
+    <div id="drawing-block" hidden>
+      <div class="panehead" id="drawing-head">DRAWING<span class="spacer"></span>
+        <button class="btn small grey" id="fit" title="Fill the box with what you drew">Fit</button>
+        <button class="btn small grey" id="plain" title="Show the whole canvas again">Whole canvas</button></div>
+      <div id="stage"><div id="turtle-canvas"></div></div>
+    </div>
+    <div id="expected-block" hidden>
+      <div class="panehead">EXPECTED OUTPUT</div>
+      <pre id="expected"></pre>
+    </div>
+    <div class="panehead" id="output-head">YOUR OUTPUT <span class="spacer"></span><span id="match"></span></div>
+    <div id="console"></div>
+    <div id="askrow">
+      <input id="askinput" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="btn small" id="asksend">Enter</button>
+    </div>
+  </section>
+</main>
+<footer>
+  <span>Your work is saved in this browser on this device. When it is finished, download it for Google Classroom or send it to your teacher.</span>
+  <span class="spacer"></span>
+  <span id="status"></span>
+  <span class="credit">Made by Colin Sheehan, 2026</span>
+</footer>
+<script>window.LESSON = {"id": "y10-write-algorithms", "order": 10, "version": 1, "look": "guide", "year": "Year 10", "slug": "write-algorithms", "folder": "y10", "title": "Writing algorithms", "short": "Lesson 10", "objective": "Write algorithms in pseudocode on paper, then mark them against the mark points.", "keywords": ["algorithm", "pseudocode", "selection", "iteration", "validation", "mark points"], "steps": [{"kind": "questions", "nav": "1", "label": "Problem 1", "title": "The larger number", "check": "once", "questions": [{"id": "p1", "label": "1", "prompt": "Write an algorithm that inputs two numbers and outputs the larger. If they are equal, output either one. [3]", "paper": true, "marks": 3, "reveal": "INPUT Number1\nINPUT Number2\nIF Number1 > Number2\n  THEN\n    OUTPUT Number1\n  ELSE\n    OUTPUT Number2\nENDIF", "points": ["Both numbers are input.", "An IF compares the two numbers, with THEN and ENDIF.", "An ELSE outputs the other number.", "The larger number is output in every case."]}], "intro": ["Write each algorithm on paper, in pseudocode.", "Then reveal the model answer and mark your own work."]}, {"kind": "questions", "nav": "2", "label": "Problem 2", "title": "Merit, Pass or Fail", "check": "once", "questions": [{"id": "p2", "label": "2", "prompt": "A mark from 0 to 100 is input. A mark of 70 or more is a Merit. A mark from 50 to 69 is a Pass. A mark below 50 is a Fail. Write an algorithm that outputs the result. [4]", "paper": true, "marks": 4, "reveal": "INPUT Mark\nIF Mark >= 70\n  THEN\n    OUTPUT \"Merit\"\n  ELSE\n    IF Mark >= 50\n      THEN\n        OUTPUT \"Pass\"\n      ELSE\n        OUTPUT \"Fail\"\n    ENDIF\nENDIF", "points": ["The mark is input.", "A test for 70 or more outputs Merit.", "A test for 50 or more outputs Pass, reached only when the mark is not a Merit.", "Fail is output for any other mark.", "Each IF has its own ENDIF."]}]}, {"kind": "questions", "nav": "3", "label": "Problem 3", "title": "Buses", "check": "once", "questions": [{"id": "p3", "label": "3", "prompt": "Each bus holds 40 students. Write an algorithm that inputs the number of students and outputs the number of buses needed. [4]", "paper": true, "marks": 4, "reveal": "CONSTANT Capacity \u2190 40\nINPUT Students\nBuses \u2190 DIV(Students, Capacity)\nIF MOD(Students, Capacity) > 0\n  THEN\n    Buses \u2190 Buses + 1\nENDIF\nOUTPUT Buses", "points": ["The number of students is input.", "DIV(Students, 40) gives the number of full buses.", "MOD(Students, 40) is tested to find students left over.", "One bus is added when students are left over.", "The number of buses is output."]}], "remember": "ROUND(Students / 40, 0) is not enough: it rounds to the nearest whole number."}, {"kind": "questions", "nav": "4", "label": "Problem 4", "title": "Total and average", "check": "once", "questions": [{"id": "p4", "label": "4", "prompt": "Write an algorithm that inputs 10 numbers. It outputs their total and their average. [4]", "paper": true, "marks": 4, "reveal": "Total \u2190 0\nFOR Count \u2190 1 TO 10\n    INPUT Number\n    Total \u2190 Total + Number\nNEXT Count\nAverage \u2190 Total / 10\nOUTPUT \"Total: \", Total\nOUTPUT \"Average: \", Average", "points": ["Total is set to 0 before the loop.", "A FOR loop runs 10 times, closed with NEXT.", "A number is input inside the loop.", "Total is updated inside the loop.", "The average is calculated after the loop, as Total / 10.", "The total and the average are output."]}]}, {"kind": "questions", "nav": "5", "label": "Problem 5", "title": "Validation", "check": "once", "questions": [{"id": "p5", "label": "5", "prompt": "Write an algorithm that inputs a number. The input is repeated until the number is from 1 to 10 inclusive. Include appropriate messages. [4]", "paper": true, "marks": 4, "reveal": "OUTPUT \"Enter a number from 1 to 10\"\nINPUT Number\nWHILE Number < 1 OR Number > 10 DO\n    OUTPUT \"Invalid. Enter a number from 1 to 10\"\n    INPUT Number\nENDWHILE\nOUTPUT \"Accepted: \", Number", "points": ["A prompt is output before the first input.", "The number is input before the loop and again inside it, or inside a REPEAT loop.", "The condition rejects numbers below 1 and above 10.", "An error message is output inside the loop.", "The loop is closed with ENDWHILE, or REPEAT is closed with UNTIL."]}]}, {"kind": "questions", "nav": "6", "label": "Problem 6", "title": "Highest temperature", "check": "once", "questions": [{"id": "p6", "label": "6", "prompt": "Temperatures are input until -999 is entered. At least one temperature is entered first. Write an algorithm that outputs the highest temperature and how many temperatures were entered. [6]", "paper": true, "marks": 6, "reveal": "Count \u2190 0\nINPUT Temperature\nHighest \u2190 Temperature\nWHILE Temperature <> -999 DO\n    Count \u2190 Count + 1\n    IF Temperature > Highest\n      THEN\n        Highest \u2190 Temperature\n    ENDIF\n    INPUT Temperature\nENDWHILE\nOUTPUT \"Highest: \", Highest\nOUTPUT \"Temperatures entered: \", Count", "points": ["Count is set to 0.", "The first temperature is input before the loop.", "Highest is set to the first temperature, or to a value below any real temperature.", "The loop stops at -999, and -999 is never counted or compared.", "Count is increased inside the loop.", "An IF compares each temperature with Highest and updates it.", "The next temperature is input at the end of the loop.", "The highest temperature and the count are output after the loop."]}]}, {"kind": "questions", "nav": "7", "label": "Problem 7", "title": "Five positive numbers", "check": "once", "questions": [{"id": "p7", "label": "7", "prompt": "Write an algorithm that accepts five positive numbers and outputs their average. A number that is not positive is rejected with a message. [5]", "paper": true, "marks": 5, "reveal": "Count \u2190 0\nTotal \u2190 0\nWHILE Count < 5 DO\n    OUTPUT \"Enter a positive number\"\n    INPUT Number\n    IF Number > 0\n      THEN\n        Total \u2190 Total + Number\n        Count \u2190 Count + 1\n      ELSE\n        OUTPUT \"Rejected\"\n    ENDIF\nENDWHILE\nOUTPUT \"Average: \", Total / 5", "points": ["Count and Total are set to 0.", "A condition-controlled loop runs until five numbers are accepted.", "A number is input inside the loop.", "An IF tests that the number is greater than 0, with a message when it is not.", "Total and Count are updated only when the number is accepted.", "The average, Total / 5, is output after the loop."]}]}, {"kind": "questions", "nav": "8", "label": "Problem 8", "title": "Password", "check": "once", "questions": [{"id": "p8", "label": "8", "prompt": "A user has at most three attempts to enter the password Secret. Write an algorithm that outputs Access granted or Locked. [5]", "paper": true, "marks": 5, "reveal": "Attempts \u2190 0\nREPEAT\n    OUTPUT \"Enter the password\"\n    INPUT Password\n    Attempts \u2190 Attempts + 1\nUNTIL Password = \"Secret\" OR Attempts = 3\nIF Password = \"Secret\"\n  THEN\n    OUTPUT \"Access granted\"\n  ELSE\n    OUTPUT \"Locked\"\nENDIF", "points": ["Attempts is set to 0.", "The password is input inside a loop.", "Attempts is increased inside the loop.", "The loop stops on the correct password or after three attempts.", "After the loop, the password is tested to choose the output.", "Access granted and Locked are each output in the right case."]}]}]};</script>
+<script>window.HANDIN = {"url": "https://script.google.com/macros/s/AKfycbyP2LqOk-4DeaVfkEDzcYRsj1IouiyK8-ABjsfiKV0N5Q-bvcY4YrCqMQN4dsoWIBmc/exec", "word": true};</script>
+<script src="../../assets/skulpt.min.js"></script>
+<script src="../../assets/skulpt-stdlib.js"></script>
+<script src="../../assets/jspdf.umd.min.js"></script>
+<script src="../../assets/lesson.js"></script>
+</body>
+</html>

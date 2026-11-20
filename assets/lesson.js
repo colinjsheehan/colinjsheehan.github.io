@@ -160,7 +160,7 @@
     reset: "Reset this step", resetArm: "Tap again to reset",
     noPdf: "The PDF tool did not load. Reload the page and try again.",
     saved: function (f) { return "Saved as \"" + f + "\". Upload it to this lesson's Google Classroom assignment."; },
-    sendLabel: "Send to my teacher", sendWordPh: "Class word", sending: "Sending...",
+    sendLabel: "Send", sendWordPh: "Class word", sending: "Sending...",
     sent: function (t) { return "Sent to your teacher at " + t + "."; },
     sendNoName: "Type your name first.", sendNoWord: "Type the class word first.",
     sendBig: "The file is too big to send. Tell your teacher.",
@@ -2687,7 +2687,7 @@
       b.setAttribute("aria-pressed", "false");
       var t = document.createElement("b"); t.textContent = m[1];
       var u = document.createElement("small"); u.textContent = m[2];
-      b.appendChild(t); b.appendChild(u); modes.appendChild(b);
+      b.appendChild(t); b.appendChild(u); b.title = m[2]; modes.appendChild(b);
       b.addEventListener("click", function () { setMode(m[0], true); });
     });
     choose.appendChild(ask); choose.appendChild(modes);

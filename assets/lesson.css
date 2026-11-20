@@ -35,14 +35,26 @@ header label { font-size:13px; opacity:.9; }
    panel. Nothing else of the hand-in shows until one is chosen. */
 .hchoose { display:flex; flex-direction:column; gap:3px; }
 .hask { font-size:12px; opacity:.9; }
-.hmodes { display:flex; gap:8px; flex-wrap:wrap; }
-.hmode { display:flex; flex-direction:column; align-items:flex-start; padding:4px 12px;
-         border:2px solid rgba(255,255,255,.75); border-radius:8px; background:transparent;
-         color:#fff; text-align:left; cursor:pointer; font:inherit; }
+/* Tidied 20 Nov 2026: one segmented control, one line per choice (the second line
+   of each choice is its title tooltip), and every control after it the same
+   height on one centre line. The question above the control shows only until a
+   choice has been made. */
+.hmodes { display:inline-flex; border:2px solid rgba(255,255,255,.8); border-radius:9px;
+          overflow:hidden; }
+.hmode { display:block; padding:0 14px; height:36px; border:0; background:transparent;
+         color:#fff; text-align:center; cursor:pointer; font:inherit; font-size:14px;
+         font-weight:800; white-space:nowrap; }
+.hmode + .hmode { border-left:2px solid rgba(255,255,255,.8); }
 .hmode b { font-size:14px; font-weight:800; }
-.hmode small { font-size:11px; opacity:.85; }
+.hmode small { display:none; }
 .hmode[aria-pressed="true"] { background:#fff; color:var(--near); }
-.hmode[aria-pressed="true"] small { opacity:1; }
+header.hand[data-hm] .hask { display:none; }
+header.hand[data-hm] .hname { padding-left:14px; margin-left:2px;
+                              border-left:1px solid rgba(255,255,255,.5); }
+header.hand #student-name, header.hand #send-word { height:36px; box-sizing:border-box;
+                                                    padding:0 10px; }
+header.hand .btn { height:36px; padding:0 18px; }
+header.hand label { white-space:nowrap; }
 header.hand:not([data-hm]) .hname,
 header.hand:not([data-hm]) #handin,
 header.hand:not([data-hm]) .sendgrp,
@@ -528,3 +540,14 @@ ul.wordlist b { color:var(--teal); }
 .paper label.pt input { flex:none; width:22px; height:22px; margin:0; accent-color:var(--teal); }
 .paper .pmark { margin:10px 0 0; font-size:17px; font-weight:800; color:var(--near); }
 .paper .pmark.all { color:var(--green); }
+
+/* Narrower windows (20 Nov 2026): the title takes its own row and the hand-in
+   controls sit together on the row below, so they wrap as a group and never
+   leave the Send button alone on a line. */
+@media (max-width:1150px) {
+  header.hand > div:first-child { flex:0 0 100%; }
+  header.hand .spacer { display:none; }
+}
+@media (max-width:640px) {
+  header.hand[data-hm] .hname { border-left:0; padding-left:0; margin-left:0; }
+}

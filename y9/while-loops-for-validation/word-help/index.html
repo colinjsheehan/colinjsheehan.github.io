@@ -521,6 +521,18 @@ body[data-scene=free] #console{display:flex;flex-direction:column;flex:1 1 auto;
 .dgroup .dheld .dcard{flex-wrap:wrap}
 .dgroup .dcard .dans{flex-basis:100%;white-space:normal}
 
+/* Layout stage 1 (Colin, 19 Nov 13:19; Year 8's 13:30 request). The stage shows only on parts
+   that run code: explainer, drag and exit parts hide it and take the full width, with the
+   reading kept to a comfortable line length. */
+body[data-kind=explainer] #right, body[data-kind=drag] #right, body[data-kind=exit] #right{display:none}
+body[data-kind=explainer] #app, body[data-kind=drag] #app, body[data-kind=exit] #app{grid-template-areas:"top" "left";grid-template-columns:1fr;grid-template-rows:auto 1fr}
+body[data-kind=explainer] #left, body[data-kind=drag] #left, body[data-kind=exit] #left{border-right:0}
+body[data-kind=explainer] #card > *, body[data-kind=drag] #card > *, body[data-kind=exit] #card > *{max-width:1040px;margin-left:auto;margin-right:auto}
+/* Word help is a small icon; the words stay for screen readers and in the tooltip. */
+#support{display:inline-flex;align-items:center;justify-content:center;gap:0;padding:6px 10px;min-width:44px}
+#support svg{width:24px;height:24px;display:block}
+#support .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
 /* Theme: the arcade (Year 9), moved out of the Year 9 engine.css on 18 Nov 2026. The written
    mark and the symbol bar now come from core.css (decided 16 Nov 06:00). */
 
@@ -606,7 +618,7 @@ body.retro #cabinet{border-color:#FACC15}
     <div id="brand"><small>Year 9, Unit 2, Lesson 5</small><b>while loops for validation</b></div>
     <nav id="journey" aria-label="Lesson parts"></nav>
     <div id="tools">
-      <button class="tog" id="support" aria-pressed="false">Word help</button>
+      <button class="tog" id="support" aria-pressed="false" title="Word help"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M9 8h7M9 11.5h5"/></svg><span class="vh">Word help</span></button>
     </div>
   </header>
   <section id="left">
@@ -1901,6 +1913,7 @@ function instrument(src){
   }).join("\n");
 }
 let running = false, stopped = false, askReject = null, lastAskRect = null;
+let runEnded = Promise.resolve();   /* settles when the last run has fully ended (21 Nov) */
 const TEST = window.__TEST__ = {answers: []};   /* automated tests queue answers here */
 /* Fix 8 (Year 9 L14): files. open() for writing gave ExternalError ("haven't implemented
    non-read opens"). A program can now write, append to and read back text files. They are
@@ -1994,10 +2007,13 @@ function speedMs(fast, slow){ return reduced || TEST.instant ? 0 : (fastNow ? fa
    straight on, so without this queue they could arrive before the earlier ones landed. A new
    run drops whatever an earlier run still had queued. */
 let outQ = Promise.resolve(), outGen = 0;
-function outSeq(f){ const g = outGen; outQ = outQ.then(() => g === outGen ? f() : null).catch(() => {}); return outQ; }
+/* f is given live(): false once a newer run or a change of part has cleared the stage, so a
+   line already flying when that happens does not land on the cleared screen (21 Nov). */
+function outSeq(f){ const g = outGen, live = () => g === outGen; outQ = outQ.then(() => live() ? f(live) : null).catch(() => {}); return outQ; }
 async function runCode(src){
   if (running) return null;
   running = true; stopped = false; runLines = 0; fastNow = false; lineRuns = {}; outGen++; outQ = Promise.resolve();
+  let endRun; runEnded = new Promise(res => endRun = res);
   $("#run").disabled = true; markLine(null);
   THEME.reset(); memClear(); outClear(); condReset();
   const r = {inputs:[], mems:[], prints:[], vars:{}, events:[], error:null, ok:false, cycles:0, lines:[]};
@@ -2099,6 +2115,7 @@ async function runCode(src){
     if (behind) paintAll(r);
   }
   await sleep(speedMs(100, 700));
+  endRun();
   return r;
 }
 function parseError(e){
@@ -2401,7 +2418,9 @@ const lastRun = {};
    (decided 16 Nov 06:00, item 6) */
 function tierWord(t){ return t === "core" ? "Everyone" : t === "open" ? "Open" : "Stretch"; }
 function tierBadge(t){ return `<span class="badge ${t}">${tierWord(t)}</span>`; }
-function kicker(i, tier){ return `<div class="kicker">Part ${i+1} of ${SCENES.length} ${tierBadge(tier || "core")}</div>`; }
+/* Layout stage 1: no "Part n of m" line (the step bar shows where the class is), and no badge
+   on core parts; an Open or Stretch part still says so. */
+function kicker(i, tier){ return tier && tier !== "core" ? `<div class="kicker">${tierBadge(tier)}</div>` : ""; }
 /* "Your code" (Dana, 18 Nov): a Python editor after the exit questions on every page, for
    extra tasks the teacher sets. It is a tab, not a numbered part, so "Part n of m" and the
    parts in the deck and the teacher reference do not change. No tasks or checks: the code is
@@ -2415,10 +2434,30 @@ function journey(){
     (FREE ? `<button class="stop free${S.scene===FREE_I?" on":""}" data-i="${FREE_I}" title="${FREE.nav}" aria-label="${FREE.nav}"><span class="n"><span>+</span></span><span class="lab">${FREE.nav}</span></button>` : "");
   $("#journey").querySelectorAll(".stop").forEach(b => b.onclick = () => go(+b.dataset.i));
 }
+/* A run and a change of part (KS3 Co-ord, 19 Nov 19:45). Moving to another part stops the run,
+   and a stopped run still ends; its Run handler used to redraw the part where the run started,
+   over the part now open. Each handler now redraws only if its part is still open (onPart).
+   The stage, memory and output belong to the part that ran, so they are cleared when the part
+   changes: at once if nothing is running, or when the stopped run has ended. The theme's exit
+   picture (Year 7's saved pet) is drawn again after a late clear. */
+function clearStage(){ outGen++; THEME.reset(); memClear(); outClear(); condReset(); }
+function onPart(sc){ return !(FREE && S.scene === FREE_I) && SCENES[S.scene] === sc; }
 function go(i){
+  const from = S.scene, wasRunning = running;
   if (running) stopRun();
   if (typeof dragAbort === "function"){ dragAbort(); picked = null; }
-  S.scene = Math.max(0, Math.min(SCENES.length - (FREE ? 0 : 1), i)); save(); journey(); render(); card.scrollTop = 0; window.scrollTo(0, 0);
+  S.scene = Math.max(0, Math.min(SCENES.length - (FREE ? 0 : 1), i)); save(); journey();
+  const moved = S.scene !== from;
+  if (moved && !wasRunning) clearStage();
+  render(); card.scrollTop = 0; window.scrollTo(0, 0);
+  if (moved && wasRunning){
+    const here = S.scene;
+    runEnded.then(() => {
+      if (running || S.scene !== here) return;
+      clearStage();
+      const sc = SCENES[S.scene]; if (sc && sc.kind === "exit") THEME.onExit();
+    });
+  }
 }
 function isWritten(t){ return !!(t.check && t.check.explained); }
 function taskList(tasks, key){
@@ -2531,6 +2570,9 @@ function render(){
   if (!SCENES[S.scene]) S.scene = 0;
   const sc = SCENES[S.scene];
   document.body.dataset.scene = sc.id;
+  /* Layout stage 1 (Colin, 19 Nov 13:19, Year 8's 13:30 request): the stage shows only on
+     parts that run code. Explainer, drag and exit parts take the full width (core.css). */
+  document.body.dataset.kind = sc.kind === "exit" && THEME.exitStage ? "exit-stage" : (sc.kind || "task");
   if (sc.kind === "explainer") return renderExplainer(sc);
   if (sc.kind === "puzzles") return renderPuzzles(sc);
   if (sc.kind === "exit") return renderExit(sc);
@@ -2598,7 +2640,7 @@ function renderTaskScene(sc){
     const res = await runCode(ta.value); if (!res) return;
     afterRun(res, key, sc.tasks);
     if (allDone(sc.tasks, key)) S.done[key] = true;
-    save(); journey(); renderTaskScene(sc);
+    save(); journey(); if (onPart(sc)) renderTaskScene(sc);
   };
 }
 /* ---- test table: each row is a value, why it was chosen, the expected result,
@@ -2634,7 +2676,7 @@ async function tableRun(sc, i){
   r.act = out; lastRun[sc.id] = res;
   afterRun(res, sc.id, sc.tasks);
   if (allDone(sc.tasks, sc.id)) S.done[sc.id] = true;
-  save(); journey(); renderTaskScene(sc);
+  save(); journey(); if (onPart(sc)) renderTaskScene(sc);
 }
 function bindTable(sc){
   if (!sc.table) return;
@@ -2816,7 +2858,7 @@ function renderPuzzles(sc){
   bindHelp(() => renderPuzzles(sc));
   runHandler = async () => {
     const res = await runCode(ta.value); if (!res) return;
-    afterRun(res, key, pz.tasks); markDone(); save(); journey(); renderPuzzles(sc);
+    afterRun(res, key, pz.tasks); markDone(); save(); journey(); if (onPart(sc)) renderPuzzles(sc);
   };
 }
 
@@ -2827,7 +2869,7 @@ function renderPuzzles(sc){
    input() and, if it fails, the error the way Python 3 prints it, all in the output pane.
    The 60-second limit, Stop, files and the code saved on the device work as in the lesson. */
 function renderFree(){
-  document.body.dataset.scene = "free";
+  document.body.dataset.scene = "free"; document.body.dataset.kind = "free";
   card.innerHTML = "";
   if (!$("#console")) $("#right").insertAdjacentHTML("beforeend",
     `<div id="console"><div class="ptitle">Output</div><pre id="conOut" aria-live="polite"></pre></div>`);
@@ -3518,11 +3560,18 @@ window.__APP__ = {
   } catch(e){} }
 };
 /* Called by render.py after the theme's stage.js, which defines THEME. */
+/* The counter's label is the lesson's to set (Year 8 A1: "Trips round the cycle"). Without
+   "countLabel" it stays as the theme wrote it ("Lines carried out"). */
+function countLabel(){
+  const n = $("#cycn"); if (!L.countLabel || !n) return;
+  const t = n.previousSibling;
+  if (t && t.nodeType === 3) t.nodeValue = L.countLabel + ": "; else n.insertAdjacentText("beforebegin", L.countLabel + ": ");
+}
 function boot(){
   (THEME.norun || []).forEach(k => NORUN.add(k));
   if (!$("#condbox")) $("#side").insertAdjacentHTML("afterbegin", CONDBOX);
   $("#condbox").hidden = !HASCOND;
-  THEME.init();
+  THEME.init(); countLabel();
   memClear(); outClear(); journey(); render();
 }
 
@@ -3608,7 +3657,7 @@ const THEME = (() => {
     reset: machineReset,
     beforeLine: cycle,
     reads: machineReads,
-    onOutput(line, curLine, quiet){ const r = lineRect(curLine); outSeq(() => quiet ? speech(line) : fly(line, "o", r, $("#speech")).then(() => speech(line))); },
+    onOutput(line, curLine, quiet){ const r = lineRect(curLine); outSeq(live => quiet ? speech(line) : fly(line, "o", r, $("#speech")).then(() => { if (live()) speech(line); })); },
     paintAll(r){ $("#cycn").textContent = r.cycles; },
     onError: machineError,
     saveAfterRun(res){ if (res.ok && res.vars.player_name){ store.set(MKEY, {player_name: res.vars.player_name}, true); } },

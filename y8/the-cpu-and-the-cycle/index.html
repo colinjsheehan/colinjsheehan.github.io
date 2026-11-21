@@ -1977,6 +1977,7 @@ function instrument(src){
   }).join("\n");
 }
 let running = false, stopped = false, askReject = null, lastAskRect = null;
+let runEnded = Promise.resolve();   /* settles when the last run has fully ended (21 Nov) */
 const TEST = window.__TEST__ = {answers: []};   /* automated tests queue answers here */
 /* Fix 8 (Year 9 L14): files. open() for writing gave ExternalError ("haven't implemented
    non-read opens"). A program can now write, append to and read back text files. They are
@@ -2070,10 +2071,13 @@ function speedMs(fast, slow){ return reduced || TEST.instant ? 0 : (fastNow ? fa
    straight on, so without this queue they could arrive before the earlier ones landed. A new
    run drops whatever an earlier run still had queued. */
 let outQ = Promise.resolve(), outGen = 0;
-function outSeq(f){ const g = outGen; outQ = outQ.then(() => g === outGen ? f() : null).catch(() => {}); return outQ; }
+/* f is given live(): false once a newer run or a change of part has cleared the stage, so a
+   line already flying when that happens does not land on the cleared screen (21 Nov). */
+function outSeq(f){ const g = outGen, live = () => g === outGen; outQ = outQ.then(() => live() ? f(live) : null).catch(() => {}); return outQ; }
 async function runCode(src){
   if (running) return null;
   running = true; stopped = false; runLines = 0; fastNow = false; lineRuns = {}; outGen++; outQ = Promise.resolve();
+  let endRun; runEnded = new Promise(res => endRun = res);
   $("#run").disabled = true; markLine(null);
   THEME.reset(); memClear(); outClear(); condReset();
   const r = {inputs:[], mems:[], prints:[], vars:{}, events:[], error:null, ok:false, cycles:0, lines:[]};
@@ -2175,6 +2179,7 @@ async function runCode(src){
     if (behind) paintAll(r);
   }
   await sleep(speedMs(100, 700));
+  endRun();
   return r;
 }
 function parseError(e){
@@ -2493,10 +2498,30 @@ function journey(){
     (FREE ? `<button class="stop free${S.scene===FREE_I?" on":""}" data-i="${FREE_I}" title="${FREE.nav}" aria-label="${FREE.nav}"><span class="n"><span>+</span></span><span class="lab">${FREE.nav}</span></button>` : "");
   $("#journey").querySelectorAll(".stop").forEach(b => b.onclick = () => go(+b.dataset.i));
 }
+/* A run and a change of part (KS3 Co-ord, 19 Nov 19:45). Moving to another part stops the run,
+   and a stopped run still ends; its Run handler used to redraw the part where the run started,
+   over the part now open. Each handler now redraws only if its part is still open (onPart).
+   The stage, memory and output belong to the part that ran, so they are cleared when the part
+   changes: at once if nothing is running, or when the stopped run has ended. The theme's exit
+   picture (Year 7's saved pet) is drawn again after a late clear. */
+function clearStage(){ outGen++; THEME.reset(); memClear(); outClear(); condReset(); }
+function onPart(sc){ return !(FREE && S.scene === FREE_I) && SCENES[S.scene] === sc; }
 function go(i){
+  const from = S.scene, wasRunning = running;
   if (running) stopRun();
   if (typeof dragAbort === "function"){ dragAbort(); picked = null; }
-  S.scene = Math.max(0, Math.min(SCENES.length - (FREE ? 0 : 1), i)); save(); journey(); render(); card.scrollTop = 0; window.scrollTo(0, 0);
+  S.scene = Math.max(0, Math.min(SCENES.length - (FREE ? 0 : 1), i)); save(); journey();
+  const moved = S.scene !== from;
+  if (moved && !wasRunning) clearStage();
+  render(); card.scrollTop = 0; window.scrollTo(0, 0);
+  if (moved && wasRunning){
+    const here = S.scene;
+    runEnded.then(() => {
+      if (running || S.scene !== here) return;
+      clearStage();
+      const sc = SCENES[S.scene]; if (sc && sc.kind === "exit") THEME.onExit();
+    });
+  }
 }
 function isWritten(t){ return !!(t.check && t.check.explained); }
 function taskList(tasks, key){
@@ -2611,7 +2636,7 @@ function render(){
   document.body.dataset.scene = sc.id;
   /* Layout stage 1 (Colin, 19 Nov 13:19, Year 8's 13:30 request): the stage shows only on
      parts that run code. Explainer, drag and exit parts take the full width (core.css). */
-  document.body.dataset.kind = sc.kind || "task";
+  document.body.dataset.kind = sc.kind === "exit" && THEME.exitStage ? "exit-stage" : (sc.kind || "task");
   if (sc.kind === "explainer") return renderExplainer(sc);
   if (sc.kind === "puzzles") return renderPuzzles(sc);
   if (sc.kind === "exit") return renderExit(sc);
@@ -2679,7 +2704,7 @@ function renderTaskScene(sc){
     const res = await runCode(ta.value); if (!res) return;
     afterRun(res, key, sc.tasks);
     if (allDone(sc.tasks, key)) S.done[key] = true;
-    save(); journey(); renderTaskScene(sc);
+    save(); journey(); if (onPart(sc)) renderTaskScene(sc);
   };
 }
 /* ---- test table: each row is a value, why it was chosen, the expected result,
@@ -2715,7 +2740,7 @@ async function tableRun(sc, i){
   r.act = out; lastRun[sc.id] = res;
   afterRun(res, sc.id, sc.tasks);
   if (allDone(sc.tasks, sc.id)) S.done[sc.id] = true;
-  save(); journey(); renderTaskScene(sc);
+  save(); journey(); if (onPart(sc)) renderTaskScene(sc);
 }
 function bindTable(sc){
   if (!sc.table) return;
@@ -2897,7 +2922,7 @@ function renderPuzzles(sc){
   bindHelp(() => renderPuzzles(sc));
   runHandler = async () => {
     const res = await runCode(ta.value); if (!res) return;
-    afterRun(res, key, pz.tasks); markDone(); save(); journey(); renderPuzzles(sc);
+    afterRun(res, key, pz.tasks); markDone(); save(); journey(); if (onPart(sc)) renderPuzzles(sc);
   };
 }
 
@@ -3858,7 +3883,7 @@ const THEME = (() => {
        (not counted as a trip, as before). Added for A2, 14 Nov 2026. */
     onCondLine(line){ setPC(line); if (painting && has("addresses")) progMark("fetch", line); },
     afterCond(line, v){ setAcc(v ? "True" : "False"); setPC(v ? FLOW_NOW.onTrue[line] : FLOW_NOW.onFalse[line]); },
-    onOutput(line, curLine, quiet){ const r = lineRect(curLine); outSeq(() => quiet ? speech(line) : fly(line, "o", r, $("#speech")).then(() => speech(line))); },
+    onOutput(line, curLine, quiet){ const r = lineRect(curLine); outSeq(live => quiet ? speech(line) : fly(line, "o", r, $("#speech")).then(() => { if (live()) speech(line); })); },
     paintAll(r){
       $("#cycn").textContent = r.cycles; lightsOff();
       if (pcNow != null) setPC(pcNow);
